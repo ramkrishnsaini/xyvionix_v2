@@ -1,0 +1,148 @@
+---
+/**
+ * Chapter 5, second part: the question each leader is asked, and what
+ * assurance lets them answer. Each card leads to the area that holds it.
+ */
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import Arrow from '../layout/Arrow.astro';
+import { clusterByKey } from '../../data/clusters.ts';
+import { roles } from '../../data/assurance-page.ts';
+import { pathFor } from '../../data/routes.ts';
+
+const cards = roles.map((role) => ({ ...role, area: clusterByKey[role.cluster] }));
+---
+
+<Section surface="light" alt labelledby="roles-title">
+  <SectionHead
+    label="Who it answers to"
+    title="The question you are asked, and what you can answer"
+    id="roles-title"
+    split
+    text="Every leader who signs for technology is asked a version of the same question: does it still work. Assurance turns the answer from a belief into a record."
+  />
+
+  <div class="ar mt-block">
+    {
+      cards.map((card) => (
+        <article class="ar__card rv">
+          <p class="ar__who">{card.who}</p>
+          <h3 class="ar__asked">“{card.asked}”</h3>
+          <div class="ar__answer">
+            <p class="ar__key">What you can answer with</p>
+            <p class="ar__value">{card.answer}</p>
+          </div>
+          <a href={pathFor(card.area.hub)} class="lk lk--sm ar__link" data-track="card_click" data-track-location="assurance-roles">
+            <span class="ul">{card.area.name}</span>
+            <Arrow size="sm" />
+          </a>
+        </article>
+      ))
+    }
+  </div>
+</Section>
+
+<style>
+  .ar {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 44rem) {
+    .ar {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .ar {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .ar__card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--ln);
+    border-radius: var(--radius-md);
+    background: var(--bg0);
+    transition:
+      transform 0.55s var(--ease),
+      border-color 0.3s var(--ease);
+  }
+
+  .ar__card:hover {
+    border-color: var(--ln2);
+  }
+
+  @media (min-width: 64rem) {
+    .ar__card {
+      padding: 2rem;
+    }
+  }
+
+  .ar__who,
+  .ar__key {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .ar__who {
+    font-size: 0.6875rem;
+  }
+
+  .ar__asked {
+    margin-top: 1.1rem;
+    font-size: clamp(1.25rem, 1.18rem + 0.3vw, 1.4375rem);
+    font-weight: 600;
+    line-height: 1.22;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+  }
+
+  .ar__answer {
+    margin-top: auto;
+    padding-top: 1.5rem;
+  }
+
+  .ar__key {
+    padding-top: 1.1rem;
+    border-top: 1px dashed var(--ln2);
+  }
+
+  .ar__value {
+    margin-top: 0.5rem;
+    font-size: 0.969rem;
+    line-height: 1.55;
+    color: var(--mut);
+  }
+
+  .ar__link {
+    align-self: flex-start;
+    margin-top: 1.25rem;
+  }
+
+  @supports (grid-template-rows: subgrid) {
+    .ar__card {
+      display: grid;
+      grid-row: span 4;
+      grid-template-rows: subgrid;
+      row-gap: 0;
+    }
+
+    .ar__answer {
+      margin-top: 0;
+    }
+
+    .ar__link {
+      justify-self: start;
+      align-self: end;
+    }
+  }
+</style>

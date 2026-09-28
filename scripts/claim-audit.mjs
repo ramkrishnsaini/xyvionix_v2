@@ -46,8 +46,11 @@ for (const root of roots) {
   if (!fs.existsSync(root)) continue;
   for (const file of walk(root, (f) => /\.(astro|ts)$/.test(f))) {
     const source = path.relative(projectRoot, file).replaceAll('\\', '/');
+    // Only copy is audited: stylesheets and scripts hold values such as "width: 100%", not claims.
     const text = fs
       .readFileSync(file, 'utf8')
+      .replace(/<style\b[\s\S]*?<\/style>/gi, '')
+      .replace(/<script\b[\s\S]*?<\/script>/gi, '')
       .split('\n')
       .filter((line) => !/^\s*(\/\/|\*|\/\*)/.test(line))
       .join('\n');

@@ -1,0 +1,304 @@
+---
+/**
+ * What each practice answers for. A real table: one row per capability, one
+ * column per practice, a mark in each cell. Solid means yes, striped means in
+ * part, dashed means no. Each mark carries its answer as text for assistive
+ * technology, so nothing depends on the shape alone.
+ *
+ * It compares practices, not any named provider.
+ */
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import Arrow from '../layout/Arrow.astro';
+import { answerLabels, matrixColumns, matrixRows, type Answer } from '../../data/home-visuals.ts';
+
+const markClass: Record<Answer, string> = {
+  yes: 'st-assured',
+  part: 'st-degrading',
+  no: 'st-unassured',
+};
+
+interface Props {
+  label?: string;
+  title?: string;
+  text?: string;
+  id?: string;
+  /** Anchor for the section, used by in-page navigation. */
+  anchor?: string;
+}
+
+const {
+  label = 'Who answers for the outcome',
+  title = 'Seven things an enterprise needs. One practice does all seven.',
+  text = 'Monitoring, audit and managed services each do part of the job, and each is worth having. None of them is answerable for the outcome staying true. That is the gap continuous assurance fills.',
+  id = 'matrix-title',
+  anchor,
+} = Astro.props;
+
+const last = matrixColumns.length - 1;
+const counts = matrixColumns.map((_, c) => matrixRows.filter((r) => r.answers[c] === 'yes').length);
+---
+
+<Section surface="dark" labelledby={id} id={anchor}>
+  <SectionHead label={label} title={title} id={id} split text={text}>
+    <a href="/how-assurance-works" class="lk matrix__link">
+      <span class="ul">How continuous assurance works</span>
+      <Arrow />
+    </a>
+  </SectionHead>
+
+  <div class="table-wrap matrix__wrap mt-block rv" role="region" aria-labelledby={id} tabindex="0">
+    <table class="matrix">
+      <caption class="sr-only">
+        What monitoring, periodic audit, managed service and continuous assurance each provide. Solid mark: yes.
+        Striped mark: in part. Dashed mark: no.
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col" class="matrix__corner">Capability</th>
+          {
+            matrixColumns.map((column, c) => (
+              <th scope="col" class:list={['matrix__col', c === last && 'matrix__col--own']}>
+                <span class="matrix__colname">{column}</span>
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+      <tbody>
+        {
+          matrixRows.map((row) => (
+            <tr>
+              <th scope="row" class="matrix__cap">
+                <span class="matrix__name">{row.capability}</span>
+                <span class="matrix__detail">{row.detail}</span>
+              </th>
+              {row.answers.map((answer, c) => (
+                <td class:list={['matrix__cell', c === last && 'matrix__cell--own']}>
+                  <span class:list={['st', markClass[answer]]} aria-hidden="true" />
+                  <span class="sr-only">{answerLabels[answer]}</span>
+                </td>
+              ))}
+            </tr>
+          ))
+        }
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row" class="matrix__cap matrix__total">Provided in full</th>
+          {
+            counts.map((count, c) => (
+              <td class:list={['matrix__cell', 'matrix__count', 'num', c === last && 'matrix__cell--own']}>
+                {count} of {matrixRows.length}
+              </td>
+            ))
+          }
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="matrix__legend rv">
+    <ul class="matrix__keys">
+      <li><span class="st st-assured" aria-hidden="true"></span> Yes</li>
+      <li><span class="st st-degrading" aria-hidden="true"></span> In part</li>
+      <li><span class="st st-unassured" aria-hidden="true"></span> No</li>
+    </ul>
+  </div>
+</Section>
+
+<style>
+  .matrix__link {
+    margin-top: 1.75rem;
+  }
+
+  .matrix {
+    width: 100%;
+    min-width: 40rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.9375rem;
+  }
+
+  .matrix th,
+  .matrix td {
+    border-bottom: 1px solid var(--ln);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .matrix thead th {
+    padding: 0 1rem 1.1rem;
+    font-family: var(--font-mono);
+    font-size: 0.656rem;
+    font-weight: 400;
+    letter-spacing: var(--track-label);
+    line-height: 1.5;
+    text-transform: uppercase;
+    color: var(--fnt);
+    border-bottom: 1px solid var(--ln2);
+    vertical-align: bottom;
+  }
+
+  .matrix__corner {
+    padding-left: 0 !important;
+  }
+
+  .matrix__col,
+  .matrix__cell {
+    width: 15%;
+    text-align: center !important;
+  }
+
+  .matrix__cap {
+    padding: 1.15rem 1.5rem 1.15rem 0;
+    font-weight: 400;
+  }
+
+  .matrix__name {
+    display: block;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--tx);
+  }
+
+  .matrix__detail {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.844rem;
+    line-height: 1.55;
+    color: var(--mut);
+  }
+
+  .matrix__cell {
+    padding: 1.15rem 1rem;
+  }
+
+  .matrix__cell .st {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+  }
+
+  /* The assurance column is set apart by a frame, not by colour. */
+  .matrix__col--own {
+    padding-top: 1.1rem !important;
+    color: var(--tx) !important;
+    font-weight: 500 !important;
+    background: var(--gls);
+    border-top: 1px solid var(--ln2);
+    border-inline: 1px solid var(--ln2);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .matrix__cell--own {
+    background: var(--gls);
+    border-inline: 1px solid var(--ln2);
+  }
+
+  .matrix tfoot th,
+  .matrix tfoot td {
+    border-bottom: 0;
+  }
+
+  .matrix__total {
+    font-family: var(--font-mono);
+    font-size: 0.656rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .matrix__count {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--mut);
+    white-space: nowrap;
+  }
+
+  .matrix tfoot .matrix__cell--own {
+    color: var(--tx);
+    font-weight: 500;
+    border-bottom: 1px solid var(--ln2);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  /* Phones: no sideways scrolling. Headings run vertically so every practice stays in view. */
+  @media (max-width: 47.99rem) {
+    .matrix {
+      min-width: 0;
+      font-size: 0.875rem;
+      table-layout: fixed;
+    }
+
+    .matrix thead th {
+      padding: 0 0 0.9rem;
+    }
+
+    .matrix__corner {
+      width: auto;
+    }
+
+    .matrix__col,
+    .matrix__cell {
+      width: 2.9rem;
+    }
+
+    .matrix__colname {
+      display: inline-block;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+
+    .matrix__col--own {
+      padding-top: 0.9rem !important;
+    }
+
+    .matrix__cap {
+      padding: 0.95rem 0.75rem 0.95rem 0;
+    }
+
+    .matrix__detail {
+      display: none;
+    }
+
+    .matrix__cell {
+      padding: 0.95rem 0.2rem;
+    }
+
+    .matrix__count {
+      font-size: 0.625rem;
+      letter-spacing: 0;
+    }
+  }
+
+  .matrix__legend {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2.5rem;
+  }
+
+  .matrix__keys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--mut);
+  }
+
+  .matrix__keys li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+</style>

@@ -1,0 +1,380 @@
+---
+/**
+ * What Xyvionix assures: six outcomes, shown with equal weight.
+ *
+ * Each card reads top to bottom as a visitor decides: the question the
+ * business has to answer, what assurance does about it, then the detail:
+ * what is held against a threshold, what the area covers, who it answers to.
+ *
+ * On wide screens the detail is always open. On phones it sits behind one
+ * toggle per card, so six cards stay a short scroll. See scripts/collapse.ts.
+ */
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import Arrow from '../layout/Arrow.astro';
+import { clusterByKey } from '../../data/clusters.ts';
+import { assuredAreas } from '../../data/home-assures.ts';
+import { pathFor } from '../../data/routes.ts';
+import { resolveSlugs } from '../../lib/pages.ts';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const short = (title: string) => title.replace(/\s+Assurance$/, '');
+
+// Link only to pages that are published.
+const cards = await Promise.all(
+  assuredAreas.map(async (area, i) => ({
+    ...area,
+    n: pad(i + 1),
+    def: clusterByKey[area.cluster],
+    pages: (await resolveSlugs(area.covers)).map((page) => ({ href: page.path, label: short(page.title) })),
+  })),
+);
+---
+
+<Section surface="light" alt labelledby="assures-title">
+  <SectionHead
+    label="What Xyvionix assures"
+    title="The outcomes that cannot be left to assumption"
+    id="assures-title"
+    split
+    text="Six outcomes a leadership team is asked to stand behind. Each is held against a threshold the business agreed, re-proven after every change, and corrected by Xyvionix when the proof fails."
+  />
+
+  <div class="as mt-block">
+    {
+      cards.map((card) => (
+        <article class="as__card rv">
+          <div class="as__top">
+            <span class="as__n num">Assurance {card.n}</span>
+            <span class="st st-assured" aria-hidden="true" />
+          </div>
+
+          <h3 class="as__name">
+            <a href={pathFor(card.def.hub)} data-track="card_click" data-track-location="home-assurance">
+              <span class="ul">{card.def.name}</span>
+            </a>
+          </h3>
+          <p class="as__question">{card.def.question}</p>
+          <p class="as__text">{card.def.summary}</p>
+
+          <details class="as__more" data-collapse open>
+            <summary class="as__toggle" data-track="card_toggle" data-track-location="home-assurance">
+              <span>What is held and covered</span>
+              <span class="as__icon" aria-hidden="true" />
+            </summary>
+
+            <div class="as__block">
+              <p class="as__key">Held against a threshold</p>
+              <ul class="as__held">
+                {card.held.map((item) => (
+                  <li>
+                    <span class="st st--sm st-assured" aria-hidden="true" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {card.pages.length > 0 && (
+              <div class="as__block">
+                <p class="as__key">Covers</p>
+                <ul class="as__chips">
+                  {card.pages.map((page) => (
+                    <li>
+                      <a href={page.href} class="as__chip">
+                        {page.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div class="as__block as__block--for">
+              <p class="as__key">Answers to</p>
+              <p class="as__who">{card.answersTo}</p>
+            </div>
+          </details>
+
+          <a href={pathFor(card.def.hub)} class="lk lk--sm as__link" data-track="card_click" data-track-location="home-assurance">
+            <span class="ul">Explore {card.def.shortName}</span>
+            <Arrow size="sm" />
+          </a>
+        </article>
+      ))
+    }
+  </div>
+
+  <a href="/assurance" class="lk as__all rv">
+    <span class="ul">How the six areas fit together</span>
+    <Arrow />
+  </a>
+</Section>
+
+<script>
+  import '../../scripts/collapse.ts';
+</script>
+
+<style>
+  .as {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 44rem) {
+    .as {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .as {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .as__card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--ln);
+    border-top: 2px solid var(--tx);
+    border-radius: var(--radius-md);
+    background: var(--bg0);
+    transition:
+      transform 0.55s var(--ease),
+      box-shadow 0.3s var(--ease);
+  }
+
+  .as__card:hover {
+    box-shadow: 0 28px 60px -40px rgba(23, 23, 21, 0.45);
+  }
+
+  @media (min-width: 64rem) {
+    .as__card {
+      padding: 2rem;
+    }
+  }
+
+  .as__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .as__n,
+  .as__key {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .as__n {
+    font-size: 0.6875rem;
+  }
+
+  .as__name {
+    margin-top: 1.25rem;
+    font-size: clamp(1.375rem, 1.3rem + 0.35vw, 1.5625rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.032em;
+    text-wrap: balance;
+  }
+
+  .as__question {
+    margin-top: 0.9rem;
+    font-size: 1rem;
+    font-weight: 550;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    color: var(--tx);
+  }
+
+  .as__text {
+    margin-top: 0.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--mut);
+  }
+
+  /* ---- detail ---- */
+  .as__more {
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--ln);
+  }
+
+  .as__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3.25rem;
+    list-style: none;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--tx);
+    cursor: pointer;
+  }
+
+  .as__toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  .as__toggle::marker {
+    content: '';
+  }
+
+  .as__toggle:focus-visible {
+    outline: 1.5px solid var(--tx);
+    outline-offset: 2px;
+  }
+
+  .as__icon {
+    position: relative;
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--ln2);
+    border-radius: 50%;
+  }
+
+  .as__icon::before,
+  .as__icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.7rem;
+    height: 1.5px;
+    margin: -0.75px 0 0 -0.35rem;
+    background: var(--tx);
+    transition: transform 0.3s var(--ease);
+  }
+
+  .as__icon::after {
+    transform: rotate(90deg);
+  }
+
+  .as__more[open] .as__icon::after {
+    transform: rotate(0deg);
+  }
+
+  .as__more[open] .as__toggle {
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .as__block {
+    padding-top: 1.25rem;
+  }
+
+  .as__block + .as__block {
+    margin-top: 1.25rem;
+    border-top: 1px solid var(--ln);
+  }
+
+  .as__block--for {
+    border-top-style: dashed !important;
+    border-top-color: var(--ln2) !important;
+  }
+
+  .as__held {
+    display: grid;
+    gap: 0.55rem;
+    margin-top: 0.85rem;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    color: var(--tx);
+  }
+
+  .as__held li {
+    display: flex;
+    gap: 0.8rem;
+  }
+
+  .as__held .st {
+    margin-top: 0.38rem;
+  }
+
+  .as__chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 0.45rem;
+    margin-top: 0.85rem;
+  }
+
+  /* 2.25rem tall so it is easy to hit with a thumb */
+  .as__chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding: 0 0.85rem;
+    border: 1px solid var(--ln2);
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    line-height: 1;
+    color: var(--mut);
+    transition:
+      color 0.2s,
+      border-color 0.2s,
+      background-color 0.2s;
+  }
+
+  .as__chip:hover {
+    color: var(--bg0);
+    background: var(--tx);
+    border-color: var(--tx);
+  }
+
+  .as__who {
+    margin-top: 0.4rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--mut);
+  }
+
+  .as__link {
+    align-self: flex-start;
+    margin-top: auto;
+    padding-top: 1.5rem;
+  }
+
+  .as__all {
+    margin-top: 2.5rem;
+  }
+
+  /* wide screens: the detail is always open, so there is nothing to toggle */
+  @media (min-width: 44rem) {
+    .as__toggle {
+      display: none;
+    }
+
+    /* room for two rows of links, so the block below lines up across cards */
+    .as__chips {
+      min-height: 4.95rem;
+    }
+  }
+
+  /* Cards in a row share their row lines, so each block lines up across them. */
+  @supports (grid-template-rows: subgrid) {
+    .as__card {
+      display: grid;
+      grid-row: span 6;
+      grid-template-rows: subgrid;
+      row-gap: 0;
+    }
+
+    .as__link {
+      justify-self: start;
+      align-self: end;
+      margin-top: 0;
+    }
+  }
+</style>

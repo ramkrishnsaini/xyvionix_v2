@@ -1,0 +1,252 @@
+---
+/**
+ * Chapter 3, how: one outcome followed through a change.
+ *
+ * Six steps in a row on wide screens, a vertical timeline on phones. The bar
+ * above each step is the state at that moment, drawn with the same marks as
+ * everywhere else: solid proven, striped drifting, dashed not yet proven.
+ */
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import { stateByKey } from '../../data/assurances.ts';
+import { journey, journeyScenario } from '../../data/assurance-page.ts';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+
+const takeaways = [
+  { title: 'The business heard first', text: 'The drift was seen in the evidence, before a customer met it.' },
+  { title: 'Your team kept control', text: 'The correction went through your own change approval.' },
+  { title: 'Closure was proven', text: 'The state returned to Assured on a passing re-test, not on a closed ticket.' },
+];
+---
+
+<Section surface="light" alt labelledby="how-title" id="how">
+  <SectionHead
+    label="03 · How"
+    title="Follow one outcome through a change"
+    id="how-title"
+    split
+    text={journeyScenario}
+  />
+
+  <ol class="aj mt-block">
+    {
+      journey.map((step, i) => (
+        <li class="aj__step rv">
+          <div class="aj__rail" aria-hidden="true">
+            <span class:list={['aj__bar', `aj__bar--${step.state}`]} />
+          </div>
+          <div class="aj__body">
+            <p class="aj__n num">Step {pad(i + 1)}</p>
+            <h3 class="aj__title">{step.title}</h3>
+            <p class="aj__who">{step.who}</p>
+            <p class="aj__text">{step.text}</p>
+            <p class="aj__state">
+              <span class:list={['st', 'st--sm', `st-${step.state}`]} aria-hidden="true" />
+              <span>{stateByKey[step.state].label}</span>
+            </p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  <ul class="aj__takes">
+    {
+      takeaways.map((item) => (
+        <li class="rv">
+          <p class="aj__take-title">{item.title}</p>
+          <p class="aj__take-text">{item.text}</p>
+        </li>
+      ))
+    }
+  </ul>
+</Section>
+
+<style>
+  /* ---- phone: a vertical timeline ---- */
+  .aj {
+    display: grid;
+  }
+
+  .aj__step {
+    display: grid;
+    grid-template-columns: 0.75rem minmax(0, 1fr);
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  .aj__rail {
+    display: flex;
+  }
+
+  .aj__bar {
+    flex: 1;
+    width: 0.75rem;
+    min-height: 100%;
+  }
+
+  .aj__bar--assured {
+    background: var(--tx);
+  }
+
+  .aj__bar--degrading {
+    background: repeating-linear-gradient(45deg, var(--tx) 0 2px, transparent 2px 5px);
+    box-shadow: inset 0 0 0 1px var(--ln2);
+  }
+
+  .aj__bar--risk {
+    box-shadow: inset 0 0 0 1.5px var(--tx);
+  }
+
+  .aj__bar--unassured {
+    border: 1px dashed var(--fnt);
+  }
+
+  .aj__body {
+    min-width: 0;
+    padding-bottom: 2.25rem;
+  }
+
+  .aj__step:last-child .aj__body {
+    padding-bottom: 0;
+  }
+
+  .aj__n,
+  .aj__who,
+  .aj__state {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .aj__title {
+    margin-top: 0.6rem;
+    font-size: clamp(1.375rem, 1.3rem + 0.35vw, 1.5625rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.032em;
+  }
+
+  .aj__who {
+    margin-top: 0.6rem;
+    line-height: 1.6;
+    color: var(--mut);
+  }
+
+  .aj__text {
+    margin-top: 0.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.62;
+    color: var(--mut);
+    max-width: 46ch;
+  }
+
+  .aj__state {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    color: var(--tx);
+  }
+
+  /* ---- tablet: three across, the bar lies along the top ---- */
+  @media (min-width: 44rem) {
+    .aj {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2.5rem 0;
+    }
+
+    .aj__step {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto 1fr;
+      gap: 0;
+    }
+
+    .aj__bar {
+      width: auto;
+      height: 0.75rem;
+      min-height: 0;
+    }
+
+    .aj__body {
+      padding: 1.5rem 1.5rem 0 0;
+    }
+  }
+
+  /* ---- desktop: all six in one line ---- */
+  @media (min-width: 76rem) {
+    .aj {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .aj__body {
+      padding-right: 1.25rem;
+    }
+
+    .aj__text {
+      font-size: 0.906rem;
+    }
+  }
+
+  @supports (grid-template-rows: subgrid) {
+    @media (min-width: 44rem) {
+      .aj__body {
+        display: grid;
+        grid-row: span 5;
+        grid-template-rows: subgrid;
+        row-gap: 0;
+        align-content: start;
+      }
+
+      .aj__step {
+        grid-row: span 6;
+        grid-template-rows: subgrid;
+        row-gap: 0;
+      }
+
+      .aj__state {
+        align-self: end;
+      }
+    }
+  }
+
+  /* ---- what the business takes from it ---- */
+  .aj__takes {
+    display: grid;
+    gap: 1rem;
+    margin-top: 3.5rem;
+  }
+
+  @media (min-width: 44rem) {
+    .aj__takes {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+
+  .aj__takes li {
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+    background: var(--bg0);
+    transition: transform 0.55s var(--ease);
+  }
+
+  .aj__take-title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+
+  .aj__take-text {
+    margin-top: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--mut);
+  }
+</style>

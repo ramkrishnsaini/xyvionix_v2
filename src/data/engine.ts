@@ -96,7 +96,48 @@ export const designPrinciples = [
     text: 'Any state, current or past, can be traced to the evidence and the threshold version that produced it.',
   },
   {
-    title: 'Nothing that cannot be handed back',
+    title: 'Everything can be handed back',
     text: 'Thresholds, evidence and action records are the enterprise’s property in open formats, so a transition out is possible at any time.',
   },
 ];
+
+/**
+ * One outcome followed through the six stages, so a reader can see what the
+ * engine holds at each one. A scenario, written as one: no customer, figure
+ * or result is claimed.
+ */
+export const engineExample = {
+  outcome: 'Every automated claims decision can be reconstructed from its record.',
+  rows: [
+    {
+      stage: 'Signals',
+      holds: 'Readings as they arrive, left where they are',
+      example: 'The decision records the claims platform writes, and the model version in production',
+    },
+    {
+      stage: 'Evidence',
+      holds: 'A check that could have failed, with its date and the version it ran on',
+      example: 'A sample of decisions checked for inputs, model version and data version',
+    },
+    {
+      stage: 'Thresholds',
+      holds: 'The boundary, the reason for it, and the person who owns it',
+      example: 'Every sampled record complete, for as long as a decision can be disputed. Owned by the head of claims',
+    },
+    {
+      stage: 'State',
+      holds: 'One of four values, derived by rule',
+      example: 'Degrading: a new data feed has started leaving the data version blank on some records',
+    },
+    {
+      stage: 'Corrective action',
+      holds: 'An owner, a cause and the route the fix takes',
+      example: 'The cause is traced to the feed mapping. The fix goes through the claims team’s own change approval',
+    },
+    {
+      stage: 'Verified closure',
+      holds: 'The same check, passing, kept as new evidence',
+      example: 'The sample is checked again on the corrected feed and passes',
+    },
+  ],
+};

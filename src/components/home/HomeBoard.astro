@@ -1,0 +1,234 @@
+---
+/**
+ * The assurance board: six outcomes, each with what is held, what makes the
+ * proof expire, a signal against its threshold and a current state.
+ *
+ * Built as HTML rows with a small figure in each, so every word stays
+ * readable at any width. The states shown are illustrative and chosen so the
+ * board demonstrates all four.
+ */
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import StateMark from '../assurance/StateMark.astro';
+import { clusterByKey } from '../../data/clusters.ts';
+import { pathFor } from '../../data/routes.ts';
+import { boardRows, boardTraces } from '../../data/home-visuals.ts';
+
+interface Props {
+  label?: string;
+  title?: string;
+  text?: string;
+  id?: string;
+  /** Anchor for the section, used by in-page navigation. */
+  anchor?: string;
+  location?: string;
+}
+
+const {
+  label = 'Assurance at a glance',
+  title = 'Six outcomes. One current state for each.',
+  text = 'This is what an enterprise holds under assurance: for every outcome, what must stay true, what makes the proof expire, where the evidence stands against its threshold, and the state today.',
+  id = 'board-title',
+  anchor,
+  location = 'home-board',
+} = Astro.props;
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const rows = boardRows.map((row) => ({ ...row, area: clusterByKey[row.cluster] }));
+---
+
+<Section surface="light" alt labelledby={id} id={anchor}>
+  <SectionHead label={label} title={title} id={id} split text={text} />
+
+  <div class="board mt-block rv" role="table" aria-label="Illustrative assurance board">
+    <div class="board__head" role="row">
+      <span role="columnheader">Outcome</span>
+      <span role="columnheader">What is held</span>
+      <span role="columnheader">Proof expires when</span>
+      <span role="columnheader">Evidence against threshold</span>
+      <span role="columnheader">State</span>
+    </div>
+
+    {
+      rows.map((row, i) => (
+        <div class="board__row" role="row">
+          <div class="board__area" role="cell">
+            <span class="lbl lbl--plain num">{pad(i + 1)}</span>
+            <a href={pathFor(row.area.hub)} class="board__name" data-track="card_click" data-track-location={location}>
+              <span class="ul">{row.area.name}</span>
+            </a>
+          </div>
+          <p class="board__cell" role="cell">
+            <span class="board__key">What is held</span>
+            {row.holds}
+          </p>
+          <p class="board__cell board__cell--muted" role="cell">
+            <span class="board__key">Proof expires when</span>
+            {row.expires}
+          </p>
+          <div class="board__signal" role="cell">
+            <svg viewBox="0 0 160 44" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+              <line class="board__threshold" x1="0" y1="28" x2="160" y2="28" stroke-dasharray="2.5 3" />
+              <polyline class="board__trace" points={boardTraces[row.state]} />
+              {row.state === 'unassured' && <line class="board__gap" x1="64" y1="15" x2="160" y2="15" stroke-dasharray="1 5" />}
+            </svg>
+          </div>
+          <div class="board__state" role="cell">
+            <StateMark state={row.state} label="visible" />
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <p class="mono-note board__note rv">
+    The dashed line in each signal is the agreed threshold.
+  </p>
+</Section>
+
+<style>
+  .board {
+    border-top: 1px solid var(--ln2);
+  }
+
+  .board__head {
+    display: none;
+  }
+
+  .board__row {
+    display: grid;
+    gap: 0.9rem 1.5rem;
+    padding-block: 1.75rem;
+    border-bottom: 1px solid var(--ln);
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "area state"
+      "holds holds"
+      "expires expires"
+      "signal signal";
+    align-items: center;
+  }
+
+  .board__area {
+    grid-area: area;
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+  }
+
+  .board__name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    color: var(--tx);
+  }
+
+  .board__cell {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--tx);
+  }
+
+  .board__cell:nth-of-type(1) {
+    grid-area: holds;
+  }
+
+  .board__cell--muted {
+    grid-area: expires;
+    color: var(--mut);
+  }
+
+  .board__key {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .board__signal {
+    grid-area: signal;
+  }
+
+  .board__signal svg {
+    width: 100%;
+    height: 48px;
+  }
+
+  .board__state {
+    grid-area: state;
+    justify-self: end;
+  }
+
+  .board__threshold {
+    stroke: var(--fnt);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .board__trace {
+    fill: none;
+    stroke: var(--tx);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .board__gap {
+    stroke: var(--fnt);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .board__note {
+    margin-top: 1.5rem;
+  }
+
+  @media (min-width: 64rem) {
+    .board__head,
+    .board__row {
+      display: grid;
+      grid-template-columns: 3.2fr 3.2fr 3.4fr 2.4fr 1.7fr;
+      grid-template-areas: none;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .board__head {
+      padding-block: 1rem;
+      border-bottom: 1px solid var(--ln);
+      font-family: var(--font-mono);
+      font-size: 0.656rem;
+      letter-spacing: var(--track-label);
+      text-transform: uppercase;
+      color: var(--fnt);
+    }
+
+    .board__row {
+      padding-block: 1.6rem;
+    }
+
+    .board__area,
+    .board__cell:nth-of-type(1),
+    .board__cell--muted,
+    .board__signal,
+    .board__state {
+      grid-area: auto;
+    }
+
+    .board__key {
+      display: none;
+    }
+
+    .board__state {
+      justify-self: start;
+    }
+
+    .board__row:hover {
+      background: var(--gls);
+    }
+  }
+</style>

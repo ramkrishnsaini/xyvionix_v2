@@ -34,7 +34,7 @@ export const companyPages: StaticPage[] = [
       'Start with one outcome that matters. Tell Xyvionix what must remain true, and we establish what evidence proves it and where assurance stands today.',
     summary:
       'Begin an assurance assessment: name the system, the outcome that must remain true and the concern, and Xyvionix responds with how it would be proven.',
-    ogQuestion: 'Which outcome would you most want proven today?',
+    ogQuestion: 'Which outcome should be proven first?',
     parent: '',
     schemaType: 'ContactPage',
     audience: 'CIO, CTO, CISO, Head of AI, VP Platform',

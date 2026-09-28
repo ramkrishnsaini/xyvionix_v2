@@ -1,11 +1,15 @@
 ---
 /**
- * Primary navigation. Parent link plus a separate disclosure button for the
- * assurance panel, so the link works without script and the panel is operable
- * by keyboard. Behaviour lives in src/scripts/site.ts.
+ * Primary navigation. "Assurance" is one control with one result: it opens the
+ * panel. The overview page is the first link inside the panel.
+ *
+ * In the HTML the control is a plain link to the overview page, so it works
+ * without script. With script it becomes a button that opens the panel.
+ * Behaviour lives in src/scripts/site.ts.
  */
 import { navCta, primaryNav } from '../../data/navigation.ts';
 import Logo from '../layout/Logo.astro';
+import Arrow from '../layout/Arrow.astro';
 
 interface Props {
   /** Root-relative path of the current page, for aria-current. */
@@ -34,28 +38,37 @@ const inSection = (href: string) => section !== undefined && href === `/${sectio
             {
               primaryNav.map((item) => (
                 <li class="nav__item">
-                  <a
-                    href={item.href}
-                    class="nav__link"
-                    aria-current={isCurrent(item.href) ? 'page' : inSection(item.href) ? 'true' : undefined}
-                  >
-                    {item.label}
-                  </a>
+                  {item.groups ? (
+                    <a
+                      href={item.href}
+                      class="nav__link"
+                      aria-current={isCurrent(item.href) ? 'page' : inSection(item.href) ? 'true' : undefined}
+                      data-nav-disclose
+                    >
+                      {item.label}
+                      <svg class="nav__caret" width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true" focusable="false">
+                        <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.2" />
+                      </svg>
+                    </a>
+                  ) : (
+                    <a
+                      href={item.href}
+                      class="nav__link"
+                      aria-current={isCurrent(item.href) ? 'page' : inSection(item.href) ? 'true' : undefined}
+                    >
+                      {item.label}
+                    </a>
+                  )}
                   {item.groups && (
                     <>
-                      <button
-                        type="button"
-                        class="nav__link nav__disclose"
-                        aria-expanded="false"
-                        aria-controls="nav-panel-assurance"
-                        data-nav-disclose
-                      >
-                        <span class="sr-only">Show assurance areas</span>
-                        <svg class="nav__caret" width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true" focusable="false">
-                          <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.2" />
-                        </svg>
-                      </button>
                       <div class="nav__panel" id="nav-panel-assurance" data-nav-panel hidden>
+                        <a href={item.href} class="nav__overview" aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                          <span>
+                            <span class="nav__overview-title">Assurance overview</span>
+                            <span class="nav__sub-desc">The six areas, and how they fit together</span>
+                          </span>
+                          <Arrow size="sm" />
+                        </a>
                         <div>
                           <div class="nav__group">
                             <p class="nav__group-label">{item.groups[0]!.label}</p>
@@ -80,6 +93,7 @@ const inSection = (href: string) => section !== undefined && href === `/${sectio
                                   <li>
                                     <a href={link.href} class="nav__sub">
                                       {link.label}
+                                      {link.description && <span class="nav__sub-desc">{link.description}</span>}
                                     </a>
                                   </li>
                                 ))}
@@ -158,10 +172,5 @@ const inSection = (href: string) => section !== undefined && href === `/${sectio
   .nav__item {
     display: flex;
     align-items: center;
-    gap: 0.15rem;
-  }
-
-  .nav__disclose {
-    padding: 0.5rem 0.35rem;
   }
 </style>

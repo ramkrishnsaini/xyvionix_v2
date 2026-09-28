@@ -16,6 +16,7 @@ interface Props {
   section?: string;
   heroCta?: boolean;
   closingCta?: boolean;
+  ctaLabel?: string;
   ctaTitle?: string;
   ctaText?: string;
   secondary?: { label: string; href: string };
@@ -30,6 +31,7 @@ const {
   section,
   heroCta = true,
   closingCta = true,
+  ctaLabel,
   ctaTitle,
   ctaText,
   secondary,
@@ -42,5 +44,5 @@ const { page, seo, crumbs } = await staticPageContext(slug, extraSchema);
 <BaseLayout seo={seo} slug={slug} pageType={pageType} section={section ?? slug}>
   <PageHero crumbs={crumbs} label={label} h1={page.h1} lede={lede} showCta={heroCta} secondary={secondary} />
   <slot />
-  {closingCta && <Cta title={ctaTitle} text={ctaText} location={`${pageType}-cta`} />}
+  {closingCta && <Cta label={ctaLabel} title={ctaTitle} text={ctaText} location={`${pageType}-cta`} />}
 </BaseLayout>

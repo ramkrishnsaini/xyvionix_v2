@@ -6,7 +6,6 @@ import SectionHead from '../components/layout/SectionHead.astro';
 import Arrow from '../components/layout/Arrow.astro';
 import Cta from '../components/layout/Cta.astro';
 import EvidenceField from '../components/evidence/EvidenceField.astro';
-import PageCard from '../components/clusters/PageCard.astro';
 import StateModel from '../components/assurance/StateModel.astro';
 import EngineRail from '../components/assurance/EngineRail.astro';
 import OperatingModel from '../components/assurance/OperatingModel.astro';
@@ -14,14 +13,17 @@ import Outcomes from '../components/assurance/Outcomes.astro';
 import HomeTrust from '../components/home/HomeTrust.astro';
 import HomeIndustries from '../components/home/HomeIndustries.astro';
 import HomeInsights from '../components/home/HomeInsights.astro';
-import { whyAssuranceIsLost } from '../data/assurances.ts';
-import { clusters, expansionClusters, primaryClusters } from '../data/clusters.ts';
-import { pathFor } from '../data/routes.ts';
+import HomeProof from '../components/home/HomeProof.astro';
+import HomeBoard from '../components/home/HomeBoard.astro';
+import HomeMatrix from '../components/home/HomeMatrix.astro';
+import HomeFaq from '../components/home/HomeFaq.astro';
+import HomeWhy from '../components/home/HomeWhy.astro';
+import HomeAssures from '../components/home/HomeAssures.astro';
+import { clusters } from '../data/clusters.ts';
 import { site } from '../data/site.ts';
 import { staticPageContext } from '../lib/static-seo.ts';
 
 const { page, seo } = await staticPageContext('');
-const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <BaseLayout seo={seo} slug="" pageType="home">
@@ -53,57 +55,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
     </div>
   </div>
 
-  <Section surface="light" flush labelledby="why-title">
-    <SectionHead label="Why the category exists" title="Critical technology changes continuously. Assurance does not survive that change on its own." id="why-title" split>
-      <p class="body measure-narrow home__aside" slot="head">
-        Every enterprise proves a system works once, at the point it goes live. Almost none can prove it still works
-        today.
-      </p>
-      <dl class="rows rows--open">
-        {
-          whyAssuranceIsLost.map((item) => (
-            <div class="row rv">
-              <dt class="row__term">{item.title}</dt>
-              <dd class="row__desc">{item.text}</dd>
-            </div>
-          ))
-        }
-      </dl>
-    </SectionHead>
-  </Section>
+  <HomeWhy />
 
-  <Section surface="light" alt labelledby="assures-title">
-    <SectionHead label="What Xyvionix assures" title="The outcomes that cannot be left to assumption" id="assures-title" />
-    <div class="grid-3 mt-block">
-      {
-        primaryClusters.map((c, i) => (
-          <PageCard
-            href={pathFor(c.hub)}
-            label={`Assurance ${pad(i + 1)}`}
-            title={c.name}
-            question={c.question}
-            text={c.summary}
-            trace={i === 0}
-            location="home-assurance"
-          />
-        ))
-      }
-    </div>
-    <div class="also rv">
-      <p class="lbl lbl--plain">Also assured</p>
-      <ul class="also__list">
-        {
-          expansionClusters.map((c) => (
-            <li>
-              <a href={pathFor(c.hub)} class="ul">
-                {c.name}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </Section>
+  <HomeProof />
+
+  <HomeAssures />
 
   <Section surface="light" labelledby="state-title">
     <SectionHead
@@ -117,6 +73,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <StateModel />
     </div>
   </Section>
+
+  <HomeBoard />
 
   <Section surface="dark" alt glow labelledby="engine-title">
     <SectionHead
@@ -150,41 +108,18 @@ const pad = (n: number) => String(n).padStart(2, '0');
     </div>
   </Section>
 
+  <HomeMatrix />
+
   <HomeTrust />
   <HomeIndustries />
   <HomeInsights />
+  <HomeFaq />
 
   <Cta location="home-cta" />
 </BaseLayout>
 
 <style>
-  .home__aside {
-    margin-top: 1.75rem;
-  }
-
   .home__link {
     margin-top: 1.75rem;
-  }
-
-  .also {
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--ln);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.75rem 2.5rem;
-  }
-
-  .also__list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 2rem;
-    font-size: 0.9375rem;
-    color: var(--mut);
-  }
-
-  .also__list a:hover {
-    color: var(--tx);
   }
 </style>

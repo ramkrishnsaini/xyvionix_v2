@@ -180,14 +180,14 @@ a:focus-visible > .ul {
   }
 }
 
-/* scroll reveal: only hidden once the enhancement script has loaded */
+/* Scroll reveal. Content is never hidden: a section only rises a few pixels into place.
+   If the animation does not run, for any reason, everything is still fully readable. */
 .js-reveal .rv:not(.in) {
-  opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(12px);
 }
 
 .rv {
-  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+  transition: transform 0.55s var(--ease);
 }
 
 .ln-draw {
@@ -205,7 +205,6 @@ a:focus-visible > .ul {
 
 @media (prefers-reduced-motion: reduce) {
   .js-reveal .rv:not(.in) {
-    opacity: 1;
     transform: none;
   }
 

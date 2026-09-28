@@ -88,7 +88,7 @@
   text-align: center;
 }
 
-/* interior page hero: left aligned, shorter */
+/* interior page hero: shorter than the home hero */
 .hero--page .hero__inner {
   padding-top: 8.5rem;
   padding-bottom: 3.5rem;
@@ -108,14 +108,40 @@
   }
 }
 
+/* Centred, as on the assurance page. Breadcrumbs stay at the top left, as on every page. */
+.hero--page .hero__inner {
+  text-align: center;
+}
+
+.hero--page .crumbs {
+  text-align: left;
+}
+
+.hero--page .hero__head {
+  justify-content: center;
+}
+
 .hero--page .hero__title {
   margin-top: 1.5rem;
+  margin-inline: auto;
   max-width: 22ch;
+  text-wrap: balance;
 }
 
 .hero--page .hero__lede {
   margin-top: 1.75rem;
+  margin-inline: auto;
   max-width: 62ch;
+  text-wrap: pretty;
+}
+
+.hero--page .hero__actions--start {
+  align-items: center;
+  justify-content: center;
+}
+
+.hero--page .hero__meta {
+  justify-content: center;
 }
 
 .hero__meta {

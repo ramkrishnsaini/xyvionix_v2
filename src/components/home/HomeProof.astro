@@ -1,0 +1,69 @@
+---
+/**
+ * The category in one picture: the same system, proven once or proven
+ * continuously. Two panels on one scale, so the difference is the evidence.
+ */
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import ProofPanel from '../evidence/ProofPanel.astro';
+import StateMark from '../assurance/StateMark.astro';
+import { states } from '../../data/assurances.ts';
+---
+
+<Section surface="dark" alt labelledby="proof-title">
+  <SectionHead
+    label="The difference in one picture"
+    title="The same system. One was proven once. One is proven still."
+    id="proof-title"
+    split
+    text="Every change to a critical system expires the proof that it works. Without re-testing, the business learns of a failure from a customer, an auditor or an incident. Under continuous assurance it learns first, while there is still time to correct it."
+  />
+
+  <div class="proofs mt-block">
+    <ProofPanel mode="once" />
+    <ProofPanel mode="continuous" />
+  </div>
+
+  <div class="proofs__legend rv">
+    <p class="lbl lbl--plain">How to read the marks</p>
+    <ul class="proofs__states">
+      {
+        states.map((s) => (
+          <li>
+            <StateMark state={s.key} label="visible" />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Section>
+
+<style>
+  .proofs {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 60rem) {
+    .proofs {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .proofs__legend {
+    margin-top: 2.5rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--ln);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2.5rem;
+  }
+
+  .proofs__states {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+  }
+</style>

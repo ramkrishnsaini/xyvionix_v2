@@ -1,45 +1,381 @@
 ---
+/**
+ * Industries on the home page: one dossier per sector.
+ *
+ * Each dossier answers, in order: what question the sector has to be able to
+ * answer, what is at stake, what has to stay proven, who asks for the proof,
+ * and what the business holds as a result. The figure draws the proof.
+ */
 import Section from '../layout/Section.astro';
 import SectionHead from '../layout/SectionHead.astro';
 import Arrow from '../layout/Arrow.astro';
+import IndustryFigure from './IndustryFigure.astro';
+import { clusterByKey } from '../../data/clusters.ts';
+import { homeIndustries } from '../../data/home-industries.ts';
 import { industries } from '../../data/industries.ts';
 import { pathFor } from '../../data/routes.ts';
 import { getPage } from '../../lib/pages.ts';
 
-// Link only to industry pages that are published.
+const pad = (n: number) => String(n).padStart(2, '0');
+const detailBySlug = new Map(homeIndustries.map((d) => [d.slug, d]));
+
+// Link only to pages that are published.
 const rows = await Promise.all(
-  industries.map(async (industry) => ({ ...industry, published: Boolean(await getPage(industry.slug)) })),
+  industries.map(async (industry, i) => {
+    const detail = detailBySlug.get(industry.slug);
+    const deeper = detail ? await getPage(detail.deeper) : undefined;
+    return {
+      ...industry,
+      n: pad(i + 1),
+      detail,
+      deeper,
+      published: Boolean(await getPage(industry.slug)),
+      areas: (detail?.focus ?? []).map((key) => clusterByKey[key]),
+    };
+  }),
 );
 ---
 
-<Section surface="light" alt labelledby="industries-title">
-  <SectionHead label="Industries" title="Where the loss of assurance carries consequence" id="industries-title" />
-  <dl class="rows mt-block">
+<Section surface="dark" alt glow labelledby="industries-title">
+  <SectionHead
+    label="Industries"
+    title="Four sectors where an unproven system becomes a regulatory, clinical or commercial event"
+    id="industries-title"
+    split
+    text="In these sectors a system that has quietly stopped meeting its outcome becomes a supervisory finding, a disputed decision, a clinical risk or a lost margin. Each sector has its own proof to keep current, and its own people who ask for it."
+  />
+
+  <div class="hi mt-block">
     {
       rows.map((row) => (
-        <div class="row row--lg rv">
-          <dt class="row__term row__term--disp">
-            {row.published ? (
-              <a href={pathFor(row.slug)} class="ul">
-                {row.name}
-              </a>
-            ) : (
-              row.name
+        <article class="hi__card rv">
+          {row.detail && (
+            <div class="hi__figure">
+              <IndustryFigure kind={row.detail.figure} uid={row.slug} />
+            </div>
+          )}
+
+          <div class="hi__content">
+            <header class="hi__head">
+              <p class="hi__n num">{row.n}</p>
+              <h3 class="hi__name">
+                {row.published ? (
+                  <a href={pathFor(row.slug)} data-track="card_click" data-track-location="home-industries">
+                    <span class="ul">{row.name}</span>
+                  </a>
+                ) : (
+                  row.name
+                )}
+              </h3>
+            </header>
+
+            {row.detail && <p class="hi__question">{row.detail.question}</p>}
+            {row.detail && <p class="hi__stake">{row.detail.stake}</p>}
+
+            {row.detail && (
+              <div class="hi__cols">
+                <div>
+                  <p class="hi__key">What has to stay proven</p>
+                  <ul class="hi__proven">
+                    {row.detail.proven.map((item) => (
+                      <li>
+                        <span class="st st--sm st-assured" aria-hidden="true" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div class="hi__facts">
+                  <div>
+                    <p class="hi__key">Who asks for the proof</p>
+                    <p class="hi__fact">{row.detail.asks}</p>
+                  </div>
+                  <div>
+                    <p class="hi__key">What the business holds</p>
+                    <p class="hi__fact hi__fact--strong">{row.detail.outcome}</p>
+                  </div>
+                </div>
+              </div>
             )}
-          </dt>
-          <dd class="row__desc">{row.consequence}</dd>
-        </div>
+
+            <footer class="hi__foot">
+              {row.areas.length > 0 && (
+                <div class="hi__areas">
+                  <p class="hi__key">Assurance that carries most weight</p>
+                  <ul class="hi__chips">
+                    {row.areas.map((area) => (
+                      <li>
+                        <a href={pathFor(area.hub)} class="hi__chip">
+                          {area.shortName}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <div class="hi__links">
+                {row.published && (
+                  <a href={pathFor(row.slug)} class="lk lk--sm" data-track="card_click" data-track-location="home-industries">
+                    <span class="ul">{row.name}</span>
+                    <Arrow size="sm" />
+                  </a>
+                )}
+                {row.deeper && (
+                  <a href={row.deeper.path} class="lk lk--sm hi__deeper" data-track="card_click" data-track-location="home-industries">
+                    <span class="ul">{row.deeper.title}</span>
+                    <Arrow size="sm" />
+                  </a>
+                )}
+              </div>
+            </footer>
+          </div>
+        </article>
       ))
     }
-  </dl>
-  <a href="/industries" class="lk industries__link rv">
+  </div>
+
+  <a href="/industries" class="lk hi__all rv">
     <span class="ul">All industries</span>
     <Arrow />
   </a>
 </Section>
 
 <style>
-  .industries__link {
+  .hi {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .hi__card {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-xl);
+    background: var(--bg0);
+    transition:
+      transform 0.55s var(--ease),
+      border-color 0.3s var(--ease);
+  }
+
+  .hi__card:hover {
+    border-color: rgba(245, 244, 241, 0.34);
+  }
+
+  .hi__figure {
+    min-width: 0;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .hi__content {
+    min-width: 0;
+    padding: 1.75rem 1.25rem 1.5rem;
+    background: var(--gls);
+  }
+
+  .hi__head {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+
+  .hi__n {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: var(--track-label);
+    color: var(--fnt);
+  }
+
+  .hi__name {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--mut);
+  }
+
+  .hi__question {
+    margin-top: 1rem;
+    font-size: clamp(1.5rem, 1.3rem + 0.9vw, 2.125rem);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+    max-width: 24ch;
+  }
+
+  .hi__stake {
+    margin-top: 1rem;
+    font-size: 0.969rem;
+    line-height: 1.65;
+    color: var(--mut);
+    max-width: 58ch;
+  }
+
+  .hi__cols {
+    display: grid;
+    gap: 1.75rem;
+    margin-top: 1.75rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--ln);
+  }
+
+  .hi__key {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .hi__proven {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 0.9rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--tx);
+  }
+
+  .hi__proven li {
+    display: flex;
+    gap: 0.85rem;
+  }
+
+  .hi__proven .st {
+    margin-top: 0.4rem;
+  }
+
+  .hi__facts {
+    display: grid;
+    gap: 1.5rem;
+    align-content: start;
+  }
+
+  .hi__fact {
+    margin-top: 0.6rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--mut);
+  }
+
+  .hi__fact--strong {
+    color: var(--tx);
+    font-weight: 550;
+  }
+
+  .hi__foot {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 1.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px dashed var(--ln2);
+  }
+
+  .hi__areas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+  }
+
+  .hi__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .hi__chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid var(--ln2);
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    line-height: 1;
+    color: var(--mut);
+    transition:
+      color 0.2s,
+      border-color 0.2s,
+      background-color 0.2s;
+  }
+
+  .hi__chip:hover {
+    color: var(--bg0);
+    background: var(--tx);
+    border-color: var(--tx);
+  }
+
+  .hi__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+  }
+
+  .hi__deeper {
+    color: var(--mut);
+    font-weight: 500;
+  }
+
+  .hi__deeper:hover {
+    color: var(--tx);
+  }
+
+  .hi__all {
     margin-top: 2.5rem;
+  }
+
+  @media (min-width: 40rem) {
+    .hi__content {
+      padding: 2.25rem 2rem 2rem;
+    }
+
+    .hi__cols {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: 2.5rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .hi {
+      gap: 1.5rem;
+    }
+
+    .hi__card {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 8fr);
+    }
+
+    /* figure changes side on alternate dossiers */
+    .hi__card:nth-child(even) {
+      grid-template-columns: minmax(0, 8fr) minmax(0, 5fr);
+    }
+
+    .hi__card:nth-child(even) .hi__figure {
+      order: 2;
+      border-left: 1px solid var(--ln);
+      border-right: 0;
+    }
+
+    .hi__figure {
+      border-bottom: 0;
+      border-right: 1px solid var(--ln);
+    }
+
+    .hi__content {
+      padding: 2.75rem 3rem 2.5rem;
+    }
+
+    .hi__content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hi__foot {
+      margin-top: auto;
+    }
+
+    .hi__cols {
+      margin-bottom: 1.75rem;
+    }
   }
 </style>

@@ -1,0 +1,207 @@
+---
+/**
+ * Chapter 4, states: not what each state means, which the home page gives,
+ * but how an outcome moves between them: what sets a state, what happens
+ * while it holds, and what ends it.
+ */
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import Arrow from '../layout/Arrow.astro';
+import { stateByKey } from '../../data/assurances.ts';
+import { stateDetails } from '../../data/assurance-page.ts';
+---
+
+<Section surface="light" alt labelledby="states-title" id="states">
+  <SectionHead
+    label="04 · States"
+    title="What moves an outcome from one state to the next"
+    id="states-title"
+    split
+    text="State is set by evidence against the threshold, by rule. Unassured is kept apart from failing: a recovery plan that has never been exercised may well work, and no one knows. Treating the unknown as acceptable is how most technology risk is carried unseen."
+  >
+    <a href="/assurance-is-a-state-not-a-report" class="lk st__link">
+      <span class="ul">Assurance is a state, not a report</span>
+      <Arrow />
+    </a>
+  </SectionHead>
+
+  <ol class="sd mt-block">
+    {
+      stateDetails.map((item) => (
+        <li class="sd__card rv">
+          <div class="sd__band" aria-hidden="true">
+            <span class:list={['sd__fill', `sd__fill--${item.state}`]} />
+          </div>
+          <h3 class="sd__name">
+            <span class:list={['st', `st-${item.state}`]} aria-hidden="true" />
+            {stateByKey[item.state].label}
+          </h3>
+
+          <dl class="sd__facts">
+            <div>
+              <dt>Set when</dt>
+              <dd>{item.setWhen}</dd>
+            </div>
+            <div>
+              <dt>What happens</dt>
+              <dd>{item.then}</dd>
+            </div>
+            <div>
+              <dt>Ends when</dt>
+              <dd>{item.leavesWhen}</dd>
+            </div>
+          </dl>
+        </li>
+      ))
+    }
+  </ol>
+
+  <p class="sd__rule rv">
+    <span class="st st-assured" aria-hidden="true"></span>
+    Every route back to Assured passes through a test. None passes through a status change.
+  </p>
+</Section>
+
+<style>
+  .st__link {
+    margin-top: 1.75rem;
+  }
+
+  .sd {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 44rem) {
+    .sd {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+
+  @media (min-width: 76rem) {
+    .sd {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .sd__card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+    background: var(--bg0);
+    transition: transform 0.55s var(--ease);
+  }
+
+  /* the state, drawn as a band across the top of its card */
+  .sd__band {
+    display: flex;
+    height: 0.75rem;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .sd__fill {
+    flex: 1;
+  }
+
+  .sd__fill--assured {
+    background: var(--tx);
+  }
+
+  .sd__fill--degrading {
+    background: repeating-linear-gradient(45deg, var(--tx) 0 2px, transparent 2px 5px);
+  }
+
+  .sd__fill--risk {
+    box-shadow: inset 0 0 0 1.5px var(--tx);
+  }
+
+  .sd__fill--unassured {
+    border: 1px dashed var(--fnt);
+  }
+
+  .sd__name {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1.5rem 1.5rem 0;
+    font-size: clamp(1.375rem, 1.3rem + 0.35vw, 1.5625rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.032em;
+  }
+
+  .sd__facts {
+    padding: 0.5rem 1.5rem 1.5rem;
+  }
+
+  .sd__facts > div {
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .sd__facts > div:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .sd__facts dt {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .sd__facts dd {
+    margin-top: 0.4rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--mut);
+  }
+
+  /* Each fact sits on a row shared with the same fact in the cards beside it. */
+  @supports (grid-template-rows: subgrid) {
+    .sd__card {
+      display: grid;
+      grid-row: span 5;
+      grid-template-rows: subgrid;
+      row-gap: 0;
+    }
+
+    .sd__facts {
+      display: contents;
+    }
+
+    .sd__facts > div {
+      margin-inline: 1.5rem;
+    }
+
+    .sd__facts > div:first-child {
+      margin-top: 0.5rem;
+    }
+
+    .sd__facts > div:last-child {
+      padding-bottom: 1.5rem;
+    }
+  }
+
+  .sd__rule {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    margin-top: 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+    font-size: 1.0625rem;
+    font-weight: 550;
+    line-height: 1.45;
+    letter-spacing: -0.012em;
+  }
+
+  .sd__rule .st {
+    margin-top: 0.35rem;
+  }
+</style>

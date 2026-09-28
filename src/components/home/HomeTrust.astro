@@ -1,46 +1,521 @@
 ---
+/**
+ * Security and trust on the home page.
+ *
+ * Three parts, in the order a buyer's teams ask:
+ *   boundary   what crosses between Xyvionix and the enterprise, and on whose terms
+ *   audiences  what security, risk and procurement can each settle in advance
+ *   status     attestation, stated as it stands
+ *
+ * The boundary is built from HTML and CSS so every word stays readable at any
+ * width. Statements come from `home-trust.ts` and `trust.ts`.
+ */
 import Section from '../layout/Section.astro';
 import SectionHead from '../layout/SectionHead.astro';
 import Arrow from '../layout/Arrow.astro';
-import { trustSummary } from '../../data/trust.ts';
+import { trustAudiences, trustChannels } from '../../data/home-trust.ts';
+
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <Section surface="light" labelledby="trust-title">
   <SectionHead
     label="Security and trust"
-    title="Assurance requires access. Access requires proof of its own."
+    title="Before you grant access, see exactly what it allows"
     id="trust-title"
     split
+    text="Your security, risk and procurement teams can settle the hard questions before the first conversation: what Xyvionix can see, what it can change, who approves it, and how you switch it off."
   >
-    <Fragment slot="head">
-      <p class="body measure-narrow trust__text">
-        Xyvionix holds the same standard it applies to its clients. The posture is published so security and
-        procurement can evaluate it before a conversation begins.
-      </p>
-      <a href="/security-trust" class="lk trust__link">
-        <span class="ul">Trust and assurance overview</span>
-        <Arrow />
-      </a>
-    </Fragment>
-    <dl class="rows rows--open rv">
+    <a href="/security-trust" class="lk trust__link" data-track="card_click" data-track-location="home-trust">
+      <span class="ul">Trust and assurance overview</span>
+      <Arrow />
+    </a>
+  </SectionHead>
+
+  <div class="tb mt-block rv">
+    <div class="tb__head" aria-hidden="true">
+      <span>Xyvionix</span>
+      <span class="tb__head-mid">Boundary</span>
+      <span class="tb__head-end">Your environment</span>
+    </div>
+
+    <ol class="tb__rows">
       {
-        trustSummary.map((item) => (
-          <div class="row">
-            <dt class="row__term">{item.title}</dt>
-            <dd class="row__desc">{item.text}</dd>
-          </div>
+        trustChannels.map((channel, i) => (
+          <li class:list={['tb__row', `tb__row--${channel.key}`]}>
+            <div class="tb__ours">
+              <p class="tb__name">
+                <span class="tb__n num">{pad(i + 1)}</span>
+                {channel.name}
+              </p>
+              <p class="tb__text">{channel.ours}</p>
+            </div>
+
+            <div class="tb__wire">
+              <span class="tb__start" />
+              <span class="tb__line tb__line--in" />
+              <span class="tb__gate">{channel.rule}</span>
+              <span class="tb__line tb__line--out" />
+              <span class="tb__end" />
+            </div>
+
+            <div class="tb__yours">
+              <p class="tb__side">Stays with you</p>
+              <p class="tb__text tb__text--strong">{channel.yours}</p>
+            </div>
+          </li>
         ))
       }
+    </ol>
+  </div>
+
+  <div class="ta">
+    {
+      trustAudiences.map((audience) => (
+        <article class="ta__card rv">
+          <p class="ta__who">{audience.who}</p>
+          <h3 class="ta__asks">{audience.asks}</h3>
+          <ul class="ta__points">
+            {audience.points.map((point) => (
+              <li>
+                <span class="st st--sm st-assured" aria-hidden="true" />
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
+          <div class="ta__outcome">
+            <p class="ta__key">What it lets you do</p>
+            <p class="ta__value">{audience.outcome}</p>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+
+  <div class="ts rv">
+    <div class="ts__lead">
+      <span class="st st-unassured" aria-hidden="true"></span>
+      <p class="ts__title">Attestation, as it stands</p>
+    </div>
+    <dl class="ts__items">
+      <div>
+        <dt>SOC 2</dt>
+        <dd>A readiness programme is planned. No report has been issued.</dd>
+      </div>
+      <div>
+        <dt>ISO 27001</dt>
+        <dd>Planned to follow SOC 2 readiness. Not certified.</dd>
+      </div>
     </dl>
-  </SectionHead>
+    <p class="ts__note">The status is confirmed to you in writing before an engagement starts.</p>
+  </div>
 </Section>
 
 <style>
-  .trust__text {
+  .trust__link {
     margin-top: 1.75rem;
   }
 
-  .trust__link {
-    margin-top: 2rem;
+  /* ---- boundary: an obsidian panel on the light surface ---- */
+  .tb {
+    --tx: #f5f4f1;
+    --mut: #a8a7a0;
+    --fnt: #8a8982;
+    --gst: #4a4944;
+    --bg0: #0c0c0b;
+    --bg1: #121211;
+    --ln: rgba(245, 244, 241, 0.08);
+    --ln2: rgba(245, 244, 241, 0.16);
+
+    color: var(--tx);
+    color-scheme: dark;
+    border-radius: var(--radius-xl);
+    padding: 1.5rem 1.25rem;
+    background-color: var(--bg0);
+    background-image:
+      radial-gradient(60rem 22rem at 50% -6rem, rgba(245, 244, 241, 0.085), transparent 70%),
+      linear-gradient(rgba(245, 244, 241, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245, 244, 241, 0.035) 1px, transparent 1px);
+    background-size:
+      auto,
+      40px 40px,
+      40px 40px;
+    background-position:
+      center top,
+      center,
+      center;
+    box-shadow: 0 40px 80px -48px rgba(12, 12, 11, 0.55);
+  }
+
+  .tb__head {
+    display: none;
+  }
+
+  .tb__row {
+    display: grid;
+    gap: 1rem;
+    padding-block: 1.75rem;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .tb__row:first-child {
+    padding-top: 0.5rem;
+  }
+
+  .tb__row:last-child {
+    padding-bottom: 0.5rem;
+    border-bottom: 0;
+  }
+
+  .tb__name {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+  }
+
+  .tb__n {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: var(--track-label);
+    color: var(--fnt);
+  }
+
+  .tb__text {
+    margin-top: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--mut);
+    max-width: 38ch;
+  }
+
+  .tb__text--strong {
+    color: var(--tx);
+  }
+
+  .tb__side {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  /* the line that crosses, or does not cross, the boundary */
+  .tb__wire {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .tb__line {
+    flex: 1 1 0;
+    min-width: 1rem;
+    border-top: 1.5px solid var(--tx);
+  }
+
+  .tb__gate {
+    flex: none;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid var(--ln2);
+    border-radius: 999px;
+    background: var(--bg0);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--tx);
+  }
+
+  /* same width as the end mark, so the gate sits exactly on the boundary */
+  .tb__start {
+    flex: none;
+    width: 11px;
+    height: 11px;
+    border: 1.5px solid var(--tx);
+    border-radius: 50%;
+  }
+
+  .tb__end {
+    flex: none;
+    width: 11px;
+    height: 11px;
+    background: var(--tx);
+  }
+
+  /* correct: the gate is the approval, drawn heavier */
+  .tb__row--correct .tb__gate {
+    border-color: var(--tx);
+    background: var(--tx);
+    color: var(--bg0);
+  }
+
+  /* data: approaches the boundary and stops there */
+  .tb__row--data .tb__line--in {
+    border-top-style: dashed;
+    border-top-color: var(--fnt);
+  }
+
+  .tb__row--data .tb__line--out {
+    border-top-color: transparent;
+  }
+
+  .tb__row--data .tb__end {
+    background: transparent;
+  }
+
+  .tb__row--data .tb__gate {
+    border-style: dashed;
+    border-color: var(--fnt);
+  }
+
+  /* exit: the line can be cut at any moment */
+  .tb__row--exit .tb__line--out {
+    border-top-style: dashed;
+    border-top-color: var(--fnt);
+  }
+
+  .tb__row--exit .tb__end {
+    background: transparent;
+    border: 1px dashed var(--fnt);
+  }
+
+  @media (min-width: 40rem) {
+    .tb {
+      padding: 2rem 2rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .tb {
+      padding: 2.25rem 3rem 2.5rem;
+    }
+
+    .tb__head,
+    .tb__row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(16rem, 24rem) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .tb__head {
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--ln2);
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      letter-spacing: var(--track-label);
+      text-transform: uppercase;
+      color: var(--fnt);
+    }
+
+    .tb__head-mid {
+      text-align: center;
+    }
+
+    .tb__head-end {
+      justify-self: end;
+      width: 100%;
+      max-width: 22rem;
+    }
+
+    /* the boundary itself, running through every gate */
+    .tb__rows {
+      position: relative;
+    }
+
+    .tb__rows::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      border-left: 1px dashed var(--gst);
+    }
+
+    .tb__row {
+      position: relative;
+      padding-block: 2.25rem;
+    }
+
+    .tb__row:first-child {
+      padding-top: 2.25rem;
+    }
+
+    .tb__row:last-child {
+      padding-bottom: 1rem;
+    }
+
+    .tb__side {
+      display: none;
+    }
+
+    .tb__yours {
+      justify-self: end;
+      width: 100%;
+      max-width: 22rem;
+    }
+
+    .tb__yours .tb__text {
+      margin-top: 0;
+    }
+  }
+
+  /* ---- audiences ---- */
+  .ta {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  @media (min-width: 56rem) {
+    .ta {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .ta__card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem 1.5rem 1.5rem;
+    border: 1px solid var(--ln);
+    border-top: 2px solid var(--tx);
+    border-radius: var(--radius-md);
+    background: var(--bg1);
+  }
+
+  @media (min-width: 64rem) {
+    .ta__card {
+      padding: 2.25rem 2rem 2rem;
+    }
+  }
+
+  .ta__who {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .ta__asks {
+    margin-top: 0.9rem;
+    font-size: clamp(1.25rem, 1.17rem + 0.35vw, 1.4375rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+  }
+
+  .ta__points {
+    display: grid;
+    gap: 0.85rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--mut);
+  }
+
+  .ta__points li {
+    display: flex;
+    gap: 0.85rem;
+  }
+
+  .ta__points .st {
+    margin-top: 0.42rem;
+  }
+
+  .ta__outcome {
+    margin-top: auto;
+    padding-top: 1.25rem;
+    border-top: 1px dashed var(--ln2);
+  }
+
+  .ta__key {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .ta__value {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    font-weight: 550;
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+    color: var(--tx);
+  }
+
+  /* ---- attestation status ---- */
+  .ts {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+  }
+
+  .ts__lead {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .ts__title {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  .ts__items {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .ts__items dt {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .ts__items dd {
+    margin-top: 0.3rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--tx);
+  }
+
+  .ts__note {
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--mut);
+  }
+
+  @media (min-width: 40rem) {
+    .ts__items {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .ts {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 6fr) minmax(0, 3.5fr);
+      align-items: center;
+      gap: 2.5rem;
+      padding: 1.75rem 2rem;
+    }
   }
 </style>

@@ -15,8 +15,24 @@
   color-scheme: dark;
 }
 
+/* Full-width backing, shown only once the page has scrolled. See .nav--stuck. */
+.nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(12, 12, 11, 0.94);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--ob-ln);
+  opacity: 0;
+  transition: opacity 0.25s var(--ease);
+  pointer-events: none;
+}
+
 .nav__shell {
   padding-top: 1rem;
+  transition: padding-top 0.25s var(--ease);
 }
 
 @media (min-width: 40rem) {
@@ -31,6 +47,41 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--ob-ln);
   padding-inline: 1rem;
+  transition:
+    padding-inline 0.25s var(--ease),
+    border-color 0.25s var(--ease);
+}
+
+.nav__bar::before {
+  transition: opacity 0.25s var(--ease);
+}
+
+/* Scrolled: the bar docks to the top edge and spans the full width, so no strip of page
+   shows above or beside it. At the top of the page it floats, as in the frozen theme. */
+.nav--stuck::before {
+  opacity: 1;
+}
+
+.nav--stuck .nav__shell {
+  padding-top: 0;
+}
+
+.nav--stuck .nav__bar {
+  border-color: transparent;
+  padding-inline: 0;
+}
+
+.nav--stuck .nav__bar::before {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav::before,
+  .nav__shell,
+  .nav__bar,
+  .nav__bar::before {
+    transition: none;
+  }
 }
 
 /* The glass sits on its own layer. If the bar itself carried the backdrop filter, the
@@ -79,7 +130,7 @@
   color: var(--ob-mut);
 }
 
-@media (min-width: 68rem) {
+@media (min-width: 76rem) {
   .nav__list {
     display: flex;
   }
@@ -90,6 +141,7 @@
 }
 
 .nav__link {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -117,7 +169,7 @@
   position: absolute;
   left: -1.5rem;
   top: calc(100% + 0.9rem);
-  width: min(46rem, calc(100vw - 4rem));
+  width: min(54rem, calc(100vw - 4rem));
   padding: 1.75rem;
   border: 1px solid var(--ob-ln);
   border-radius: var(--radius-lg);
@@ -126,8 +178,45 @@
   box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7);
   z-index: 1;
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 1.5rem 2.5rem;
+}
+
+/* first row of the panel: the overview page */
+.nav__overview {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin: -0.5rem -0.75rem 0;
+  padding: 0.85rem 0.75rem 1.1rem;
+  border-bottom: 1px solid var(--ob-ln);
+  color: var(--ob-tx);
+}
+
+.nav__overview-title {
+  display: block;
+  font-size: 0.969rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.nav__overview .arw {
+  transition: transform 0.3s var(--ease);
+}
+
+.nav__overview:hover .arw {
+  transform: translateX(4px);
+}
+
+.nav__sub {
+  transition: color 0.2s;
+}
+
+.nav__sub:hover .nav__sub-desc,
+.nav__overview:hover .nav__sub-desc {
+  color: var(--ob-tx);
 }
 
 .nav__group-label {
@@ -174,6 +263,7 @@
 
 .nav__cta {
   display: none;
+  white-space: nowrap;
 }
 
 @media (min-width: 40rem) {
@@ -192,7 +282,7 @@
   border-radius: var(--radius);
 }
 
-@media (min-width: 68rem) {
+@media (min-width: 76rem) {
   .nav__toggle {
     display: none;
   }
@@ -208,7 +298,7 @@
   color: var(--ob-mut);
 }
 
-@media (min-width: 68rem) {
+@media (min-width: 76rem) {
   .nav__mobile {
     display: none;
   }

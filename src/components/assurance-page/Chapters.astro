@@ -1,0 +1,127 @@
+---
+/**
+ * Chapter bar for a long page. It stays under the navigation while the page
+ * scrolls, so a reader always knows where they are and can jump.
+ * On a phone the list scrolls sideways inside the bar; the page never does.
+ */
+import { chapters as assuranceChapters } from '../../data/assurance-page.ts';
+
+interface Props {
+  /** Chapters in page order. Each id is the id of a section on the page. */
+  items?: { id: string; label: string }[];
+  /** Where the click came from, for analytics. */
+  location?: string;
+}
+
+const { items = assuranceChapters, location = 'assurance' } = Astro.props;
+const chapters = items;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<nav class="chap" aria-label="On this page" data-chapters>
+  <div class="shell">
+    <ol class="chap__list" data-chapters-list>
+      {
+        chapters.map((chapter, i) => (
+          <li>
+            <a href={`#${chapter.id}`} class="chap__link" data-track="chapter_click" data-track-location={location}>
+              <span class="chap__n num">{pad(i + 1)}</span>
+              <span>{chapter.label}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</nav>
+
+<script>
+  import '../../scripts/chapters.ts';
+</script>
+
+<style>
+  .chap {
+    position: sticky;
+    top: 60px;
+    z-index: 40;
+    background: #121211;
+    border-block: 1px solid var(--ob-ln);
+    color: var(--ob-mut);
+  }
+
+  .chap__list {
+    display: flex;
+    gap: 0.25rem;
+    margin-inline: -0.75rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .chap__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chap__link {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.95rem 0.75rem;
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    color: var(--ob-mut);
+    transition: color 0.2s;
+  }
+
+  .chap__n {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+    color: var(--ob-fnt);
+  }
+
+  .chap__link:hover,
+  .chap__link[aria-current='true'] {
+    color: var(--ob-tx);
+  }
+
+  .chap__link::after {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: -1px;
+    height: 2px;
+    background: var(--ob-tx);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s var(--ease);
+  }
+
+  .chap__link[aria-current='true']::after {
+    transform: scaleX(1);
+  }
+
+  .chap__link:focus-visible {
+    outline: 1.5px solid var(--ob-tx);
+    outline-offset: -3px;
+  }
+
+  @media (min-width: 64rem) {
+    .chap__list {
+      gap: 1rem;
+    }
+
+    .chap__link {
+      font-size: 0.875rem;
+    }
+  }
+
+  @media print {
+    .chap {
+      display: none;
+    }
+  }
+</style>

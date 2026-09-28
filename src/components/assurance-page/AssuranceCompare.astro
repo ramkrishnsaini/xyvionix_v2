@@ -1,0 +1,258 @@
+---
+/**
+ * Chapter 6, how it compares: one event, and what each practice does with it.
+ *
+ * The line in each lane runs from the event to the point where that practice
+ * notices it. A dashed line means it notices only if something was set up in
+ * advance. It compares practices, not any named provider.
+ */
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import Arrow from '../layout/Arrow.astro';
+import { compareEvent, practices } from '../../data/assurance-page.ts';
+---
+
+<Section surface="dark" labelledby="compare-title" id="compare">
+  <SectionHead
+    label="06 · How it compares"
+    title="One event. Four practices. One of them closes it."
+    id="compare-title"
+    split
+    text="Monitoring, audit and managed services each do part of the job, and each is worth having. What separates them is what they do when something has quietly stopped being true."
+  >
+    <a href="/continuous-assurance-vs-monitoring" class="lk cp__link">
+      <span class="ul">Continuous assurance is not monitoring</span>
+      <Arrow />
+    </a>
+  </SectionHead>
+
+  <div class="cp__event mt-block rv">
+    <p class="cp__key">The event</p>
+    <p class="cp__event-text">{compareEvent}</p>
+  </div>
+
+  <ol class="cp">
+    {
+      practices.map((practice) => (
+        <li class:list={['cp__lane', 'rv', practice.own && 'cp__lane--own']}>
+          <h3 class="cp__name">{practice.name}</h3>
+
+          <div class="cp__line">
+            <svg viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+              <line class="cp__rest" x1={practice.at} y1="6" x2="100" y2="6" />
+              <line
+                class:list={['cp__until', practice.conditional && 'cp__until--if']}
+                x1="0"
+                y1="6"
+                x2={practice.at}
+                y2="6"
+                stroke-dasharray={practice.conditional ? '3 4' : undefined}
+              />
+              <line class="cp__tick" x1="0" y1="1" x2="0" y2="11" />
+              <line class="cp__tick cp__tick--seen" x1={practice.at} y1="0" x2={practice.at} y2="12" />
+            </svg>
+            <p class="cp__scale" aria-hidden="true">
+              <span>Event</span>
+              <span>Later</span>
+            </p>
+          </div>
+
+          <dl class="cp__facts">
+            <div>
+              <dt>Notices</dt>
+              <dd>{practice.notices}</dd>
+            </div>
+            <div>
+              <dt>Then</dt>
+              <dd>{practice.does}</dd>
+            </div>
+            <div>
+              <dt>Ends when</dt>
+              <dd>{practice.endsWhen}</dd>
+            </div>
+          </dl>
+        </li>
+      ))
+    }
+  </ol>
+
+  <p class="cp__note rv">
+    In three of the four, the work ends when a record changes. In one, it ends when the exposure is shown to be gone.
+  </p>
+</Section>
+
+<style>
+  .cp__link {
+    margin-top: 1.75rem;
+  }
+
+  .cp__key,
+  .cp__facts dt,
+  .cp__scale {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .cp__event {
+    padding: 1.5rem;
+    border: 1px dashed var(--ln2);
+    border-radius: var(--radius-md);
+  }
+
+  .cp__event-text {
+    margin-top: 0.6rem;
+    font-size: clamp(1.125rem, 1.06rem + 0.3vw, 1.3125rem);
+    font-weight: 550;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+    max-width: 56ch;
+  }
+
+  .cp {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  @media (min-width: 44rem) {
+    .cp {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+
+  @media (min-width: 76rem) {
+    .cp {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .cp__lane {
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--ln);
+    border-radius: var(--radius-md);
+    background: var(--gls);
+    transition: transform 0.55s var(--ease);
+    --ink: var(--tx);
+    --soft: var(--mut);
+    --rule: var(--ln);
+  }
+
+  /* the practice that answers for the outcome, set apart by a frame */
+  .cp__lane--own {
+    border-color: var(--tx);
+    background: var(--tx);
+    color: var(--bg0);
+    --ink: var(--bg0);
+    --soft: #55544d;
+    --rule: rgba(23, 23, 21, 0.18);
+  }
+
+  .cp__name {
+    font-size: clamp(1.25rem, 1.2rem + 0.3vw, 1.4375rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+  }
+
+  .cp__line {
+    margin-top: 1.5rem;
+  }
+
+  .cp__line svg {
+    display: block;
+    width: 100%;
+    height: 12px;
+    overflow: visible;
+  }
+
+  .cp__until {
+    stroke: var(--ink);
+    stroke-width: 3;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .cp__until--if {
+    stroke-width: 2;
+  }
+
+  .cp__rest {
+    stroke: var(--rule);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .cp__tick {
+    stroke: var(--soft);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .cp__tick--seen {
+    stroke: var(--ink);
+    stroke-width: 2.5;
+  }
+
+  .cp__scale {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.6rem;
+    font-size: 0.5938rem;
+  }
+
+  .cp__facts {
+    margin-top: 0.75rem;
+  }
+
+  .cp__facts > div {
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .cp__facts > div:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .cp__facts dd {
+    margin-top: 0.4rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--soft);
+  }
+
+  .cp__lane--own .cp__facts dt,
+  .cp__lane--own .cp__scale {
+    color: #6b6a63;
+  }
+
+  .cp__lane--own .cp__facts dd {
+    color: var(--bg0);
+    font-weight: 500;
+  }
+
+  @supports (grid-template-rows: subgrid) {
+    .cp__lane {
+      display: grid;
+      grid-row: span 3;
+      grid-template-rows: subgrid;
+      row-gap: 0;
+    }
+  }
+
+  .cp__note {
+    margin-top: 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+    font-size: 1.0625rem;
+    font-weight: 550;
+    line-height: 1.45;
+    letter-spacing: -0.012em;
+    max-width: none;
+  }
+</style>

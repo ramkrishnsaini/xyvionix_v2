@@ -1,0 +1,280 @@
+---
+/**
+ * One half of the "proven once / proven continuously" comparison.
+ *
+ * Both panels share one scale, one threshold and one time axis, so the only
+ * difference the eye sees is the evidence. State is carried by shape and
+ * texture, never by colour.
+ */
+interface Props {
+  mode: 'once' | 'continuous';
+}
+
+const { mode } = Astro.props;
+const once = mode === 'once';
+const id = `proof-${mode}`;
+
+// Shared geometry: x positions of nine evenly spaced points in time.
+const xs = [30, 68, 106, 145, 183, 221, 260, 298, 336];
+const changes = [87, 164, 279];
+
+const continuous = [92, 86, 93, 100, 126, 166, 104, 90, 84];
+// After the first change nothing is measured: the path from that change to today.
+const drift = [106, 128, 152, 170, 180, 184];
+const driftPoints = `87,95 ${drift.map((y, i) => `${xs[i + 3]},${y}`).join(' ')}`;
+
+const points = (ys: number[]) => ys.map((y, i) => `${xs[i]},${y}`).join(' ');
+
+const copy = once
+  ? {
+      label: 'Proven once',
+      title: 'Approved at go-live. Assumed ever since.',
+      state: 'unassured' as const,
+      stateLabel: 'Unassured',
+      text: 'The last evidence is the launch review. Three changes later the system has crossed its threshold, and nothing recorded it.',
+      desc: 'A single verification at go-live. After the first change the trace is dashed because nothing has been measured. It falls below the required threshold without being seen. The state today is unassured.',
+    }
+  : {
+      label: 'Proven continuously',
+      title: 'Re-proven after every change.',
+      state: 'assured' as const,
+      stateLabel: 'Assured',
+      text: 'Each change is followed by a test. Movement toward the threshold starts a correction, and the state returns to assured only after a re-test.',
+      desc: 'Verifications at regular intervals. After the second change the trace moves toward the threshold and a correction begins. It breaches once, is corrected and re-tested, and returns above the threshold. The state today is assured.',
+    };
+---
+
+<figure class="proof rv">
+  <div class="proof__head">
+    <p class="lbl lbl--plain">{copy.label}</p>
+    <p class="state">
+      <span class:list={['st', `st-${copy.state}`]} aria-hidden="true"></span>
+      <span>Today: {copy.stateLabel}</span>
+    </p>
+  </div>
+  <h3 class="h3 proof__title">{copy.title}</h3>
+
+  <svg class="proof__svg" viewBox="0 0 360 280" role="img" aria-labelledby={`${id}-t ${id}-d`}>
+    <title id={`${id}-t`}>{copy.label}, illustrative</title>
+    <desc id={`${id}-d`}>{copy.desc}</desc>
+    <defs>
+      <pattern id={`${id}-stripes`} width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <line class="proof__stripe" x1="0" y1="0" x2="0" y2="5"></line>
+      </pattern>
+    </defs>
+
+    <!-- frame -->
+    <line class="proof__axis" x1="24" y1="215" x2="342" y2="215"></line>
+    <line class="proof__axis" x1="24" y1="40" x2="24" y2="215"></line>
+
+    <!-- changes -->
+    {
+      changes.map((x) => (
+        <>
+          <line class="proof__change" x1={x} y1="46" x2={x} y2="215" stroke-dasharray="2 4" />
+          <text class="proof__mono proof__faint" x={x} y="36" text-anchor="middle">
+            CHANGE
+          </text>
+        </>
+      ))
+    }
+
+    <!-- threshold -->
+    <line class="proof__threshold" x1="24" y1="150" x2="342" y2="150" stroke-dasharray="3 4"></line>
+    <text class="proof__mono proof__faint" x="30" y="163">REQUIRED THRESHOLD</text>
+
+    {
+      once ? (
+        <>
+          <polyline class="proof__trace ln-draw" pathLength="920" points={`30,92 87,95`} />
+          <polyline class="proof__unknown" points={driftPoints} stroke-dasharray="1.5 5" />
+          <rect class="proof__solid" x="26" y="88" width="8" height="8" />
+          <text class="proof__mono proof__muted" x="30" y="76">LAST PROVEN</text>
+          <line class="proof__lead" x1="218" y1="152" x2="218" y2="186" stroke-dasharray="2 3" />
+          <text class="proof__mono proof__muted" x="212" y="198" text-anchor="end">
+            CROSSED UNSEEN
+          </text>
+          <rect class="proof__dashed" x="331.5" y="179.5" width="9" height="9" stroke-dasharray="2.5 2" />
+        </>
+      ) : (
+        <>
+          <polyline class="proof__trace ln-draw" pathLength="920" points={points(continuous)} />
+          {[0, 1, 2, 3, 6, 7, 8].map((i) => (
+            <rect class="proof__solid" x={xs[i]! - 4} y={continuous[i]! - 4} width="8" height="8" />
+          ))}
+          <rect class="proof__surface" x="178" y="121" width="10" height="10" />
+          <rect class="proof__striped" x="178" y="121" width="10" height="10" fill={`url(#${id}-stripes)`} />
+          <rect class="proof__surface" x="216" y="161" width="10" height="10" />
+          <rect class="proof__hollow" x="216" y="161" width="10" height="10" />
+          <text class="proof__mono proof__muted" x="174" y="141" text-anchor="end">
+            CORRECTION BEGINS
+          </text>
+          <text class="proof__mono proof__muted" x="221" y="190" text-anchor="middle">
+            BREACH
+          </text>
+          <text class="proof__mono proof__muted" x="268" y="122">
+            RE-TESTED
+          </text>
+        </>
+      )
+    }
+
+    <!-- time axis -->
+    <text class="proof__mono proof__faint" x="30" y="230">GO-LIVE</text>
+    <text class="proof__mono proof__faint" x="336" y="230" text-anchor="end">TODAY</text>
+
+    <!-- state over time -->
+    {
+      once ? (
+        <>
+          <rect class="proof__solid" x="30" y="246" width="55" height="9" />
+          <rect class="proof__dashed" x="89.5" y="246.5" width="246" height="8" stroke-dasharray="3 3" />
+        </>
+      ) : (
+        <>
+          <rect class="proof__solid" x="30" y="246" width="132" height="9" />
+          <rect class="proof__striped" x="166" y="246" width="34" height="9" fill={`url(#${id}-stripes)`} />
+          <rect class="proof__hollow" x="204.75" y="246.75" width="32.5" height="7.5" />
+          <rect class="proof__solid" x="242" y="246" width="94" height="9" />
+        </>
+      )
+    }
+    <text class="proof__mono proof__faint" x="30" y="272">STATE OVER TIME</text>
+  </svg>
+
+  <figcaption class="proof__caption">{copy.text}</figcaption>
+</figure>
+
+<style>
+  .proof {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    border: 1px solid var(--ln);
+    border-radius: var(--radius-xl);
+    background: var(--gls);
+  }
+
+  @media (min-width: 40rem) {
+    .proof {
+      padding: 2.25rem;
+    }
+  }
+
+  .proof__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+  }
+
+  .proof__title {
+    margin-top: 1rem;
+    max-width: 22ch;
+    min-height: 2.35em;
+  }
+
+  .proof__svg {
+    width: 100%;
+    max-width: 30rem;
+    height: auto;
+    margin: 1.75rem auto 0;
+    overflow: visible;
+  }
+
+  .proof__caption {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--ln);
+    font-size: 0.906rem;
+    line-height: 1.7;
+    color: var(--mut);
+  }
+
+  .proof__axis {
+    stroke: var(--ln2);
+    stroke-width: 1;
+  }
+
+  .proof__change {
+    stroke: var(--gst);
+    stroke-width: 1;
+  }
+
+  .proof__threshold,
+  .proof__lead {
+    stroke: var(--fnt);
+    stroke-width: 1;
+  }
+
+  .proof__trace {
+    fill: none;
+    stroke: var(--tx);
+    stroke-width: 1.8;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  .proof__unknown {
+    fill: none;
+    stroke: var(--fnt);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+
+  .proof__solid {
+    fill: var(--tx);
+  }
+
+  /* A patch of surface behind a mark, so the trace does not run through it. */
+  .proof__surface {
+    fill: var(--bg1);
+    stroke: var(--bg1);
+    stroke-width: 3;
+  }
+
+  .proof__hollow {
+    fill: none;
+    stroke: var(--tx);
+    stroke-width: 1.6;
+  }
+
+  .proof__striped {
+    stroke: var(--ln2);
+    stroke-width: 1;
+  }
+
+  .proof__stripe {
+    stroke: var(--tx);
+    stroke-width: 2.4;
+  }
+
+  .proof__dashed {
+    fill: none;
+    stroke: var(--fnt);
+    stroke-width: 1.2;
+  }
+
+  .proof__mono {
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    letter-spacing: 0.9px;
+  }
+
+  /* The chart is drawn smaller on a phone, so its labels are set larger to stay legible. */
+  @media (max-width: 39.99rem) {
+    .proof__mono {
+      font-size: 11px;
+      letter-spacing: 0.6px;
+    }
+  }
+
+  .proof__faint {
+    fill: var(--fnt);
+  }
+
+  .proof__muted {
+    fill: var(--mut);
+  }
+</style>

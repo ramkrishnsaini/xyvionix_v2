@@ -142,7 +142,10 @@
   overflow-x: auto;
 }
 
+/* Positioned, so absolutely placed children (such as visually hidden text) are clipped
+   with the table instead of widening the page. */
 .table-wrap {
+  position: relative;
   overflow-x: auto;
 }
 

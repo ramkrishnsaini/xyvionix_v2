@@ -1,152 +1,71 @@
 ---
-/** Assurance overview: the six areas, how they relate and which page answers which question. */
-import PageLayout from '../layouts/PageLayout.astro';
-import Section from '../components/layout/Section.astro';
-import SectionHead from '../components/layout/SectionHead.astro';
-import PageCard from '../components/clusters/PageCard.astro';
-import PageList from '../components/clusters/PageList.astro';
-import StateModel from '../components/assurance/StateModel.astro';
-import Arrow from '../components/layout/Arrow.astro';
-import { expansionClusters, primaryClusters } from '../data/clusters.ts';
-import { pathFor } from '../data/routes.ts';
-import { byTitle, getChildrenOf, getPage } from '../lib/pages.ts';
+/**
+ * Assurance: the one page that explains why, what and how Xyvionix assures.
+ *
+ * The home page shows the idea. This page shows the working, and repeats
+ * nothing from the home page: every figure and every section here is built
+ * for this page alone.
+ *
+ * It reads as seven chapters, in the order a buyer asks:
+ *   01 why       the evidence an enterprise holds, and what expires each item
+ *   02 what      why six outcomes and not one score, then each area in detail
+ *   03 how       one outcome followed through a change, the loop, who does what
+ *   04 states    what moves an outcome from one state to the next
+ *   05 receive   the four records the business holds, and what each leader can answer
+ *   06 compare   one event, and what each practice does with it
+ *   07 start     how to begin
+ *
+ * A chapter bar stays under the navigation so a reader can jump at any point.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Cta from '../components/layout/Cta.astro';
+import AssuranceHero from '../components/assurance-page/AssuranceHero.astro';
+import Chapters from '../components/assurance-page/Chapters.astro';
+import AssuranceWhy from '../components/assurance-page/AssuranceWhy.astro';
+import AssuranceSeparate from '../components/assurance-page/AssuranceSeparate.astro';
+import AssuranceAreas from '../components/assurance-page/AssuranceAreas.astro';
+import AssuranceJourney from '../components/assurance-page/AssuranceJourney.astro';
+import AssuranceFlow from '../components/assurance-page/AssuranceFlow.astro';
+import AssuranceResponsibility from '../components/assurance-page/AssuranceResponsibility.astro';
+import AssuranceStates from '../components/assurance-page/AssuranceStates.astro';
+import AssuranceRecords from '../components/assurance-page/AssuranceRecords.astro';
+import AssuranceRoles from '../components/assurance-page/AssuranceRoles.astro';
+import AssuranceCompare from '../components/assurance-page/AssuranceCompare.astro';
+import AssuranceStart from '../components/assurance-page/AssuranceStart.astro';
+import { staticPageContext } from '../lib/static-seo.ts';
 
-const pad = (n: number) => String(n).padStart(2, '0');
-
-// Only clusters whose hub page is published are linked.
-const withPages = async (list: typeof primaryClusters) =>
-  (
-    await Promise.all(
-      list.map(async (cluster) => ({
-        cluster,
-        hub: await getPage(cluster.hub),
-        children: (await getChildrenOf(cluster.hub)).filter((p) => p.kind === 'assurance').sort(byTitle),
-      })),
-    )
-  ).filter((row) => row.hub !== undefined);
-
-const primary = await withPages(primaryClusters);
-const expansion = await withPages(expansionClusters);
+const { page, seo, crumbs } = await staticPageContext('assurance');
 ---
 
-<PageLayout
-  slug="assurance"
-  label="Assurance"
-  pageType="hub"
-  lede="Assurance is the continuing proof that a technology outcome is still being met. Xyvionix holds six outcomes under that proof. Three are where most enterprises begin, because the consequence of being wrong is immediate. Three extend the same method to cost, data and change."
-  secondary={{ label: 'How assurance works', href: '/how-assurance-works' }}
->
-  <Section surface="light" flush labelledby="primary-title">
-    <SectionHead
-      label="Primary assurance"
-      title="Where assurance is most often lost first"
-      id="primary-title"
-      split
-      text="AI systems change beneath their approval. Production drifts from what was tested. Exposure that was closed reopens. These three areas carry the most direct consequence, so they are assured first and in the most depth."
-    />
-    <div class="grid-3 mt-block">
-      {
-        primary.map(({ cluster }, i) => (
-          <PageCard
-            href={pathFor(cluster.hub)}
-            label={`Assurance ${pad(i + 1)}`}
-            title={cluster.name}
-            question={cluster.question}
-            text={cluster.summary}
-            level="h3"
-            location="assurance-primary"
-          />
-        ))
-      }
-    </div>
-  </Section>
+<BaseLayout seo={seo} slug="assurance" pageType="hub" section="assurance">
+  <AssuranceHero crumbs={crumbs} h1={page.h1} />
 
-  <Section surface="light" alt labelledby="expansion-title">
-    <SectionHead
-      label="Also assured"
-      title="The same method, applied to value, data and change"
-      id="expansion-title"
-      split
-      text="Cost, data and change are usually reported rather than assured. Each has an outcome the business depends on, evidence that expires and a threshold that can be agreed, which is all the method requires."
-    />
-    <div class="grid-3 mt-block">
-      {
-        expansion.map(({ cluster }, i) => (
-          <PageCard
-            href={pathFor(cluster.hub)}
-            label={`Assurance ${pad(primary.length + i + 1)}`}
-            title={cluster.name}
-            question={cluster.question}
-            text={cluster.summary}
-            level="h3"
-            location="assurance-expansion"
-          />
-        ))
-      }
-    </div>
-  </Section>
+  <div class="ap">
+    <Chapters />
+    <AssuranceWhy />
+    <AssuranceSeparate />
+    <AssuranceAreas />
+    <AssuranceJourney />
+    <AssuranceFlow />
+    <AssuranceResponsibility />
+    <AssuranceStates />
+    <AssuranceRecords />
+    <AssuranceRoles />
+    <AssuranceCompare />
+    <AssuranceStart />
+  </div>
 
-  <Section surface="light" labelledby="why-separate-title">
-    <SectionHead
-      label="Why six, not one"
-      title="Outcomes are assured separately because they fail separately"
-      id="why-separate-title"
-      split
-    >
-      <div class="prose">
-        <p>
-          A single score for the health of a technology estate hides the thing a business needs to know: which outcome
-          can no longer be proven. A system can be reliable and unaffordable. It can be secure and wrong. An AI feature
-          can pass every evaluation while the data it retrieves is three weeks old.
-        </p>
-        <p>
-          Each assurance area therefore has its own evidence, its own thresholds and its own state. The areas are
-          connected where the failure is connected. Data freshness is assured under data, and it is also the most
-          common cause of loss in retrieval quality, so the two pages refer to each other. Drift is a reliability
-          problem, a security problem and a change problem, and it appears in all three.
-        </p>
-        <p>
-          The areas below are grouped by the question the business is asking, not by the team that operates the
-          technology.
-        </p>
-      </div>
-    </SectionHead>
-  </Section>
-
-  {
-    [...primary, ...expansion].map(({ cluster, children }, i) =>
-      children.length > 0 ? (
-        <Section surface="light" alt={i % 2 === 0} labelledby={`cluster-${cluster.key}`}>
-          <SectionHead label={cluster.band} title={cluster.name} id={`cluster-${cluster.key}`} split text={cluster.question}>
-            <a href={pathFor(cluster.hub)} class="lk cluster__link">
-              <span class="ul">{cluster.name} overview</span>
-              <Arrow />
-            </a>
-          </SectionHead>
-          <div class="mt-block">
-            <PageList pages={children} location={`assurance-${cluster.key}`} />
-          </div>
-        </Section>
-      ) : null,
-    )
-  }
-
-  <Section surface="light" labelledby="state-title">
-    <SectionHead
-      label="The state model"
-      title="Every outcome holds one of four states"
-      id="state-title"
-      split
-      text="The state is determined by current evidence against the agreed threshold. It is legible without colour, in print and on screen: solid means proven, hollow means breached, dashed means no current evidence."
-    />
-    <div class="mt-block">
-      <StateModel />
-    </div>
-  </Section>
-</PageLayout>
+  <Cta
+    label="Next"
+    title="Bring one outcome to the first conversation"
+    text="It establishes what must be true, which evidence would prove it, and how the present state would be measured."
+    location="hub-cta"
+  />
+</BaseLayout>
 
 <style>
-  .cluster__link {
-    margin-top: 1.75rem;
+  /* Anchors stop below the chapter bar. The navigation is already allowed for in base.css. */
+  .ap :global(.section[id]) {
+    scroll-margin-top: 0.5rem;
   }
 </style>

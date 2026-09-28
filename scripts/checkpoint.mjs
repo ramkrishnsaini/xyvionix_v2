@@ -42,7 +42,7 @@ const batches = JSON.parse(fs.readFileSync(at('docs', '_writer-batches.json'), '
 });
 
 // Files
-const expectPages = ['index', 'assurance', 'how-assurance-works', 'assurance-engine', 'security-trust', 'use-cases', 'industries', 'technologies', 'insights', 'company', 'contact', 'security', 'privacy', 'terms', 'subprocessors', 'search', '404'];
+const expectPages = ['index', 'assurance', 'how-assurance-works', 'why-assurance', 'assurance-engine', 'security-trust', 'use-cases', 'industries', 'technologies', 'insights', 'company', 'contact', 'security', 'privacy', 'terms', 'subprocessors', 'search', '404'];
 const expectDocs = ['research-2026', 'information-architecture', 'seo-matrix', 'cluster-map', 'content-roadmap', 'content-inventory', 'redirects', 'ai-discovery', 'social-sharing', 'search-console', 'bing-indexnow', 'schema', 'launch-checklist', 'post-launch', 'claim-audit'];
 const expectScripts = ['validate-content', 'validate-dist', 'claim-audit', 'review-report', 'generate-docs', 'build-headers', 'indexnow', 'generate-icons', 'content-status', 'content-integrity', 'build-research-doc', 'checkpoint', 'scaffold-content'];
 const expectOther = ['README.md', '.env.example', 'vercel.json', 'public/robots.txt', 'public/favicon.ico', 'public/site.webmanifest', 'public/brand/xyvionix-logo-512.png', 'tests/slug-rules.test.ts', 'tests/content-routes.test.ts', 'docs/reports/claim-audit-hits.md', 'docs/reports/content-review.md', 'docs/reports/build-validation.md'];

@@ -76,6 +76,10 @@ export interface InsightTheme {
   cluster: ExtendedClusterKey;
   title: string;
   text: string;
+  /** The question a business leader is asking, which this research answers. */
+  question: string;
+  /** What is at stake for the business if the question goes unanswered. */
+  stake: string;
 }
 
 export const insightThemes: InsightTheme[] = [
@@ -83,36 +87,50 @@ export const insightThemes: InsightTheme[] = [
     cluster: 'category',
     title: 'The practice of assurance',
     text: 'What separates assurance from monitoring, audit and managed service, and why a current state is a different thing from a periodic report.',
+    question: "Can we prove it still works today?",
+    stake: "Without a current answer, a leader is asked to sign for a system on the strength of what was true last quarter.",
   },
   {
     cluster: 'ai',
     title: 'AI assurance',
     text: 'How evaluation, retrieval quality, agent permissions and human oversight lose their validity after launch, and what it takes to keep them current.',
+    question: "Are the answers still right, safe and affordable?",
+    stake: "Quality, safety and cost all move after launch. Someone has to notice before customers do.",
   },
   {
     cluster: 'reliability',
     title: 'Production reliability',
     text: 'Recovery that has never been exercised, error budgets that change nothing, drift, and incidents that return.',
+    question: "Will the service recover when it has to?",
+    stake: "Availability is what customers bought. The ability to recover has to be shown, not assumed.",
   },
   {
     cluster: 'cyber',
     title: 'Cyber exposure',
     text: 'The gap between a closed finding and a closed exposure, and the ways identity and privilege drift from the policy that describes them.',
+    question: "Has what we closed stayed closed?",
+    stake: "Risk reported as removed gets no further attention, whether or not it is gone.",
   },
   {
     cluster: 'data',
     title: 'Data assurance',
     text: 'Why data that arrives late or changes meaning is a quality problem for every system that consumes it, AI included.',
+    question: "Is the decision based on current data?",
+    stake: "Stale data does not fail. It keeps producing answers, and the cost appears later in pricing, reporting and AI output.",
   },
   {
     cluster: 'change',
     title: 'Change assurance',
     text: 'What delivery metrics prove, what they conceal, and how to use them as thresholds rather than scorecards.',
+    question: "Is each release safe to ship and to reverse?",
+    stake: "Every release is a bet on stability. Without evidence, the pace of change is set by hope and corrected by incidents.",
   },
   {
     cluster: 'value',
     title: 'Technology value',
     text: 'Cost held as an outcome: unit economics for AI and the risk carried by cloud commitments.',
+    question: "Is the spend still buying the outcome?",
+    stake: "Cost moves with usage, pricing and architecture. Unmeasured, it is discovered at the invoice, after the margin has gone.",
   },
 ];
 
@@ -140,3 +158,59 @@ export const industryNotes: IndustryNote[] = [
     proof: 'The service level that was sold and the unit cost that supports the margin both have to be proven continuously, because customers and investors ask.',
   },
 ];
+
+/** The small figure drawn beside an insight. See components/editorial/InsightFigure.astro. */
+export type FigureKind = 'expiry' | 'recovery' | 'closure' | 'state' | 'trace';
+
+/** Figures chosen for specific articles, because the figure draws that article's argument. */
+export const figureBySlug: Record<string, FigureKind> = {
+  'why-ai-evaluation-fails-after-launch': 'expiry',
+  'model-retirement-is-a-production-change': 'expiry',
+  'disaster-recovery-plan-never-tested': 'recovery',
+  'security-findings-vs-verified-closure': 'closure',
+  'assurance-is-a-state-not-a-report': 'state',
+  'continuous-assurance-vs-monitoring': 'state',
+};
+
+/** Fallback by theme for any article without a figure of its own. */
+export const figureByCluster: Partial<Record<ExtendedClusterKey, FigureKind>> = {
+  ai: 'expiry',
+  reliability: 'recovery',
+  cyber: 'closure',
+  category: 'state',
+};
+
+export function figureFor(slug: string, cluster: ExtendedClusterKey): FigureKind {
+  return figureBySlug[slug] ?? figureByCluster[cluster] ?? 'trace';
+}
+
+/**
+ * Why a piece of research matters to the business, for the home page.
+ * Written from each piece's own argument. Add an entry when featuring a new one.
+ */
+export const insightImpact: Record<string, { stake: string; outcome: string }> = {
+  'why-ai-evaluation-fails-after-launch': {
+    stake: 'An AI system approved at launch can drift into wrong answers with no alert, and the business carries every decision made on them.',
+    outcome: 'Know when an approval has stopped being true, before a customer or an auditor finds out first.',
+  },
+  'disaster-recovery-plan-never-tested': {
+    stake: 'A recovery target that was never exercised is a promise to customers and regulators that nobody has tested.',
+    outcome: 'Find the gap between the plan and the real recovery in an exercise, not in an outage.',
+  },
+  'security-findings-vs-verified-closure': {
+    stake: 'A finding marked closed is reported upward as risk removed. If the exposure is still open, the business is carrying risk it believes it no longer has.',
+    outcome: 'Report closure only when the exposure is shown to be gone.',
+  },
+  'assurance-is-a-state-not-a-report': {
+    stake: 'Leaders decide on the last report. If it no longer describes the system, the decision rests on a past that has ended.',
+    outcome: 'Hold a current answer for every outcome that matters, available on the day it is asked for.',
+  },
+  'continuous-assurance-vs-monitoring': {
+    stake: 'Dashboards show activity. They do not say whether the outcome the business agreed is still being met, or who acts when it is not.',
+    outcome: 'Know who is answerable for the outcome, not only who is watching the system.',
+  },
+  'ai-cost-per-business-outcome': {
+    stake: 'AI spend can rise faster than the value it produces, and a price per token hides it.',
+    outcome: 'Hold the cost of each business outcome against the margin it has to protect.',
+  },
+};

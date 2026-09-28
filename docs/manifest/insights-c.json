@@ -1,0 +1,78 @@
+[
+  {
+    "slug": "why-agentic-ai-needs-assurance",
+    "title": "Why agentic AI needs assurance first",
+    "category": "AI Assurance",
+    "cluster": "ai",
+    "secondary": ["cyber", "change"],
+    "parent": "why-assurance",
+    "state": "unassured",
+    "cadence": 90,
+    "fresh": true,
+    "brief": "The case for putting assurance ahead of capability when an AI system can act, not only answer. An agent holds permissions, calls tools, chains steps and changes state in other systems, so an error is an action with consequence and not a wrong sentence. Covers why review at launch cannot cover a system whose behaviour depends on tool definitions, permissions and model versions that all change after launch; what has to be proven before an agent is given write access (what it is permitted to do, what it did, that a human can stop it, that every action is attributable); and why this proof has to be continuous. Distinct from ai-agent-permission-risk, which is about the permission model itself, and from the use case ai-agent-with-write-access, which is one scenario. This page is the argument for why assurance is the precondition.",
+    "related": {
+      "assurance": ["ai-agent-assurance", "ai-assurance", "mcp-security-assurance", "ai-security-assurance"],
+      "useCases": ["ai-agent-with-write-access", "production-ai-going-live"],
+      "technologies": ["azure-ai-assurance", "aws-bedrock-assurance"],
+      "industries": ["financial-services-ai-assurance"],
+      "insights": ["ai-agent-permission-risk", "mcp-servers-trust-boundary", "human-oversight-evidence"]
+    }
+  },
+  {
+    "slug": "why-ai-models-need-assurance",
+    "title": "Why AI models need assurance first",
+    "category": "AI Assurance",
+    "cluster": "ai",
+    "secondary": ["data", "value"],
+    "parent": "why-assurance",
+    "state": "degrading",
+    "cadence": 90,
+    "fresh": true,
+    "brief": "The case for putting assurance ahead of adoption for any system built on a model the enterprise does not control. A model is a dependency with its own release and retirement calendar, its behaviour is statistical and not specified, and its cost and quality both move without a code change on the enterprise side. Covers why a model cannot be accepted once like conventional software; the four things that move under a deployed model (the model version, the prompt, the retrieved data, the price); why an evaluation result is evidence for one combination only; and what the business is exposed to when it relies on a model without current proof. Distinct from why-ai-evaluation-fails-after-launch, which is about how evaluation evidence expires, and from model-retirement-is-a-production-change, which is about one event. This page is the argument for why assurance is the precondition for relying on a model at all.",
+    "related": {
+      "assurance": ["ai-assurance", "model-change-assurance", "llm-evaluation-assurance", "ai-cost-assurance"],
+      "useCases": ["model-provider-migration", "production-ai-going-live", "rag-quality-degradation"],
+      "technologies": ["azure-ai-assurance", "aws-bedrock-assurance", "vertex-ai-assurance"],
+      "industries": ["healthcare-ai-assurance"],
+      "insights": ["why-ai-evaluation-fails-after-launch", "model-retirement-is-a-production-change", "ai-cost-per-business-outcome"]
+    }
+  },
+  {
+    "slug": "why-modern-systems-need-assurance",
+    "title": "Why modern systems need assurance first",
+    "category": "Production Reliability",
+    "cluster": "reliability",
+    "secondary": ["change", "cyber"],
+    "parent": "why-assurance",
+    "state": "degrading",
+    "cadence": 180,
+    "fresh": true,
+    "brief": "The case for putting assurance ahead of delivery speed in cloud-native, distributed, continuously deployed systems. A modern system is never finished: it is assembled from managed services, open source components and platforms that each change on a calendar the enterprise does not set, it is reconfigured by automation, and it is released many times between any two reviews. Covers why the unit of proof has moved from the release to the running system; how provider-initiated change (platform versions leaving support, managed service defaults, deprecations) expires proof without any action by the enterprise; why infrastructure as code describes intent and not the running state; and why a system that changes continuously can only be proven continuously. Distinct from cloud-drift-production-risk and kubernetes-support-windows-upgrade-risk, which each cover one mechanism. This page is the argument across all of them.",
+    "related": {
+      "assurance": ["production-reliability-assurance", "change-assurance", "cloud-drift-assurance", "kubernetes-reliability-assurance"],
+      "useCases": ["cloud-configuration-drift", "kubernetes-upgrade-risk", "high-change-failure-rate"],
+      "technologies": ["eks-reliability-assurance", "terraform-drift-assurance", "aws-production-reliability"],
+      "industries": ["saas-production-reliability"],
+      "insights": ["cloud-drift-production-risk", "kubernetes-support-windows-upgrade-risk", "what-change-failure-rate-proves"]
+    }
+  },
+  {
+    "slug": "why-critical-systems-need-assurance",
+    "title": "Why critical systems need assurance first",
+    "category": "Production Reliability",
+    "cluster": "reliability",
+    "secondary": ["cyber", "data"],
+    "parent": "why-assurance",
+    "state": "unassured",
+    "cadence": 180,
+    "fresh": true,
+    "brief": "The case for putting assurance ahead of everything else for the systems an enterprise cannot operate without: payments, claims, clinical records, core platforms. For these systems the cost of being wrong is not a defect to fix but a harm to customers, a supervisory finding or a loss of the ability to trade, and the evidence is asked for by people outside the engineering function. Covers why criticality changes the standard of proof from 'we believe it works' to 'we can show it works'; why recovery, access and integrity are the three things most often assumed and least often tested; why a plan or a policy is not evidence; what operational resilience expectations ask an enterprise to be able to show; and why proof for a critical system has to be held continuously and not assembled before an audit. Distinct from disaster-recovery-plan-never-tested, which is about recovery only, and from the industry pages, which are by sector. This page is the argument by criticality.",
+    "related": {
+      "assurance": ["production-reliability-assurance", "disaster-recovery-assurance", "privileged-access-assurance", "data-assurance"],
+      "useCases": ["untested-disaster-recovery", "stale-privileged-access", "identity-access-drift"],
+      "technologies": ["azure-production-reliability", "entra-id-exposure-assurance"],
+      "industries": ["financial-services", "healthcare"],
+      "insights": ["disaster-recovery-plan-never-tested", "standing-privilege-evidence-gap", "assurance-is-a-state-not-a-report"]
+    }
+  }
+]

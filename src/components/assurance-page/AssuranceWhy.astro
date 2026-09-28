@@ -1,0 +1,316 @@
+---
+/**
+ * Chapter 1, why: proof has a shelf life.
+ *
+ * The shelf shows the evidence an enterprise already holds, what each item
+ * really proves, and the ordinary event that expires it. Below it, the four
+ * ways a business finds out that a system has stopped meeting its outcome.
+ * Only one of them leaves time to act.
+ */
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import { discoveries, shelf } from '../../data/assurance-page.ts';
+---
+
+<Section surface="dark" alt labelledby="why-title" id="why">
+  <SectionHead
+    label="01 · Why"
+    title="Proof has a shelf life. Every change shortens it."
+    id="why-title"
+    split
+    text="A system is approved on the evidence of one day. Each item of that evidence describes one version of the system, and stops describing it when that version changes. What remains is an assumption the business is still signing for."
+  />
+
+  <div class="sh mt-block rv" role="table" aria-label="Evidence, what it proves and what expires it">
+    <div class="sh__head" role="row">
+      <span role="columnheader">Evidence you already hold</span>
+      <span role="columnheader">What it proves</span>
+      <span role="columnheader">How long it holds</span>
+      <span role="columnheader">Expires when</span>
+    </div>
+
+    {
+      shelf.map((item) => (
+        <div class="sh__row" role="row">
+          <p class="sh__name" role="cell">
+            {item.evidence}
+          </p>
+          <p class="sh__cell" role="cell">
+            <span class="sh__key">What it proves</span>
+            {item.proves}
+          </p>
+          <div class="sh__bar" role="cell">
+            <svg viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+              <line class="sh__unknown" x1={item.valid} y1="6" x2="100" y2="6" stroke-dasharray="2 5" />
+              <line class="sh__valid" x1="0" y1="6" x2={item.valid} y2="6" />
+              <line class="sh__tick" x1={item.valid} y1="0" x2={item.valid} y2="12" />
+            </svg>
+            <span class="sr-only">Proven until the first such change, unknown afterwards.</span>
+          </div>
+          <p class="sh__cell sh__cell--strong" role="cell">
+            <span class="sh__key">Expires when</span>
+            {item.expires}
+          </p>
+        </div>
+      ))
+    }
+
+    <div class="sh__legend">
+      <span><span class="sh__swatch sh__swatch--valid"></span>Proven</span>
+      <span><span class="sh__swatch sh__swatch--tick"></span>The change that expires it</span>
+      <span><span class="sh__swatch sh__swatch--unknown"></span>Assumed</span>
+    </div>
+  </div>
+
+  <div class="aw__find">
+    <h3 class="aw__find-title rv">How a business finds out</h3>
+    <ol class="aw__grid">
+      {
+        discoveries.map((item) => (
+          <li class:list={['aw__card', 'rv', item.own && 'aw__card--own']}>
+            <div class="aw__top">
+              <span class="aw__key">{item.own ? 'Under assurance' : 'Without it'}</span>
+              <span class:list={['st', `st-${item.state}`]} aria-hidden="true" />
+            </div>
+            <p class="aw__from">{item.from}</p>
+            <p class="aw__text">{item.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</Section>
+
+<style>
+  /* ---- the shelf ---- */
+  .sh {
+    padding: 0.5rem 1.25rem 1.25rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-xl);
+    background: var(--gls);
+  }
+
+  .sh__head {
+    display: none;
+  }
+
+  .sh__row {
+    display: grid;
+    gap: 0.9rem;
+    padding-block: 1.5rem;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .sh__name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+
+  .sh__cell {
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--mut);
+  }
+
+  .sh__cell--strong {
+    color: var(--tx);
+  }
+
+  .sh__key {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .sh__bar svg {
+    display: block;
+    width: 100%;
+    height: 12px;
+  }
+
+  .sh__valid {
+    stroke: var(--tx);
+    stroke-width: 3;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .sh__tick {
+    stroke: var(--tx);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .sh__unknown {
+    stroke: var(--fnt);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .sh__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.75rem;
+    padding-top: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--mut);
+  }
+
+  .sh__legend > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .sh__swatch {
+    display: inline-block;
+    width: 1.5rem;
+  }
+
+  .sh__swatch--valid {
+    border-top: 3px solid var(--tx);
+  }
+
+  .sh__swatch--tick {
+    width: 0;
+    height: 0.75rem;
+    border-left: 1.5px solid var(--tx);
+  }
+
+  .sh__swatch--unknown {
+    border-top: 1.5px dashed var(--fnt);
+  }
+
+  @media (min-width: 40rem) {
+    .sh {
+      padding: 0.75rem 2rem 1.5rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .sh {
+      padding: 1rem 2.5rem 1.75rem;
+    }
+
+    .sh__head,
+    .sh__row {
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 3.6fr) minmax(0, 3fr) minmax(0, 3.4fr);
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .sh__head {
+      padding-block: 1.25rem;
+      border-bottom: 1px solid var(--ln2);
+      font-family: var(--font-mono);
+      font-size: 0.656rem;
+      letter-spacing: var(--track-label);
+      text-transform: uppercase;
+      color: var(--fnt);
+    }
+
+    .sh__row {
+      padding-block: 1.6rem;
+    }
+
+    .sh__key {
+      display: none;
+    }
+  }
+
+  /* ---- how a business finds out ---- */
+  .aw__find {
+    margin-top: 4rem;
+  }
+
+  .aw__find-title {
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    line-height: 1.16;
+    letter-spacing: -0.03em;
+  }
+
+  .aw__grid {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.75rem;
+  }
+
+  @media (min-width: 40rem) {
+    .aw__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .aw__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .aw__card {
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--ln);
+    border-radius: var(--radius-md);
+    background: var(--gls);
+    transition: transform 0.55s var(--ease);
+  }
+
+  /* the one that leaves time to act */
+  .aw__card--own {
+    border-color: var(--tx);
+    background: var(--tx);
+    color: var(--bg0);
+  }
+
+  .aw__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .aw__key {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .aw__from {
+    margin-top: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+
+  .aw__text {
+    margin-top: 0.6rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--mut);
+  }
+
+  .aw__card--own .aw__key,
+  .aw__card--own .aw__text {
+    color: #55544d;
+  }
+
+  .aw__card--own .st {
+    background: var(--bg0);
+  }
+</style>

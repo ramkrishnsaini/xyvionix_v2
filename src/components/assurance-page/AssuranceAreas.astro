@@ -1,0 +1,566 @@
+---
+/**
+ * Chapter 2, second part: the six areas in working detail.
+ *
+ * The home page gives each area a question and a summary. This page gives the
+ * working: the thresholds that are held and the condition that loses each
+ * one, the evidence that is retained, who it answers to, and every page
+ * inside the area. All of it is read from the area's own page, so the two
+ * cannot drift apart.
+ *
+ * On phones the detail and the page list each sit behind a toggle. Both are
+ * open in the HTML, so everything is present without script.
+ */
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import Arrow from '../layout/Arrow.astro';
+import { clusterByKey } from '../../data/clusters.ts';
+import { separateOrder } from '../../data/assurance-page.ts';
+import { pathFor } from '../../data/routes.ts';
+import { byTitle, getChildrenOf, getContentEntries } from '../../lib/pages.ts';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const entries = await getContentEntries();
+
+// Only areas whose hub page is published are shown.
+const areas = (
+  await Promise.all(
+    separateOrder.map(async (key) => {
+      const def = clusterByKey[key];
+      const hub = entries.find((entry) => entry.collection === 'assurance' && entry.id === def.hub);
+      if (!hub) return null;
+      return {
+        key,
+        def,
+        statement: hub.data.h1,
+        text: hub.data.description,
+        audience: hub.data.audience.slice(0, 4).join(', '),
+        thresholds: hub.data.thresholds.slice(0, 3),
+        evidence: hub.data.evidence.map((item) => item.name),
+        pages: (await getChildrenOf(def.hub)).filter((p) => p.kind === 'assurance').sort(byTitle),
+      };
+    }),
+  )
+)
+  .filter((area) => area !== null)
+  .map((area, i) => ({ ...area, n: pad(i + 1) }));
+---
+
+<Section surface="light" labelledby="areas-title">
+  <SectionHead
+    label="The six areas"
+    title="What is held in each area, and what loses it"
+    id="areas-title"
+    split
+    text="For every area: the thresholds that are held, the condition that loses each one, and the evidence that is retained. Most enterprises begin with one area."
+  />
+
+  <nav class="aa__index rv" aria-label="Assurance areas">
+    <ol>
+      {
+        areas.map((area) => (
+          <li>
+            <a href={`#area-${area.key}`} class="aa__jump">
+              <span class="aa__jump-n num">{area.n}</span>
+              <span>{area.def.shortName}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+
+  <div class="aa">
+    {
+      areas.map((area) => (
+        <article class="aa__panel rv" id={`area-${area.key}`} aria-labelledby={`area-${area.key}-title`}>
+          <div class="aa__main">
+            <div class="aa__top">
+              <span class="aa__key num">Assurance {area.n}</span>
+              <span class="st st-assured" aria-hidden="true" />
+            </div>
+
+            <h3 class="aa__name" id={`area-${area.key}-title`}>
+              <a href={pathFor(area.def.hub)} data-track="card_click" data-track-location={`assurance-${area.key}`}>
+                <span class="ul">{area.def.name}</span>
+              </a>
+            </h3>
+            <p class="aa__statement">{area.statement}</p>
+            <p class="aa__text">{area.text}</p>
+
+            {area.audience && (
+              <div class="aa__for">
+                <p class="aa__key">Answers to</p>
+                <p class="aa__who">{area.audience}</p>
+              </div>
+            )}
+
+            <a href={pathFor(area.def.hub)} class="btn btn--ghost btn--sm aa__cta" data-track="card_click" data-track-location={`assurance-${area.key}`}>
+              Explore {area.def.shortName}
+              <Arrow size="sm" />
+            </a>
+          </div>
+
+          <details class="aa__fold aa__detail" data-collapse open>
+            <summary class="aa__toggle">
+              <span>Thresholds and evidence</span>
+              <span class="aa__icon" aria-hidden="true" />
+            </summary>
+
+            <div class="aa__detail-body">
+              {area.thresholds.length > 0 && (
+                <div>
+                  <p class="aa__key">Thresholds held</p>
+                  <ul class="aa__thresholds">
+                    {area.thresholds.map((threshold) => (
+                      <li>
+                        <p class="aa__signal">{threshold.signal}</p>
+                        <p class="aa__lost">
+                          <span class="aa__lost-key">Lost when</span>
+                          {threshold.lostWhen}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {area.evidence.length > 0 && (
+                <div>
+                  <p class="aa__key">Evidence retained</p>
+                  <ul class="aa__evidence">
+                    {area.evidence.map((name) => (
+                      <li>{name}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </details>
+
+          {area.pages.length > 0 && (
+            <details class="aa__fold aa__inside" data-collapse open>
+              <summary class="aa__toggle">
+                <span>Inside {area.def.shortName}</span>
+                <span class="aa__icon" aria-hidden="true" />
+              </summary>
+              <p class="aa__key aa__inside-key">Inside this area</p>
+              <ul class="aa__pages">
+                {area.pages.map((page) => (
+                  <li>
+                    <a href={page.path} class="aa__page" data-track="listing_click" data-track-location={`assurance-${area.key}`}>
+                      <span class="aa__page-text">
+                        <span class="aa__page-title">
+                          <span class="ul">{page.title}</span>
+                        </span>
+                        <span class="aa__page-q">{page.ogQuestion}</span>
+                      </span>
+                      <Arrow size="sm" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+        </article>
+      ))
+    }
+  </div>
+</Section>
+
+<script>
+  import '../../scripts/collapse.ts';
+</script>
+
+<style>
+  /* ---- index ---- */
+  .aa__index {
+    margin-top: 2.5rem;
+  }
+
+  .aa__index ol {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 40rem) {
+    .aa__index ol {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .aa__index ol {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+
+  .aa__jump {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    min-height: 3rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--tx);
+    transition:
+      background-color 0.2s,
+      color 0.2s,
+      border-color 0.2s;
+  }
+
+  .aa__jump-n {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--fnt);
+  }
+
+  .aa__jump:hover {
+    background: var(--tx);
+    border-color: var(--tx);
+    color: var(--bg0);
+  }
+
+  .aa__jump:hover .aa__jump-n {
+    color: var(--gst);
+  }
+
+  /* ---- panels ---- */
+  .aa {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  .aa__panel {
+    display: grid;
+    min-width: 0;
+    border: 1px solid var(--ln2);
+    border-top: 2px solid var(--tx);
+    border-radius: var(--radius-md);
+    background: var(--bg0);
+    scroll-margin-top: 1.5rem;
+    transition: transform 0.55s var(--ease);
+  }
+
+  .aa__main {
+    min-width: 0;
+    padding: 1.5rem;
+  }
+
+  .aa__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .aa__key {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .aa__name {
+    margin-top: 1.25rem;
+    font-size: clamp(1.625rem, 1.45rem + 0.8vw, 2.125rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .aa__statement {
+    margin-top: 1rem;
+    font-size: 1.0625rem;
+    font-weight: 550;
+    line-height: 1.45;
+    letter-spacing: -0.012em;
+    max-width: 38ch;
+  }
+
+  .aa__text {
+    margin-top: 0.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.68;
+    color: var(--mut);
+    max-width: 52ch;
+  }
+
+  .aa__for {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px dashed var(--ln2);
+  }
+
+  .aa__who {
+    margin-top: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--mut);
+  }
+
+  .aa__cta {
+    margin-top: 1.75rem;
+  }
+
+  /* ---- folds ---- */
+  .aa__fold {
+    min-width: 0;
+    padding: 0 1.5rem;
+    border-top: 1px solid var(--ln);
+  }
+
+  .aa__inside {
+    background: var(--bg1);
+  }
+
+  .aa__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3.5rem;
+    list-style: none;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+  }
+
+  .aa__toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  .aa__toggle::marker {
+    content: '';
+  }
+
+  .aa__toggle:focus-visible {
+    outline: 1.5px solid var(--tx);
+    outline-offset: 2px;
+  }
+
+  .aa__icon {
+    position: relative;
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--ln2);
+    border-radius: 50%;
+  }
+
+  .aa__icon::before,
+  .aa__icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.7rem;
+    height: 1.5px;
+    margin: -0.75px 0 0 -0.35rem;
+    background: var(--tx);
+    transition: transform 0.3s var(--ease);
+  }
+
+  .aa__icon::after {
+    transform: rotate(90deg);
+  }
+
+  .aa__fold[open] .aa__icon::after {
+    transform: rotate(0deg);
+  }
+
+  /* ---- thresholds and evidence ---- */
+  .aa__detail-body {
+    display: grid;
+    gap: 2rem;
+    padding-block: 1.25rem 1.75rem;
+    border-top: 1px solid var(--ln);
+  }
+
+  .aa__thresholds {
+    margin-top: 0.5rem;
+  }
+
+  .aa__thresholds li {
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .aa__thresholds li:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .aa__signal {
+    position: relative;
+    padding-left: 1.4rem;
+    font-size: 0.969rem;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.012em;
+  }
+
+  .aa__signal::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.42em;
+    width: 9px;
+    height: 9px;
+    background: var(--tx);
+  }
+
+  .aa__lost {
+    margin-top: 0.4rem;
+    padding-left: 1.4rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--mut);
+  }
+
+  .aa__lost-key {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.5938rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .aa__evidence {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.9rem;
+  }
+
+  .aa__evidence li {
+    padding: 0.5rem 0.8rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+    font-size: 0.8125rem;
+    line-height: 1.3;
+    color: var(--mut);
+  }
+
+  /* ---- pages inside the area ---- */
+  .aa__inside-key {
+    display: none;
+  }
+
+  .aa__pages {
+    padding-bottom: 0.75rem;
+    border-top: 1px solid var(--ln);
+  }
+
+  .aa__page {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    height: 100%;
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .aa__page-text {
+    min-width: 0;
+  }
+
+  .aa__page-title {
+    display: block;
+    font-size: 0.969rem;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.012em;
+  }
+
+  .aa__page-q {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--mut);
+  }
+
+  .aa__page .arw {
+    color: var(--fnt);
+    transition:
+      transform 0.3s var(--ease),
+      color 0.2s;
+  }
+
+  .aa__page:hover .arw {
+    transform: translateX(4px);
+    color: var(--tx);
+  }
+
+  /* wide screens: everything is open, so there is nothing to toggle */
+  @media (min-width: 44rem) {
+    .aa__main {
+      padding: 2rem;
+    }
+
+    .aa__fold {
+      padding: 2rem;
+    }
+
+    .aa__toggle {
+      display: none;
+    }
+
+    .aa__detail-body {
+      padding-block: 0;
+      border-top: 0;
+    }
+
+    .aa__inside-key {
+      display: block;
+      padding-bottom: 1rem;
+    }
+
+    .aa__pages {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 2.5rem;
+      padding-bottom: 0;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .aa__panel {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+
+    .aa__main {
+      padding: 2.75rem 3rem;
+    }
+
+    .aa__detail {
+      padding: 2.75rem 3rem;
+      border-top: 0;
+      border-left: 1px solid var(--ln);
+    }
+
+    .aa__inside {
+      grid-column: 1 / -1;
+      padding: 2.25rem 3rem 1.5rem;
+    }
+
+    .aa__pages {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

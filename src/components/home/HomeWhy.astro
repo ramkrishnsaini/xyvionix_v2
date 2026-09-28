@@ -1,0 +1,357 @@
+---
+/**
+ * Why the category exists.
+ *
+ * One idea, read in order: a system is proven at go-live, six things change
+ * afterwards, and each one expires the proof. Every force shows how it
+ * happens, what it costs the business, and the assurance area that answers it.
+ *
+ * Titles and texts are the wording of the frozen theme.
+ */
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import Arrow from '../layout/Arrow.astro';
+import { whyAssuranceIsLost } from '../../data/assurances.ts';
+import { clusterByKey } from '../../data/clusters.ts';
+import { forces, type ForceShape } from '../../data/home-assures.ts';
+import { pathFor } from '../../data/routes.ts';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const textByTitle = new Map(whyAssuranceIsLost.map((item) => [item.title, item.text]));
+
+/** Each trace starts proven and ends below the threshold at y = 38, in a 160 x 56 box. */
+const traces: Record<ForceShape, { points: string; cross: number }> = {
+  step: { points: '8,16 70,16 74,30 114,30 118,46 152,46', cross: 116 },
+  drift: { points: '8,14 40,17 72,22 104,29 130,37 152,45', cross: 133 },
+  reopen: { points: '8,16 60,15 96,17 108,44 152,46', cross: 105 },
+  fade: { points: '8,16 50,18 90,25 120,34 152,46', cross: 131 },
+  curve: { points: '8,14 44,15 76,19 102,26 124,35 140,43 152,50', cross: 130 },
+  stairs: { points: '8,14 32,14 32,20 56,20 56,26 80,26 80,32 104,32 104,40 128,40 128,46 152,46', cross: 104 },
+};
+
+const items = forces.map((force, i) => ({
+  ...force,
+  n: pad(i + 1),
+  text: textByTitle.get(force.title) ?? '',
+  area: clusterByKey[force.cluster],
+  trace: traces[force.shape],
+}));
+---
+
+<Section surface="light" flush labelledby="why-title">
+  <SectionHead
+    label="Why the category exists"
+    title="Critical technology changes continuously. Assurance does not survive that change on its own."
+    id="why-title"
+    split
+    text="Every enterprise proves a system works once, at the point it goes live. Almost none can prove it still works today."
+  />
+
+  <div class="why__span mt-block rv" aria-hidden="true">
+    <div class="why__end">
+      <span class="st st-assured"></span>
+      <span>
+        <span class="why__when">Go-live</span>
+        <span class="why__what">Proven once</span>
+      </span>
+    </div>
+    <div class="why__track">
+      {items.map((item) => <span class="why__tick num">{item.n}</span>)}
+    </div>
+    <div class="why__end why__end--last">
+      <span class="st st-unassured"></span>
+      <span>
+        <span class="why__when">Today</span>
+        <span class="why__what">Assumed</span>
+      </span>
+    </div>
+  </div>
+
+  <ol class="why">
+    {
+      items.map((item) => (
+        <li class="why__card rv">
+          <div class="why__top">
+            <span class="why__n num">{item.n}</span>
+            <svg class="why__fig" viewBox="0 0 160 56" aria-hidden="true" focusable="false">
+              <line class="why__threshold" x1="0" y1="38" x2="160" y2="38" stroke-dasharray="2.5 3" />
+              {item.shape === 'fade' && (
+                <line class="why__seen" x1="8" y1="16" x2="152" y2="16" stroke-dasharray="1.5 4" />
+              )}
+              <polyline class="why__trace" points={item.trace.points} />
+              <rect class="why__start" x="4" y={item.shape === 'drift' || item.shape === 'curve' || item.shape === 'stairs' ? 10 : 12} width="8" height="8" />
+              <rect class="why__cross" x={item.trace.cross - 4.5} y="33.5" width="9" height="9" />
+            </svg>
+          </div>
+
+          <h3 class="why__title">{item.title}</h3>
+          <p class="why__text">{item.text}</p>
+
+          <div class="why__cost">
+            <p class="why__key">What it costs the business</p>
+            <p class="why__value">{item.cost}</p>
+          </div>
+
+          <a href={pathFor(item.area.hub)} class="lk lk--sm why__link" data-track="card_click" data-track-location="home-why">
+            <span class="ul">{item.area.name}</span>
+            <Arrow size="sm" />
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</Section>
+
+<style>
+  /* ---- go-live to today ---- */
+  .why__span {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1rem 1rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+    background: var(--bg1);
+  }
+
+  .why__end {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .why__end--last {
+    flex-direction: row-reverse;
+    text-align: right;
+  }
+
+  .why__when,
+  .why__what {
+    display: block;
+  }
+
+  .why__when {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .why__what {
+    margin-top: 0.15rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    color: var(--tx);
+    white-space: nowrap;
+  }
+
+  /* solid where it was proven, fading to dashes where it is only assumed */
+  .why__track {
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    min-width: 0;
+    height: 1.75rem;
+    background-image:
+      linear-gradient(90deg, var(--tx) 0 22%, transparent 22%),
+      repeating-linear-gradient(90deg, var(--fnt) 0 4px, transparent 4px 9px);
+    background-size:
+      100% 1.5px,
+      100% 1px;
+    background-position:
+      left center,
+      left center;
+    background-repeat: no-repeat;
+  }
+
+  .why__tick {
+    display: none;
+    padding: 0.3rem 0.45rem;
+    border: 1px solid var(--ln2);
+    border-radius: 999px;
+    background: var(--bg1);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    color: var(--mut);
+  }
+
+  @media (min-width: 40rem) {
+    .why__span {
+      gap: 1.5rem;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .why__tick {
+      display: block;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .why__span {
+      gap: 2rem;
+      padding: 1.5rem 2rem;
+    }
+  }
+
+  /* ---- six forces ---- */
+  .why {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  @media (min-width: 40rem) {
+    .why {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .why {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .why__card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--ln);
+    border-radius: var(--radius-md);
+    background: var(--bg0);
+    transition:
+      transform 0.55s var(--ease),
+      border-color 0.3s var(--ease);
+  }
+
+  .why__card:hover {
+    border-color: var(--ln2);
+  }
+
+  @media (min-width: 64rem) {
+    .why__card {
+      padding: 2rem;
+    }
+  }
+
+  .why__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .why__n {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: var(--track-label);
+    color: var(--fnt);
+  }
+
+  .why__fig {
+    flex: none;
+    width: min(10rem, 62%);
+    height: auto;
+    overflow: visible;
+  }
+
+  .why__threshold {
+    stroke: var(--fnt);
+    stroke-width: 1;
+  }
+
+  .why__seen {
+    stroke: var(--fnt);
+    stroke-width: 1.3;
+    stroke-linecap: round;
+  }
+
+  .why__trace {
+    fill: none;
+    stroke: var(--tx);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  .why__start {
+    fill: var(--tx);
+  }
+
+  .why__cross {
+    fill: var(--bg0);
+    stroke: var(--tx);
+    stroke-width: 1.5;
+  }
+
+  .why__title {
+    margin-top: 1.5rem;
+    font-size: clamp(1.25rem, 1.2rem + 0.3vw, 1.4375rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+  }
+
+  .why__text {
+    margin-top: 0.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--mut);
+  }
+
+  .why__cost {
+    margin-top: auto;
+    padding-top: 1.5rem;
+  }
+
+  .why__key {
+    padding-top: 1.1rem;
+    border-top: 1px dashed var(--ln2);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .why__value {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    font-weight: 550;
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+    color: var(--tx);
+  }
+
+  .why__link {
+    margin-top: 1.25rem;
+    align-self: flex-start;
+  }
+
+  /* Cards in a row share their row lines, so titles, texts and costs line up across them. */
+  @supports (grid-template-rows: subgrid) {
+    .why__card {
+      display: grid;
+      grid-row: span 5;
+      grid-template-rows: subgrid;
+      row-gap: 0;
+    }
+
+    .why__cost {
+      margin-top: 0;
+    }
+
+    .why__link {
+      justify-self: start;
+      align-self: end;
+    }
+  }
+</style>

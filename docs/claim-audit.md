@@ -25,7 +25,7 @@ wording and labour vocabulary on every build.
 
 ## Result
 
-Final run over all 97 content pages and 17 static pages: 53 pattern matches.
+Final run over all 97 content pages and 17 static pages: 52 pattern matches.
 
 | Finding | Count | Decision |
 |---|---|---|
@@ -33,7 +33,6 @@ Final run over all 97 content pages and 17 static pages: 53 pattern matches.
 | Third-party statistics and labelled illustrative figures | 48 | Keep. Each statistic names its report and year and lists the source in frontmatter. Figures in worked examples are labelled illustrative |
 | Partnership pattern | 4 | Keep. Each is an FAQ asking whether Xyvionix is a vendor partner or reseller, answered that it is not |
 | Labour vocabulary | 1 | Keep. It is in the "What is not sold" list on `/company` |
-| CSS false positive | 1 | `width: 100%` in a component stylesheet |
 
 ### Third-party statistics in use
 
@@ -80,7 +79,7 @@ not as results, but the company must confirm each is true.
 |---|---|
 | Certifications | No page claims one. `/security-trust` states that none is held. `src/data/trust.ts` holds the wording in one place |
 | Assurance Engine capability | Described as the design and method behind the assurance. `/assurance-engine` states it is not sold as software and that the figure is not a product screen |
-| Diagrams and traces | Every figure is labelled illustrative in the graphic and in the caption. Threshold tables are captioned as illustrative |
+| Diagrams and traces | Figures carry no numbers, names or dates that could be read as measurements. Visible disclaimer lines were removed at the owner's request. Threshold tables keep their caption |
 | Threshold values | Rows state the basis for a threshold, not a number, unless the number comes from a cited standard or vendor policy |
 | Customers and case studies | None appear. Failure patterns in insights are described generically |
 | Named authors | None. Insights are attributed to Xyvionix Research |
@@ -89,6 +88,23 @@ not as results, but the company must confirm each is true.
 | Legal pages | Each shows a "Pending review" notice until company inputs are supplied and counsel has reviewed it |
 | Regulatory statements | Facts with dates, from primary sources. No page says it ensures compliance, and no page gives legal advice |
 | Vendor relationships | Technology pages carry a note that Xyvionix is not a reseller or partner of the vendors named |
+
+## Home page figures
+
+Owner decision, 2026-09-28: visible disclaimer lines were removed from the figures
+("Illustrative model, not live data" and similar), and none are to be added. This
+replaces the labelling asked for in section 59 of the specification.
+
+| Figure | What keeps it accurate without a disclaimer |
+|---|---|
+| Proven once or proven continuously | It shows a model with no numbers, no system name and no dates. The text describes what happens to proof after a change |
+| Assurance board | The heading and introduction present it as what an enterprise holds under assurance. No real system or customer is named |
+| Capability matrix | It compares practices. No provider is named, and the text says each practice is worth having |
+| Small signal traces on cards | Decorative shapes with no values |
+
+Still in place: the hero graphic from the frozen theme keeps its original wording, and
+threshold tables on content pages keep their caption, which explains that thresholds are
+agreed per engagement.
 
 ## Process for every release
 

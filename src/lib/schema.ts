@@ -202,3 +202,96 @@ export function pageGraph(input: PageGraphInput): Node {
     ...(input.extra ?? []),
   ]);
 }
+
+export interface DefinedTermInput {
+  term: string;
+  definition: string;
+  /** Fragment of the page where the term is defined, without the hash. */
+  anchor: string;
+}
+
+/**
+ * A glossary published on a page. Each term is addressable, so another page
+ * or an agent can refer to the definition and not to the page as a whole.
+ */
+export function definedTermSetNode(pageUrl: string, name: string, description: string, terms: DefinedTermInput[]): Node {
+  const setId = `${pageUrl}#glossary`;
+  return {
+    '@type': 'DefinedTermSet',
+    '@id': setId,
+    name,
+    description,
+    url: setId,
+    inLanguage: site.language,
+    publisher: orgRef,
+    hasDefinedTerm: terms.map((t) => ({
+      '@type': 'DefinedTerm',
+      '@id': `${pageUrl}#${t.anchor}`,
+      name: t.term,
+      description: t.definition,
+      url: `${pageUrl}#${t.anchor}`,
+      inDefinedTermSet: { '@id': setId },
+    })),
+  };
+}
+
+export interface ListStepInput {
+  name: string;
+  description: string;
+  /** Fragment of the page where the step is described, without the hash. */
+  anchor: string;
+}
+
+/** An ordered list of steps. Plain ItemList: HowTo is not used. */
+export function stepListNode(pageUrl: string, id: string, name: string, steps: ListStepInput[]): Node {
+  return {
+    '@type': 'ItemList',
+    '@id': `${pageUrl}#${id}`,
+    name,
+    itemListOrder: 'https://schema.org/ItemListOrderAscending',
+    numberOfItems: steps.length,
+    itemListElement: steps.map((s, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: s.name,
+      description: s.description,
+      url: `${pageUrl}#${s.anchor}`,
+    })),
+  };
+}
+
+export interface ReferenceArticleInput {
+  url: string;
+  headline: string;
+  description: string;
+  published: Date;
+  modified: Date;
+  wordCount: number;
+  /** What the article is about, as the @id of a DefinedTerm on the page. */
+  aboutTermId: string;
+  /** @ids of other nodes on the page that are parts of the article. */
+  parts: string[];
+  audience: string;
+}
+
+/** A reference article written by the organisation. No named individuals are invented. */
+export function referenceArticleNode(input: ReferenceArticleInput): Node {
+  return {
+    '@type': 'TechArticle',
+    '@id': `${input.url}#article`,
+    headline: input.headline,
+    description: input.description,
+    inLanguage: site.language,
+    datePublished: input.published.toISOString(),
+    dateModified: input.modified.toISOString(),
+    wordCount: input.wordCount,
+    author: { '@type': 'Organization', '@id': organization.id, name: site.editorialAuthor, url: organization.url },
+    publisher: orgRef,
+    image: { '@id': `${input.url}#primaryimage` },
+    mainEntityOfPage: { '@id': `${input.url}#webpage` },
+    isPartOf: siteRef,
+    about: { '@id': input.aboutTermId },
+    hasPart: input.parts.map((id) => ({ '@id': id })),
+    audience: { '@type': 'BusinessAudience', audienceType: input.audience },
+  };
+}

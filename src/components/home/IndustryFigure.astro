@@ -1,0 +1,300 @@
+---
+/**
+ * A figure that draws what has to stay proven in a sector, on an obsidian
+ * tile. Built from the same marks as the rest of the site: solid is proven,
+ * striped is drifting, hollow is breached or due, dashed is not yet proven.
+ *
+ *   tolerance  recovery time at the last test and today, against tolerance
+ *   decision   a decision explained from its record after the model has changed
+ *   care       recovery, access and integrity against what care requires
+ *   margin     service level and cost to serve against what was sold and priced
+ *
+ * Decorative: the text beside it carries the meaning.
+ */
+import type { IndustryFigureKind } from '../../data/home-industries.ts';
+
+interface Props {
+  kind: IndustryFigureKind;
+  /** Unique per instance, for pattern ids. */
+  uid: string;
+}
+
+const { kind, uid } = Astro.props;
+const stripes = `ifig-${uid}-stripes`;
+
+const titles: Record<IndustryFigureKind, string> = {
+  tolerance: 'Recovery against tolerance',
+  decision: 'A decision outlives its model',
+  care: 'Held against what care requires',
+  margin: 'Held against what was sold and priced',
+};
+
+const meters = [
+  { label: 'RECOVERY', y: 56, solid: 9, striped: 0 },
+  { label: 'ACCESS', y: 100, solid: 6, striped: 2 },
+  { label: 'INTEGRITY', y: 144, solid: 8, striped: 0 },
+];
+const blocks = Array.from({ length: 10 }, (_, i) => i);
+const fillOf = (m: (typeof meters)[number], i: number) =>
+  i < m.solid ? 'solid' : i < m.solid + m.striped ? 'striped' : 'dashed';
+---
+
+<div class="ifig" aria-hidden="true">
+  <p class="ifig__title">{titles[kind]}</p>
+  <svg viewBox="0 0 320 200" aria-hidden="true" focusable="false">
+    <defs>
+      <pattern id={stripes} width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <line class="ifig__stripe" x1="0" y1="0" x2="0" y2="5"></line>
+      </pattern>
+    </defs>
+
+    {
+      kind === 'tolerance' && (
+        <>
+          <line class="ifig__threshold" x1="262" y1="46" x2="262" y2="160" stroke-dasharray="3 4" />
+          <text class="ifig__label ifig__label--muted" x="262" y="36" text-anchor="middle">TOLERANCE</text>
+
+          <text class="ifig__label" x="20" y="78">LAST TEST</text>
+          <rect class="ifig__solid" x="110" y="68" width="86" height="12" />
+
+          <text class="ifig__label" x="20" y="120">TODAY</text>
+          <rect class="ifig__solid" x="110" y="110" width="86" height="12" />
+          <rect class="ifig__striped" x="198" y="110" width="40" height="12" fill={`url(#${stripes})`} />
+          <rect class="ifig__hollow" x="242" y="110.75" width="10.5" height="10.5" />
+
+          <line class="ifig__axis" x1="110" y1="160" x2="300" y2="160" />
+          {[110, 148, 186, 224, 262, 300].map((x) => (
+            <line class="ifig__axis" x1={x} y1="160" x2={x} y2="165" />
+          ))}
+          <text class="ifig__label ifig__label--sm" x="110" y="180">TIME TO RECOVER</text>
+        </>
+      )
+    }
+
+    {
+      kind === 'decision' && (
+        <>
+          <line class="ifig__threshold" x1="286" y1="40" x2="286" y2="146" stroke-dasharray="3 4" />
+          <text class="ifig__label ifig__label--muted" x="300" y="30" text-anchor="end">QUESTIONED</text>
+
+          <text class="ifig__label" x="20" y="64">MODEL</text>
+          <rect class="ifig__solid" x="100" y="54" width="60" height="12" />
+          <rect class="ifig__later" x="164.5" y="54.5" width="61" height="11" stroke-dasharray="2.5 2" />
+          <rect class="ifig__later" x="230.5" y="54.5" width="69" height="11" stroke-dasharray="2.5 2" />
+          <text class="ifig__label ifig__label--sm" x="100" y="82">V1</text>
+          <text class="ifig__label ifig__label--sm" x="164" y="82">V2</text>
+          <text class="ifig__label ifig__label--sm" x="230" y="82">V3</text>
+
+          <line class="ifig__tick" x1="131" y1="66" x2="131" y2="150" />
+          <text class="ifig__label" x="20" y="114">DECISION</text>
+          <rect class="ifig__surface" x="126" y="105" width="10" height="10" />
+          <rect class="ifig__solid" x="126" y="105" width="10" height="10" />
+
+          <text class="ifig__label" x="20" y="154">RECORD</text>
+          <line class="ifig__solidline" x1="131" y1="150" x2="286" y2="150" />
+          <rect class="ifig__solid" x="281" y="145" width="10" height="10" />
+          <text class="ifig__label ifig__label--muted" x="300" y="176" text-anchor="end">EXPLAINED</text>
+        </>
+      )
+    }
+
+    {
+      kind === 'care' && (
+        <>
+          <line class="ifig__threshold" x1="241" y1="40" x2="241" y2="166" stroke-dasharray="3 4" />
+          <text class="ifig__label ifig__label--muted" x="241" y="30" text-anchor="middle">REQUIRED</text>
+
+          {meters.map((m) => (
+            <>
+              <text class="ifig__label" x="20" y={m.y + 3}>
+                {m.label}
+              </text>
+              {blocks.map((i) => {
+                const x = 110 + i * 19;
+                const fill = fillOf(m, i);
+                return fill === 'solid' ? (
+                  <rect class="ifig__solid" x={x} y={m.y - 6} width="15" height="12" />
+                ) : fill === 'striped' ? (
+                  <rect class="ifig__striped" x={x} y={m.y - 6} width="15" height="12" fill={`url(#${stripes})`} />
+                ) : (
+                  <rect class="ifig__dashed" x={x + 0.5} y={m.y - 5.5} width="14" height="11" stroke-dasharray="2.5 2" />
+                );
+              })}
+            </>
+          ))}
+        </>
+      )
+    }
+
+    {
+      kind === 'margin' && (
+        <>
+          <text class="ifig__label" x="20" y="60">SERVICE</text>
+          <text class="ifig__label" x="20" y="73">LEVEL</text>
+          <line class="ifig__threshold" x1="110" y1="80" x2="300" y2="80" stroke-dasharray="3 4" />
+          <text class="ifig__label ifig__label--sm ifig__label--muted" x="300" y="94" text-anchor="end">SOLD AT</text>
+          <polyline class="ifig__solidline" points="110,56 140,50 170,58 200,47 230,54 260,45 296,51" />
+          <rect class="ifig__solid" x="291" y="46" width="10" height="10" />
+
+          <text class="ifig__label" x="20" y="146">COST TO</text>
+          <text class="ifig__label" x="20" y="159">SERVE</text>
+          <line class="ifig__threshold" x1="110" y1="124" x2="300" y2="124" stroke-dasharray="3 4" />
+          <text class="ifig__label ifig__label--sm ifig__label--muted" x="110" y="116">PRICE ASSUMES</text>
+          <polyline class="ifig__solidline" points="110,172 140,169 170,165 200,157 230,149 260,140 296,133" />
+          <rect class="ifig__surface" x="291" y="128" width="10" height="10" />
+          <rect class="ifig__striped" x="291" y="128" width="10" height="10" fill={`url(#${stripes})`} />
+        </>
+      )
+    }
+  </svg>
+  <ul class="ifig__legend">
+    <li><span class="st st--sm st-assured"></span>Proven</li>
+    <li><span class="st st--sm st-degrading"></span>Drifting</li>
+    <li><span class="st st--sm st-risk"></span>Re-test due</li>
+  </ul>
+</div>
+
+<style>
+  /* An obsidian tile on any surface: the figure always uses the dark palette. */
+  .ifig {
+    --tx: #f5f4f1;
+    --mut: #a8a7a0;
+    --fnt: #8a8982;
+    --gst: #4a4944;
+    --bg0: #0c0c0b;
+    --ln2: rgba(245, 244, 241, 0.16);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    height: 100%;
+    min-height: 14rem;
+    padding: 1.5rem 1.25rem;
+    color: var(--tx);
+    background-color: var(--bg0);
+    background-image:
+      linear-gradient(rgba(245, 244, 241, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245, 244, 241, 0.04) 1px, transparent 1px);
+    background-size: 36px 36px;
+    background-position: center;
+  }
+
+  .ifig svg {
+    width: 100%;
+    max-width: 30rem;
+    height: auto;
+  }
+
+  .ifig__title,
+  .ifig__legend {
+    align-self: stretch;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .ifig__title {
+    color: var(--mut);
+  }
+
+  .ifig__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(245, 244, 241, 0.08);
+  }
+
+  .ifig__legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 64rem) {
+    .ifig {
+      padding: 2rem 2rem 1.75rem;
+    }
+  }
+
+  .ifig__label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 1px;
+    fill: var(--fnt);
+  }
+
+  .ifig__label--muted {
+    fill: var(--mut);
+  }
+
+  .ifig__label--sm {
+    font-size: 7.5px;
+    letter-spacing: 0.6px;
+  }
+
+  .ifig__solidline {
+    fill: none;
+    stroke: var(--tx);
+    stroke-width: 1.8;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  .ifig__tick {
+    stroke: var(--mut);
+    stroke-width: 1;
+  }
+
+  .ifig__axis {
+    stroke: var(--gst);
+    stroke-width: 1;
+  }
+
+  .ifig__threshold {
+    stroke: var(--fnt);
+    stroke-width: 1;
+  }
+
+  .ifig__solid {
+    fill: var(--tx);
+  }
+
+  .ifig__surface {
+    fill: var(--bg0);
+    stroke: var(--bg0);
+    stroke-width: 3;
+  }
+
+  .ifig__hollow {
+    fill: none;
+    stroke: var(--tx);
+    stroke-width: 1.6;
+  }
+
+  .ifig__dashed {
+    fill: none;
+    stroke: var(--gst);
+    stroke-width: 1.2;
+  }
+
+  .ifig__later {
+    fill: none;
+    stroke: var(--fnt);
+    stroke-width: 1.2;
+  }
+
+  .ifig__striped {
+    stroke: var(--ln2);
+    stroke-width: 1;
+  }
+
+  .ifig__stripe {
+    stroke: var(--tx);
+    stroke-width: 2.4;
+  }
+</style>

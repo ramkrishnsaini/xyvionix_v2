@@ -1,0 +1,186 @@
+---
+/**
+ * The method, step by step. Each step says what happens, who does it, what
+ * it produces and the mistake most often made at that point. A line down the
+ * left joins the steps, because each one depends on the one before.
+ */
+import { methodSteps } from '../../data/method.ts';
+import { anchorFor } from '../../lib/text.ts';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<ol class="ms">
+  {
+    methodSteps.map((step, i) => (
+      <li class="ms__step rv" id={`step-${anchorFor(step.title)}`}>
+        <div class="ms__rail" aria-hidden="true">
+          <span class="ms__n num">{pad(i + 1)}</span>
+          <span class="ms__line" />
+        </div>
+
+        <div class="ms__main">
+          <h3 class="ms__title">{step.title}</h3>
+          <p class="ms__text">{step.text}</p>
+        </div>
+
+        <dl class="ms__facts">
+          <div>
+            <dt>Who</dt>
+            <dd>{step.who}</dd>
+          </div>
+          <div>
+            <dt>Produces</dt>
+            <dd>{step.produces}</dd>
+          </div>
+          <div class="ms__mistake">
+            <dt>Common mistake</dt>
+            <dd>{step.mistake}</dd>
+          </div>
+        </dl>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .ms {
+    display: grid;
+  }
+
+  .ms__step {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    column-gap: 1rem;
+    min-width: 0;
+    scroll-margin-top: 4rem;
+  }
+
+  /* number, with the line that leads to the next step */
+  .ms__rail {
+    grid-row: 1 / span 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ms__n {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--tx);
+    border-radius: 50%;
+    background: var(--tx);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    color: var(--bg0);
+  }
+
+  .ms__line {
+    flex: 1;
+    margin-block: 0.5rem;
+    border-left: 1px solid var(--ln2);
+  }
+
+  .ms__step:last-child .ms__line {
+    display: none;
+  }
+
+  .ms__main {
+    min-width: 0;
+    padding-top: 0.35rem;
+  }
+
+  .ms__title {
+    font-size: clamp(1.375rem, 1.3rem + 0.4vw, 1.625rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.032em;
+  }
+
+  .ms__text {
+    margin-top: 0.75rem;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--mut);
+    max-width: 60ch;
+  }
+
+  .ms__facts {
+    grid-column: 2;
+    display: grid;
+    gap: 0.75rem;
+    min-width: 0;
+    margin-top: 1.25rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .ms__step:last-child .ms__facts {
+    padding-bottom: 0;
+  }
+
+  .ms__facts > div {
+    min-width: 0;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--ln);
+    border-radius: var(--radius-md);
+    background: var(--bg0);
+  }
+
+  .ms__facts dt {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .ms__facts dd {
+    margin-top: 0.4rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--tx);
+  }
+
+  /* the mistake is drawn as not proven: a dashed frame */
+  .ms__mistake {
+    border-style: dashed !important;
+    border-color: var(--ln2) !important;
+    background: transparent !important;
+  }
+
+  .ms__mistake dd {
+    color: var(--mut);
+  }
+
+  @media (min-width: 44rem) {
+    .ms__facts {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 76rem) {
+    .ms__step {
+      grid-template-columns: 2.5rem minmax(0, 5fr) minmax(0, 7fr);
+      column-gap: 2rem;
+    }
+
+    .ms__rail {
+      grid-row: 1;
+    }
+
+    .ms__main {
+      padding-bottom: 3rem;
+    }
+
+    .ms__facts {
+      grid-column: 3;
+      margin-top: 0;
+      padding-bottom: 3rem;
+      align-content: start;
+    }
+  }
+</style>

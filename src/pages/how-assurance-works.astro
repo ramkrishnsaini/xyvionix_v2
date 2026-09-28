@@ -1,15 +1,101 @@
 ---
+/**
+ * How assurance works: the reference page for what continuous technology
+ * assurance is and how it is done.
+ *
+ * Written to be found and to be quoted. Every heading is the question a
+ * reader or an agent would ask, and the first sentence under it is the
+ * answer. All text is in the page: nothing is loaded later or hidden.
+ *
+ * The same data feeds the page, its structured data (a reference article, a
+ * glossary of defined terms and the list of steps) and the method section of
+ * /llms-full.txt. See src/data/method.ts.
+ */
 import PageLayout from '../layouts/PageLayout.astro';
 import Section from '../components/layout/Section.astro';
 import SectionHead from '../components/layout/SectionHead.astro';
-import OperatingModel from '../components/assurance/OperatingModel.astro';
-import StateModel from '../components/assurance/StateModel.astro';
-import Outcomes from '../components/assurance/Outcomes.astro';
-import Faq from '../components/editorial/Faq.astro';
 import Arrow from '../components/layout/Arrow.astro';
-import { comparison, evidenceProperties, methodFaqs, thresholdSteps } from '../data/method.ts';
+import Faq from '../components/editorial/Faq.astro';
+import Chapters from '../components/assurance-page/Chapters.astro';
+import RowTable from '../components/method/RowTable.astro';
+import MethodSteps from '../components/method/MethodSteps.astro';
+import {
+  anatomy,
+  assertionVsEvidence,
+  closureRule,
+  comparison,
+  definition,
+  evidenceProperties,
+  glossary,
+  inShort,
+  methodChapters,
+  methodFaqs,
+  methodSteps,
+  notClosure,
+  prepare,
+  relatedPractices,
+  stateRules,
+  thresholdParts,
+} from '../data/method.ts';
+import { site } from '../data/site.ts';
+import { getStaticPage } from '../data/static-pages.ts';
+import { definedTermSetNode, referenceArticleNode, stepListNode } from '../lib/schema.ts';
+import { anchorFor } from '../lib/text.ts';
 
 const pad = (n: number) => String(n).padStart(2, '0');
+
+const page = getStaticPage('how-assurance-works');
+const url = `${site.url}/how-assurance-works`;
+const termAnchor = (term: string) => `term-${anchorFor(term)}`;
+
+// Words of reference text on the page, counted from the data that renders it.
+const words = [
+  definition.short,
+  definition.full,
+  ...inShort,
+  ...anatomy.flatMap((a) => [a.part, a.means, a.example]),
+  ...methodSteps.flatMap((s) => [s.title, s.text, s.who, s.produces, s.mistake]),
+  ...thresholdParts.flatMap((t) => [t.title, t.text]),
+  ...evidenceProperties.flatMap((e) => [e.title, e.text]),
+  ...assertionVsEvidence.flat(),
+  ...stateRules.flatMap((r) => [r.when, r.follows]),
+  ...notClosure.flat(),
+  closureRule,
+  ...comparison.rows.flatMap((r) => [r.aspect, ...r.cells]),
+  ...relatedPractices.flatMap((p) => [p.practice, p.gives, p.adds]),
+  ...prepare.flatMap((p) => [p.title, p.text]),
+  ...glossary.flatMap((g) => [g.term, g.definition]),
+  ...methodFaqs.flatMap((f) => [f.q, f.a]),
+]
+  .join(' ')
+  .split(/\s+/)
+  .filter(Boolean).length;
+
+const extraSchema = [
+  referenceArticleNode({
+    url,
+    headline: page.h1,
+    description: page.description,
+    published: new Date(page.publishedDate),
+    modified: new Date(page.modifiedDate),
+    wordCount: words,
+    aboutTermId: `${url}#${termAnchor(definition.term)}`,
+    parts: [`${url}#method-steps`, `${url}#glossary`],
+    audience: page.audience,
+  }),
+  stepListNode(
+    url,
+    'method-steps',
+    'The method of continuous technology assurance',
+    methodSteps.map((step) => ({ name: step.title, description: step.text, anchor: `step-${anchorFor(step.title)}` })),
+  ),
+  definedTermSetNode(
+    url,
+    'Glossary of continuous technology assurance',
+    'The terms used in continuous technology assurance, as Xyvionix defines them.',
+    glossary.map((g) => ({ term: g.term, definition: g.definition, anchor: termAnchor(g.term) })),
+  ),
+];
 ---
 
 <PageLayout
@@ -17,217 +103,511 @@ const pad = (n: number) => String(n).padStart(2, '0');
   label="Method"
   pageType="core"
   section="assurance"
-  lede="Continuous assurance holds a technology outcome as a current fact. The business states what must remain true. Evidence is gathered from the running system and tested against an agreed threshold. When the evidence falls short, the correction is owned until a re-test shows the outcome is met again."
-  secondary={{ label: 'The Assurance Engine', href: '/assurance-engine' }}
+  lede={`${definition.short} ${definition.full}`}
+  secondary={{ label: 'Why assurance comes first', href: '/why-assurance' }}
+  ctaLabel="Next"
+  ctaTitle="See where one of your outcomes stands"
+  ctaText="Name the outcome. The first conversation sets out what would prove it and how its present state would be measured."
+  extraSchema={extraSchema}
 >
-  <Section surface="light" flush labelledby="different-title">
-    <SectionHead
-      label="What assurance is"
-      title="Not monitoring, not audit, not a managed service"
-      id="different-title"
-      split
-      text="Enterprises already monitor their systems, audit their controls and pay for services to be run. None of the three answers the question a board or a regulator eventually asks: can you prove it still works today, and who acts if you cannot?"
-    />
-    <div class="table-wrap mt-block rv" role="region" aria-label="Comparison of monitoring, audit, managed service and continuous assurance" tabindex="0">
-      <table class="table compare">
-        <caption>How continuous assurance differs from the practices it is most often confused with.</caption>
-        <thead>
-          <tr>
-            <th scope="col">Aspect</th>
-            {comparison.columns.map((column) => <th scope="col">{column}</th>)}
-          </tr>
-        </thead>
-        <tbody>
+  <div class="hw">
+    <Chapters items={methodChapters} location="method" />
+
+    <Section surface="light" flush labelledby="definition-title" id="definition">
+      <SectionHead
+        label="What it is"
+        title="What is continuous technology assurance?"
+        id="definition-title"
+        split
+        text="It is the difference between a system that was proven once and a system that is proven now. Most enterprises can show the first. The second is what a board, a supervisor or a customer is asking about."
+      >
+        <a href="/why-assurance" class="lk hw__link">
+          <span class="ul">Why the proof has to come first</span>
+          <Arrow />
+        </a>
+      </SectionHead>
+
+      <div class="hw__short mt-block rv">
+        <p class="hw__key">In short</p>
+        <ol class="hw__short-list">
           {
-            comparison.rows.map((row) => (
-              <tr>
-                <th scope="row">{row.aspect}</th>
-                {row.cells.map((cell) => (
-                  <td>{cell}</td>
-                ))}
-              </tr>
+            inShort.map((line, i) => (
+              <li>
+                <span class="hw__n num">{pad(i + 1)}</span>
+                <span>{line}</span>
+              </li>
             ))
           }
-        </tbody>
-      </table>
-    </div>
-  </Section>
+        </ol>
+      </div>
 
-  <Section surface="light" alt labelledby="operating-title">
-    <SectionHead
-      label="Operating model"
-      title="Baseline, assure, correct, improve"
-      id="operating-title"
-      split
-      text="The four stages run as a cycle. Closure of a correction returns as a new signal, and the thresholds themselves are raised as the business asks more of the system."
-    />
-    <div class="mt-block">
-      <OperatingModel />
-    </div>
-  </Section>
+      <h3 class="hw__sub rv">The five parts of one assured outcome</h3>
+      <p class="hw__sub-text rv">
+        Every outcome under assurance has the same five parts. One example is followed through all of them.
+      </p>
+      <div class="hw__table">
+        <RowTable
+          label="The five parts of an assured outcome, with one example"
+          columns={['Part', 'What it means', 'In one example']}
+          rows={anatomy.map((a) => [a.part, a.means, a.example])}
+          lead
+          own={2}
+        />
+      </div>
+    </Section>
 
-  <Section surface="light" labelledby="thresholds-title">
-    <SectionHead
-      label="Thresholds"
-      title="How a threshold is established"
-      id="thresholds-title"
-      split
-      text="A threshold is a business decision recorded in technical terms. It is the point at which the outcome can no longer be claimed, so it has to be set by the people who carry the consequence."
-    />
-    <ol class="steps mt-block">
-      {
-        thresholdSteps.map((step, i) => (
-          <li class="row rv">
-            <h3 class="row__term steps__term">
-              <span class="lbl lbl--plain num">{pad(i + 1)}</span>
-              {step.title}
-            </h3>
-            <p class="row__desc">{step.text}</p>
-          </li>
-        ))
-      }
-    </ol>
-  </Section>
+    <Section surface="light" alt labelledby="method-title" id="method">
+      <SectionHead
+        label="The method"
+        title="How does continuous assurance work, step by step?"
+        id="method-title"
+        split
+        text="In eight steps. The first four are done once for each outcome and set out what has to be true. The last four run for as long as the outcome matters, and begin again with every change."
+      >
+        <a href="/assurance-engine" class="lk hw__link">
+          <span class="ul">The engine the method runs on</span>
+          <Arrow />
+        </a>
+      </SectionHead>
+      <div class="mt-block" id="method-steps">
+        <MethodSteps />
+      </div>
+    </Section>
 
-  <Section surface="light" alt labelledby="evidence-title">
-    <SectionHead
-      label="Evidence"
-      title="What makes something evidence"
-      id="evidence-title"
-      split
-      text="Most of what is presented as proof in technology is assertion: a diagram, a policy, a dashboard at one moment. Evidence under assurance has five properties."
-    >
-      <dl class="rows rows--open rv">
+    <Section surface="light" labelledby="thresholds-title" id="thresholds">
+      <SectionHead
+        label="Thresholds"
+        title="How is a threshold set, and who decides it?"
+        id="thresholds-title"
+        split
+        text="The business decides it. A threshold is a business decision recorded in technical terms: the point at which the outcome can no longer be claimed. It is set by the people who carry the consequence, and it carries six things."
+      />
+      <ol class="hw__cards hw__cards--3 mt-block">
         {
-          evidenceProperties.map((item) => (
-            <div class="row">
-              <dt class="row__term">{item.title}</dt>
-              <dd class="row__desc">{item.text}</dd>
+          thresholdParts.map((part, i) => (
+            <li class="hw__card rv">
+              <p class="hw__n num">{pad(i + 1)}</p>
+              <h3 class="hw__card-title">{part.title}</h3>
+              <p class="hw__card-text">{part.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </Section>
+
+    <Section surface="light" alt labelledby="evidence-title" id="evidence">
+      <SectionHead
+        label="Evidence"
+        title="What counts as evidence, and what does not?"
+        id="evidence-title"
+        split
+        text="Evidence is the result of a check that could have failed. Most of what is offered as proof in technology is assertion: a diagram, a policy, a dashboard at one moment. Evidence under assurance has five properties."
+      />
+      <ol class="hw__cards hw__cards--5 mt-block">
+        {
+          evidenceProperties.map((item, i) => (
+            <li class="hw__card rv">
+              <p class="hw__n num">{pad(i + 1)}</p>
+              <h3 class="hw__card-title">{item.title}</h3>
+              <p class="hw__card-text">{item.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+
+      <h3 class="hw__sub rv">The same subject, as assertion and as evidence</h3>
+      <div class="hw__table">
+        <RowTable
+          label="What is offered as proof, and what would be evidence of the same thing"
+          columns={['Often offered as proof', 'What would be evidence']}
+          rows={assertionVsEvidence}
+          own={1}
+        />
+      </div>
+    </Section>
+
+    <Section surface="dark" alt labelledby="state-title" id="state">
+      <SectionHead
+        label="State"
+        title="How is the state of an outcome decided?"
+        id="state-title"
+        split
+        text="By rule, from the evidence and the threshold. No one forms an opinion. Unassured is kept apart from failing on purpose: a recovery plan that has never been exercised may well work, and no one knows."
+      >
+        <a href="/assurance-is-a-state-not-a-report" class="lk hw__link">
+          <span class="ul">Why a state and not a report</span>
+          <Arrow />
+        </a>
+      </SectionHead>
+      <div class="mt-block">
+        <RowTable
+          label="How the state of an outcome is decided"
+          columns={['When', 'The state is', 'What follows']}
+          rows={stateRules.map((r) => [r.when, { state: r.state }, r.follows])}
+        />
+      </div>
+    </Section>
+
+    <Section surface="light" labelledby="closure-title" id="closure">
+      <SectionHead
+        label="Closure"
+        title="When is a correction closed?"
+        id="closure-title"
+        split
+        text="When the re-test passes, and not before. Four other things are commonly treated as closure. Each records that something was done. None shows that it worked."
+      >
+        <a href="/security-findings-vs-verified-closure" class="lk hw__link">
+          <span class="ul">Findings closed, exposure open</span>
+          <Arrow />
+        </a>
+      </SectionHead>
+      <div class="mt-block">
+        <RowTable
+          label="What is often called closed, and why it is not closure"
+          columns={['Often called closed', 'Why it is not closure']}
+          rows={notClosure}
+          lead
+        />
+      </div>
+      <p class="hw__rule rv">
+        <span class="st st-assured" aria-hidden="true"></span>
+        {closureRule}
+      </p>
+    </Section>
+
+    <Section surface="light" alt labelledby="compare-title" id="compare">
+      <SectionHead
+        label="Compared"
+        title="How is assurance different from monitoring, audit and a managed service?"
+        id="compare-title"
+        split
+        text="Each of the three answers a different question. None of them answers the one a board or a regulator eventually asks: can you prove it still works today, and who acts if you cannot?"
+      >
+        <a href="/continuous-assurance-vs-monitoring" class="lk hw__link">
+          <span class="ul">Continuous assurance is not monitoring</span>
+          <Arrow />
+        </a>
+      </SectionHead>
+      <div class="mt-block">
+        <RowTable
+          label="Monitoring, periodic audit, managed service and continuous assurance compared"
+          columns={['Aspect', ...comparison.columns]}
+          rows={comparison.rows.map((row) => [row.aspect, ...row.cells])}
+          lead
+          own={4}
+        />
+      </div>
+
+      <h3 class="hw__sub rv">What assurance adds to the practices you already run</h3>
+      <p class="hw__sub-text rv">
+        Assurance does not replace any of these. It uses what they produce, and adds the part that makes the outcome
+        answerable.
+      </p>
+      <div class="hw__table">
+        <RowTable
+          label="Practices an enterprise already runs, what each gives, and what assurance adds"
+          columns={['Practice', 'What it gives you', 'What assurance adds']}
+          rows={relatedPractices.map((p) => [p.practice, p.gives, p.adds])}
+          lead
+          own={2}
+        />
+      </div>
+    </Section>
+
+    <Section surface="light" labelledby="working-title" id="working">
+      <SectionHead
+        label="Working model"
+        title="Does assurance replace the teams that run the systems?"
+        id="working-title"
+        split
+      >
+        <div class="prose">
+          <p>
+            No. Xyvionix does not replace platform, security, data or AI teams, and it does not supply people to them.
+            Those teams design, build and operate. Assurance is a separate responsibility: to hold the evidence that
+            what they operate still meets the outcome the business agreed, and to carry corrections through to closure.
+          </p>
+          <p>
+            The separation matters. A team that builds a system and also certifies that it works is marking its own
+            work, usually under delivery pressure. An assurance function is answerable for the evidence and has no
+            stake in the answer being favourable.
+          </p>
+          <p>
+            Corrective action is taken within the access that has been granted and through the enterprise’s own change
+            process. Where a correction needs a decision that belongs to the business, the decision is recorded with
+            its owner and an expiry date. The access model is described in
+            <a href="/security-trust">Security and trust</a>.
+          </p>
+        </div>
+      </SectionHead>
+    </Section>
+
+    <Section surface="light" alt labelledby="start-title" id="start">
+      <SectionHead
+        label="Starting"
+        title="How does an enterprise start?"
+        id="start-title"
+        split
+      >
+        <div class="prose">
+          <p>
+            With one outcome. Assurance does not start with an estate-wide assessment. It starts with one outcome that
+            matters and one system that delivers it. The first step establishes what must be true, which signals can
+            prove it, what threshold the business will agree and what the state is today.
+          </p>
+          <p>
+            That first baseline is often the most informative result. It shows which outcomes the enterprise can
+            already prove, which it believes but cannot prove, and which no one has measured.
+          </p>
+        </div>
+        <a href="/use-cases" class="lk hw__link">
+          <span class="ul">See the situations where assurance is lost</span>
+          <Arrow />
+        </a>
+      </SectionHead>
+
+      <h3 class="hw__sub rv">What to bring to a first conversation</h3>
+      <ol class="hw__cards hw__cards--5">
+        {
+          prepare.map((item, i) => (
+            <li class="hw__card rv">
+              <p class="hw__n num">{pad(i + 1)}</p>
+              <h4 class="hw__card-title">{item.title}</h4>
+              <p class="hw__card-text">{item.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </Section>
+
+    <Section surface="light" labelledby="glossary-title" id="glossary">
+      <SectionHead
+        label="Glossary"
+        title="The terms, defined"
+        id="glossary-title"
+        split
+        text="Each term has one meaning across every page of this site. Each has its own address, so a definition can be linked to on its own."
+      />
+      <dl class="hw__terms mt-block">
+        {
+          glossary.map((item) => (
+            <div class="hw__term rv" id={termAnchor(item.term)}>
+              <dt>
+                <a href={`#${termAnchor(item.term)}`}>{item.term}</a>
+              </dt>
+              <dd>{item.definition}</dd>
             </div>
           ))
         }
       </dl>
-    </SectionHead>
-  </Section>
+    </Section>
 
-  <Section surface="light" labelledby="state-title">
-    <SectionHead
-      label="State"
-      title="What happens when assurance is lost"
-      id="state-title"
-      split
-    >
-      <div class="prose">
-        <p>
-          State is determined by evidence, not by opinion. Movement toward a threshold sets the state to Degrading,
-          and corrective action begins there, while there is still time to act before the outcome is lost. A breach
-          sets the state to At risk. Evidence that has aged past its validity, or that a change has invalidated, sets
-          the state to Unassured.
-        </p>
-        <p>
-          Unassured is deliberately separate from failing. A recovery plan that has never been exercised may well
-          work. No one knows. Treating the unknown as acceptable is how most technology risk is carried without being
-          seen.
-        </p>
-        <p>
-          In each case the owner of the threshold is told, the correction is owned, and the state returns to Assured
-          only when a re-test shows the outcome is met. The argument behind the model is set out in
-          <a href="/assurance-is-a-state-not-a-report">Assurance is a state, not a report</a>.
-        </p>
-      </div>
-    </SectionHead>
-    <div class="mt-block">
-      <StateModel />
-    </div>
-  </Section>
-
-  <Section surface="light" alt labelledby="teams-title">
-    <SectionHead
-      label="Working model"
-      title="Alongside the teams that run the systems"
-      id="teams-title"
-      split
-    >
-      <div class="prose">
-        <p>
-          Xyvionix does not replace platform, security, data or AI teams, and it does not supply people to them. Those
-          teams design, build and operate. Assurance is a separate responsibility: to hold the evidence that what they
-          operate still meets the outcome the business agreed, and to carry corrections through to closure.
-        </p>
-        <p>
-          The separation matters. A team that builds a system and also certifies that it works is marking its own
-          work, usually under delivery pressure. An assurance function is answerable for the evidence and has no
-          stake in the answer being favourable.
-        </p>
-        <p>
-          Corrective action is taken within the access that has been granted and through the enterprise’s own change
-          process. Where a correction needs a decision that belongs to the business, the decision is recorded with
-          its owner and an expiry date. The access model is described in
-          <a href="/security-trust">Security and trust</a>.
-        </p>
-      </div>
-    </SectionHead>
-  </Section>
-
-  <Section surface="light" labelledby="receives-title">
-    <SectionHead label="What the business receives" title="Four outcomes, held continuously" id="receives-title" />
-    <div class="mt-block">
-      <Outcomes />
-    </div>
-  </Section>
-
-  <Section surface="light" alt labelledby="start-title">
-    <SectionHead
-      label="Starting"
-      title="Begin with one outcome"
-      id="start-title"
-      split
-    >
-      <div class="prose">
-        <p>
-          Assurance does not start with an estate-wide assessment. It starts with one outcome that matters and one
-          system that delivers it. The first step establishes what must be true, which signals can prove it, what
-          threshold the business will agree and what the state is today.
-        </p>
-        <p>
-          That first baseline is often the most informative result. It shows which outcomes the enterprise can already
-          prove, which it believes but cannot prove, and which no one has measured.
-        </p>
-      </div>
-      <a href="/use-cases" class="lk start__link">
-        <span class="ul">See the situations where assurance is lost</span>
-        <Arrow />
-      </a>
-    </SectionHead>
-  </Section>
-
-  <Section surface="light" labelledby="questions-title">
-    <Faq items={methodFaqs} title="Questions about the method" />
-  </Section>
+    <Section surface="light" alt labelledby="questions-title" id="questions">
+      <Faq items={methodFaqs} title="Questions about the method" />
+    </Section>
+  </div>
 </PageLayout>
 
 <style>
-  .compare td,
-  .compare th {
-    min-width: 11rem;
+  /* Anchors stop below the chapter bar. The navigation is already allowed for in base.css. */
+  .hw :global(.section[id]) {
+    scroll-margin-top: 0.5rem;
   }
 
-  .compare td:last-child {
-    color: var(--tx);
-    font-weight: 500;
+  .hw__link {
+    margin-top: 1.75rem;
   }
 
-  .steps {
-    border-top: 1px solid var(--ln);
+  .hw__key,
+  .hw__n {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
   }
 
-  .steps__term {
-    display: flex;
+  .hw__n {
+    font-size: 0.6875rem;
+  }
+
+  /* ---- in short ---- */
+  .hw__short {
+    padding: 1.5rem;
+    border: 1px solid var(--tx);
+    border-radius: var(--radius-md);
+    background: var(--tx);
+    color: var(--bg0);
+  }
+
+  .hw__short .hw__key,
+  .hw__short .hw__n {
+    color: var(--gst);
+  }
+
+  .hw__short-list {
+    display: grid;
     gap: 1rem;
-    align-items: baseline;
+    margin-top: 1.25rem;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: -0.012em;
   }
 
-  .start__link {
-    margin-top: 2rem;
+  .hw__short-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+
+  @media (min-width: 56rem) {
+    .hw__short {
+      padding: 2.25rem 2.5rem;
+    }
+
+    .hw__short-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem 3rem;
+    }
+  }
+
+  /* ---- sub-headings inside a section ---- */
+  .hw__sub {
+    margin-top: 3.5rem;
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    line-height: 1.16;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .hw__sub-text {
+    margin-top: 0.75rem;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--mut);
+    max-width: 62ch;
+  }
+
+  .hw__table {
+    margin-top: 1.75rem;
+  }
+
+  .hw__sub + .hw__cards {
+    margin-top: 1.75rem;
+  }
+
+  /* ---- cards ---- */
+  .hw__cards {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 44rem) {
+    .hw__cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .hw__cards--3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .hw__cards--5 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  .hw__card {
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--ln2);
+    border-top: 2px solid var(--tx);
+    border-radius: var(--radius-md);
+    background: var(--bg0);
+    transition: transform 0.55s var(--ease);
+  }
+
+  .hw__card-title {
+    margin-top: 1.1rem;
+    font-size: 1.1875rem;
+    font-weight: 600;
+    line-height: 1.22;
+    letter-spacing: -0.025em;
+  }
+
+  .hw__card-text {
+    margin-top: 0.6rem;
+    font-size: 0.9375rem;
+    line-height: 1.62;
+    color: var(--mut);
+  }
+
+  /* ---- the closure rule ---- */
+  .hw__rule {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    margin-top: 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid var(--tx);
+    border-radius: var(--radius-md);
+    font-size: 1.0625rem;
+    font-weight: 550;
+    line-height: 1.45;
+    letter-spacing: -0.012em;
+  }
+
+  .hw__rule .st {
+    margin-top: 0.35rem;
+  }
+
+  /* ---- glossary ---- */
+  .hw__terms {
+    display: grid;
+    gap: 0 3rem;
+    border-top: 1px solid var(--ln2);
+  }
+
+  @media (min-width: 56rem) {
+    .hw__terms {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .hw__term {
+    min-width: 0;
+    padding-block: 1.35rem;
+    border-bottom: 1px solid var(--ln);
+    scroll-margin-top: 4rem;
+    transition: transform 0.55s var(--ease);
+  }
+
+  .hw__term:target {
+    box-shadow: inset 2px 0 0 var(--tx);
+    padding-left: 1rem;
+  }
+
+  .hw__term dt {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+
+  .hw__term dt a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .hw__term dd {
+    margin-top: 0.4rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--mut);
+    max-width: 58ch;
   }
 </style>

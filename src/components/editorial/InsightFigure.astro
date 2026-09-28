@@ -1,0 +1,259 @@
+---
+/**
+ * A small figure that draws the argument of an insight, on an obsidian tile.
+ * Four kinds, each built from the same marks as the rest of the site:
+ *
+ *   expiry    evidence of several kinds, each valid until a different event
+ *   recovery  a recovery plan against the chain of phases actually needed
+ *   closure   a ticket that closes while the exposure stays open
+ *   state     periodic reports against a continuously held state
+ *   trace     a signal against its threshold (fallback)
+ *
+ * Decorative: the article title and summary beside it carry the meaning.
+ */
+import type { FigureKind } from '../../data/hubs.ts';
+
+interface Props {
+  kind: FigureKind;
+  /** Unique per instance, for pattern ids. */
+  uid: string;
+  size?: 'lg' | 'sm';
+}
+
+const { kind, uid, size = 'sm' } = Astro.props;
+const stripes = `fig-${uid}-stripes`;
+
+const expiryRows = [
+  { label: 'TEST SET', y: 42, event: 176 },
+  { label: 'JUDGE', y: 78, event: 226 },
+  { label: 'TRAFFIC', y: 114, event: 198 },
+  { label: 'SYSTEM', y: 150, event: 258 },
+];
+
+const phases = [
+  { label: 'DETECT', x: 30, w: 46, fill: 'solid' },
+  { label: 'DECIDE', x: 80, w: 62, fill: 'striped' },
+  { label: 'RESTORE', x: 146, w: 96, fill: 'solid' },
+  { label: 'VERIFY', x: 246, w: 46, fill: 'hollow' },
+];
+---
+
+<div class:list={['fig', `fig--${size}`]}>
+  <svg viewBox="0 0 320 180" aria-hidden="true" focusable="false">
+    <defs>
+      <pattern id={stripes} width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <line class="fig__stripe" x1="0" y1="0" x2="0" y2="5"></line>
+      </pattern>
+    </defs>
+
+    {
+      kind === 'expiry' && (
+        <>
+          {expiryRows.map((row) => (
+            <>
+              <text class="fig__label" x="20" y={row.y + 3}>
+                {row.label}
+              </text>
+              <line class="fig__solidline" x1="100" y1={row.y} x2={row.event} y2={row.y} />
+              <rect class="fig__solid" x="96" y={row.y - 4} width="8" height="8" />
+              <line class="fig__tick" x1={row.event} y1={row.y - 9} x2={row.event} y2={row.y + 9} />
+              <line class="fig__unknown" x1={row.event + 4} y1={row.y} x2="296" y2={row.y} stroke-dasharray="1.5 5" />
+              <rect class="fig__dashed" x="292.5" y={row.y - 4.5} width="9" height="9" stroke-dasharray="2.5 2" />
+            </>
+          ))}
+        </>
+      )
+    }
+
+    {
+      kind === 'recovery' && (
+        <>
+          <text class="fig__label" x="30" y="40">PLAN</text>
+          <line class="fig__solidline" x1="30" y1="54" x2="196" y2="54" />
+          <rect class="fig__solid" x="192" y="50" width="8" height="8" />
+
+          <line class="fig__threshold" x1="196" y1="24" x2="196" y2="156" stroke-dasharray="3 4" />
+          <text class="fig__label fig__label--muted" x="202" y="32">TARGET</text>
+
+          <text class="fig__label" x="30" y="92">MEASURED</text>
+          {phases.map((p) => (
+            <>
+              {p.fill === 'solid' && <rect class="fig__solid" x={p.x} y="102" width={p.w} height="12" />}
+              {p.fill === 'striped' && <rect class="fig__striped" x={p.x} y="102" width={p.w} height="12" fill={`url(#${stripes})`} />}
+              {p.fill === 'hollow' && <rect class="fig__hollow" x={p.x + 0.75} y="102.75" width={p.w - 1.5} height="10.5" />}
+              <text class="fig__label fig__label--sm" x={p.x} y="132">
+                {p.label}
+              </text>
+            </>
+          ))}
+        </>
+      )
+    }
+
+    {
+      kind === 'closure' && (
+        <>
+          <text class="fig__label" x="20" y="58">TICKET</text>
+          <line class="fig__solidline" x1="100" y1="54" x2="182" y2="54" />
+          <rect class="fig__solid" x="178" y="50" width="8" height="8" />
+          <text class="fig__label fig__label--muted" x="194" y="58">CLOSED</text>
+
+          <text class="fig__label" x="20" y="124">EXPOSURE</text>
+          <line class="fig__solidline" x1="100" y1="120" x2="182" y2="120" />
+          <line class="fig__unknown" x1="186" y1="120" x2="226" y2="120" stroke-dasharray="1.5 5" />
+          <line class="fig__solidline" x1="230" y1="120" x2="296" y2="120" />
+          <rect class="fig__surface" x="177" y="115" width="10" height="10" />
+          <rect class="fig__hollow" x="177" y="115" width="10" height="10" />
+          <rect class="fig__surface" x="291" y="115" width="10" height="10" />
+          <rect class="fig__hollow" x="291" y="115" width="10" height="10" />
+          <text class="fig__label fig__label--muted" x="296" y="146" text-anchor="end">STILL OPEN</text>
+
+          <line class="fig__threshold" x1="182" y1="30" x2="182" y2="150" stroke-dasharray="3 4" />
+        </>
+      )
+    }
+
+    {
+      kind === 'state' && (
+        <>
+          <text class="fig__label" x="20" y="58">REPORTS</text>
+          <line class="fig__unknown" x1="100" y1="54" x2="296" y2="54" stroke-dasharray="1.5 5" />
+          {[110, 172, 234, 296].map((x) => (
+            <rect class="fig__solid" x={x - 4} y="50" width="8" height="8" />
+          ))}
+
+          <text class="fig__label" x="20" y="124">STATE</text>
+          <rect class="fig__solid" x="100" y="114" width="92" height="12" />
+          <rect class="fig__striped" x="196" y="114" width="34" height="12" fill={`url(#${stripes})`} />
+          <rect class="fig__hollow" x="234.75" y="114.75" width="24.5" height="10.5" />
+          <rect class="fig__solid" x="264" y="114" width="36" height="12" />
+        </>
+      )
+    }
+
+    {
+      kind === 'trace' && (
+        <>
+          <line class="fig__threshold" x1="20" y1="112" x2="300" y2="112" stroke-dasharray="3 4" />
+          <polyline class="fig__solidline" points="20,60 60,52 100,64 140,58 180,84 220,124 260,70 300,56" />
+          {[20, 100, 260, 300].map((x, i) => (
+            <rect class="fig__solid" x={x - 4} y={[60, 64, 70, 56][i]! - 4} width="8" height="8" />
+          ))}
+          <rect class="fig__surface" x="215" y="119" width="10" height="10" />
+          <rect class="fig__hollow" x="215" y="119" width="10" height="10" />
+        </>
+      )
+    }
+  </svg>
+</div>
+
+<style>
+  /* An obsidian tile on any surface: the figure always uses the dark palette. */
+  .fig {
+    --tx: #f5f4f1;
+    --mut: #a8a7a0;
+    --fnt: #8a8982;
+    --gst: #4a4944;
+    --bg0: #0c0c0b;
+    --ln2: rgba(245, 244, 241, 0.16);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg0);
+    background-image:
+      linear-gradient(rgba(245, 244, 241, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245, 244, 241, 0.04) 1px, transparent 1px);
+    background-size: 36px 36px;
+    background-position: center;
+  }
+
+  .fig--lg {
+    height: 100%;
+    min-height: 16rem;
+    padding: 2rem;
+  }
+
+  .fig--sm {
+    aspect-ratio: 16 / 9;
+    padding: 1rem 1.25rem;
+  }
+
+  .fig svg {
+    width: 100%;
+    max-width: 30rem;
+    height: auto;
+  }
+
+  .fig__label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 1px;
+    fill: var(--fnt);
+  }
+
+  .fig__label--muted {
+    fill: var(--mut);
+  }
+
+  .fig__label--sm {
+    font-size: 7.5px;
+    letter-spacing: 0.6px;
+  }
+
+  .fig__solidline {
+    fill: none;
+    stroke: var(--tx);
+    stroke-width: 1.8;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  .fig__unknown {
+    stroke: var(--fnt);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+
+  .fig__tick {
+    stroke: var(--mut);
+    stroke-width: 1;
+  }
+
+  .fig__threshold {
+    stroke: var(--fnt);
+    stroke-width: 1;
+  }
+
+  .fig__solid {
+    fill: var(--tx);
+  }
+
+  .fig__surface {
+    fill: var(--bg0);
+    stroke: var(--bg0);
+    stroke-width: 3;
+  }
+
+  .fig__hollow {
+    fill: none;
+    stroke: var(--tx);
+    stroke-width: 1.6;
+  }
+
+  .fig__dashed {
+    fill: none;
+    stroke: var(--fnt);
+    stroke-width: 1.2;
+  }
+
+  .fig__striped {
+    stroke: var(--ln2);
+    stroke-width: 1;
+  }
+
+  .fig__stripe {
+    stroke: var(--tx);
+    stroke-width: 2.4;
+  }
+</style>

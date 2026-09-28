@@ -224,7 +224,8 @@ const seo = buildSeo({
     )
   }
 
-  <Cta title={ctaTitle} text={ctaText} location={`${pageType}-cta`} />
+  {/* The closing heading asks the page’s own question, so no two pages close the same way. */}
+  <Cta title={data.ogQuestion ?? ctaTitle} text={ctaText} location={`${pageType}-cta`} />
 </BaseLayout>
 
 <style>

@@ -4,10 +4,6 @@ Generated 2026-09-28 by `scripts/claim-audit.mjs`. 53 item(s).
 
 Each item is a pattern match, not a verdict. For each one, decide: sourced fact (keep), technical phrase (keep), or unverified claim about Xyvionix (rewrite).
 
-## src/components/evidence/SignalTrace.astro
-
-- **Percentage figure: confirm it is sourced.** width: 100%;
-
 ## src/content/assurance/ai-assurance.md
 
 - **Percentage figure: confirm it is sourced.** **The cost changes.** Unit cost moves with no change in traffic. Anthropic's models from Claude Opus 4.7 onward use a tokenizer that produces about 30% more tok
@@ -160,6 +156,10 @@ Each item is a pattern match, not a verdict. For each one, decide: sourced fact 
 ## src/content/use-cases/unverified-vulnerability-closure.md
 
 - **Percentage figure: confirm it is sourced.** **The fix reached part of the estate.** The finding was closed when the change was released to the first environment or the first cluster. The Verizon 2026 Data
+
+## src/data/home-faq.ts
+
+- **Certification or compliance claim about a framework.** q: 'Is Xyvionix SOC 2 or ISO 27001 certified?',
 
 ## src/pages/company.astro
 

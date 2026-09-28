@@ -1,0 +1,660 @@
+---
+/**
+ * Why assurance comes first. The argument, then the four kinds of system it
+ * applies to most: agentic AI, AI models, modern systems and critical
+ * systems. Each kind links to the page that makes its case in full.
+ */
+import PageLayout from '../layouts/PageLayout.astro';
+import Section from '../components/layout/Section.astro';
+import SectionHead from '../components/layout/SectionHead.astro';
+import Arrow from '../components/layout/Arrow.astro';
+import WhyFigure from '../components/why/WhyFigure.astro';
+import { clusterByKey } from '../data/clusters.ts';
+import { pathFor } from '../data/routes.ts';
+import { firsts, objections, orders, systemKinds } from '../data/why-assurance.ts';
+import { getPage } from '../lib/pages.ts';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+
+// Link only to pages that are published.
+const kinds = await Promise.all(
+  systemKinds.map(async (kind, i) => ({
+    ...kind,
+    n: pad(i + 1),
+    page: await getPage(kind.slug),
+    clusters: kind.areas.map((key) => clusterByKey[key]),
+  })),
+);
+---
+
+<PageLayout
+  slug="why-assurance"
+  label="Why assurance"
+  pageType="core"
+  section="assurance"
+  lede="Assurance is usually added after a system is built, if there is time. For four kinds of system that order is the wrong way round. The proof has to exist before the business relies on the system, and it has to be kept for as long as the reliance lasts."
+  secondary={{ label: 'How assurance works', href: '/how-assurance-works' }}
+  ctaLabel="Next"
+  ctaTitle="Which system are you about to rely on?"
+  ctaText="Name it, and the first conversation sets out what would have to be proven before you do."
+>
+  <Section surface="light" flush labelledby="order-title">
+    <SectionHead
+      label="The order is the argument"
+      title="The same work, in a different order, carries a different risk"
+      id="order-title"
+      split
+      text="Both orders end with a system that has been proven. In one of them the business relies on the system for a period in which nothing is known. That period is where the loss happens."
+    />
+
+    <div class="wo mt-block">
+      {
+        orders.map((track) => (
+          <div class:list={['wo__track', 'rv', track.own && 'wo__track--own']}>
+            <p class="wo__name">{track.name}</p>
+            <ol class="wo__steps">
+              {track.steps.map((step) => (
+                <li class="wo__step">
+                  <span class:list={['st', `st-${step.state}`]} aria-hidden="true" />
+                  <span>{step.label}</span>
+                </li>
+              ))}
+            </ol>
+            <p class="wo__verdict">{track.verdict}</p>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section surface="dark" alt glow labelledby="kinds-title">
+    <SectionHead
+      label="Four kinds of system"
+      title="Where assurance has to come before anything else"
+      id="kinds-title"
+      split
+      text="Each of these can now do something that systems could not do before. Each has a different reason why a review at launch is not enough."
+    />
+
+    <nav class="wk__index rv" aria-label="Kinds of system">
+      <ol>
+        {
+          kinds.map((kind) => (
+            <li>
+              <a href={`#${kind.key}`} class="wk__jump">
+                <span class="wk__jump-n num">{kind.n}</span>
+                <span>
+                  <span class="wk__jump-name">{kind.name}</span>
+                  <span class="wk__jump-reason">{kind.reason}</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+
+    <div class="wk">
+      {
+        kinds.map((kind) => (
+          <article class="wk__card rv" id={kind.key} aria-labelledby={`${kind.key}-title`}>
+            <div class="wk__figure">
+              <WhyFigure kind={kind.key} uid={kind.key} />
+            </div>
+
+            <div class="wk__content">
+              <p class="wk__label">
+                <span class="num">{kind.n}</span>
+                {kind.name}
+              </p>
+              <h3 class="wk__reason" id={`${kind.key}-title`}>
+                {kind.reason}
+              </h3>
+              <p class="wk__line">{kind.line}</p>
+
+              <dl class="wk__facts">
+                <div>
+                  <dt>What it can now do</dt>
+                  <dd>{kind.can}</dd>
+                </div>
+                <div>
+                  <dt>What that puts at stake</dt>
+                  <dd>{kind.stake}</dd>
+                </div>
+                <div>
+                  <dt>What is usually assumed</dt>
+                  <dd>{kind.assumed}</dd>
+                </div>
+              </dl>
+
+              <div class="wk__prove">
+                <p class="wk__key">What has to be proven first</p>
+                <ul>
+                  {kind.prove.map((item) => (
+                    <li>
+                      <span class="st st--sm st-assured" aria-hidden="true" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <footer class="wk__foot">
+                <ul class="wk__chips" aria-label="Assurance areas involved">
+                  {kind.clusters.map((cluster) => (
+                    <li>
+                      <a href={pathFor(cluster.hub)} class="wk__chip">
+                        {cluster.shortName}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+                {kind.page && (
+                  <a href={kind.page.path} class="lk lk--sm" data-track="card_click" data-track-location="why-assurance">
+                    <span class="ul">The full argument for {kind.name.toLowerCase().replace('ai', 'AI')}</span>
+                    <Arrow size="sm" />
+                  </a>
+                )}
+              </footer>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section surface="light" labelledby="first-title">
+    <SectionHead
+      label="What first means"
+      title="Three moments when the proof has to exist already"
+      id="first-title"
+      split
+      text="First is not a slogan about priority. It is a statement about timing: the proof is in place before the moment it is needed."
+    />
+    <ol class="wf mt-block">
+      {
+        firsts.map((item, i) => (
+          <li class="wf__card rv">
+            <p class="wf__n num">{pad(i + 1)}</p>
+            <h3 class="wf__title">{item.title}</h3>
+            <p class="wf__text">{item.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <Section surface="light" alt labelledby="objections-title">
+    <SectionHead
+      label="Four objections"
+      title="What is said against putting assurance first"
+      id="objections-title"
+      split
+      text="Each of these is reasonable, and each describes something worth having. None of them answers whether the outcome is still being met today."
+    />
+    <div class="wb mt-block">
+      {
+        objections.map((item) => (
+          <article class="wb__card rv">
+            <h3 class="wb__says">“{item.says}”</h3>
+            <p class="wb__answer">{item.answer}</p>
+          </article>
+        ))
+      }
+    </div>
+  </Section>
+</PageLayout>
+
+<style>
+  /* ---- two orders ---- */
+  .wo {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 64rem) {
+    .wo {
+      gap: 1.25rem;
+    }
+  }
+
+  .wo__track {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+    background: var(--bg1);
+    transition: transform 0.55s var(--ease);
+  }
+
+  .wo__track--own {
+    border-color: var(--tx);
+    background: var(--tx);
+    color: var(--bg0);
+    --ln2: rgba(250, 250, 248, 0.3);
+    --fnt: #a8a7a0;
+  }
+
+  .wo__track--own .st-assured {
+    background: var(--bg0);
+  }
+
+  .wo__track--own .st-unassured {
+    border-color: #a8a7a0;
+  }
+
+  .wo__name {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .wo__steps {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .wo__step {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 0;
+    padding: 0.85rem 0.75rem;
+    white-space: nowrap;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.012em;
+  }
+
+  .wo__verdict {
+    font-size: 1.0625rem;
+    font-weight: 550;
+    line-height: 1.4;
+    letter-spacing: -0.015em;
+  }
+
+  @media (min-width: 40rem) {
+    .wo__track {
+      padding: 2rem;
+    }
+  }
+
+  @media (min-width: 56rem) {
+    .wo__steps {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .wo__track {
+      grid-template-columns: 10rem minmax(0, 1fr) 14rem;
+      align-items: center;
+      gap: 2.5rem;
+      padding: 2rem 2.5rem;
+    }
+  }
+
+  /* ---- index of kinds ---- */
+  .wk__index {
+    margin-top: 2.5rem;
+  }
+
+  .wk__index ol {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 64rem) {
+    .wk__index ol {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .wk__jump {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    height: 100%;
+    padding: 1rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+    transition:
+      background-color 0.2s,
+      color 0.2s,
+      border-color 0.2s;
+  }
+
+  .wk__jump-n {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+    color: var(--fnt);
+  }
+
+  .wk__jump-name,
+  .wk__jump-reason {
+    display: block;
+  }
+
+  .wk__jump-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.012em;
+  }
+
+  .wk__jump-reason {
+    margin-top: 0.2rem;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--mut);
+  }
+
+  .wk__jump:hover {
+    background: var(--tx);
+    border-color: var(--tx);
+    color: var(--bg0);
+  }
+
+  .wk__jump:hover .wk__jump-reason,
+  .wk__jump:hover .wk__jump-n {
+    color: var(--gst);
+  }
+
+  /* ---- one dossier per kind ---- */
+  .wk {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  .wk__card {
+    display: grid;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-xl);
+    background: var(--bg0);
+    scroll-margin-top: 1rem;
+    transition: transform 0.55s var(--ease);
+  }
+
+  .wk__figure {
+    min-width: 0;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .wk__content {
+    min-width: 0;
+    padding: 1.75rem 1.25rem 1.5rem;
+    background: var(--gls);
+  }
+
+  .wk__label {
+    display: flex;
+    gap: 0.9rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--mut);
+  }
+
+  .wk__label .num {
+    color: var(--fnt);
+  }
+
+  .wk__reason {
+    margin-top: 0.9rem;
+    font-size: clamp(1.875rem, 1.6rem + 1.3vw, 2.75rem);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+
+  .wk__line {
+    margin-top: 1rem;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--mut);
+    max-width: 54ch;
+  }
+
+  .wk__facts {
+    display: grid;
+    margin-top: 1.75rem;
+    border-top: 1px solid var(--ln);
+  }
+
+  .wk__facts > div {
+    padding-block: 1.1rem;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .wk__facts dt,
+  .wk__key {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .wk__facts dd {
+    margin-top: 0.4rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--tx);
+  }
+
+  .wk__prove {
+    margin-top: 1.5rem;
+  }
+
+  .wk__prove ul {
+    display: grid;
+    gap: 0.7rem;
+    margin-top: 0.9rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .wk__prove li {
+    display: flex;
+    gap: 0.85rem;
+  }
+
+  .wk__prove .st {
+    margin-top: 0.4rem;
+  }
+
+  .wk__foot {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px dashed var(--ln2);
+  }
+
+  .wk__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .wk__chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding: 0 0.85rem;
+    border: 1px solid var(--ln2);
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    line-height: 1;
+    color: var(--mut);
+    transition:
+      color 0.2s,
+      border-color 0.2s,
+      background-color 0.2s;
+  }
+
+  .wk__chip:hover {
+    color: var(--bg0);
+    background: var(--tx);
+    border-color: var(--tx);
+  }
+
+  @media (min-width: 40rem) {
+    .wk__content {
+      padding: 2.25rem 2rem 2rem;
+    }
+
+    .wk__facts {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 2rem;
+      border-bottom: 1px solid var(--ln);
+    }
+
+    .wk__facts > div {
+      border-bottom: 0;
+    }
+
+    .wk__prove ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 2rem;
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .wk__card {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 8fr);
+    }
+
+    .wk__card:nth-child(even) {
+      grid-template-columns: minmax(0, 8fr) minmax(0, 5fr);
+    }
+
+    .wk__card:nth-child(even) .wk__figure {
+      order: 2;
+      border-right: 0;
+      border-left: 1px solid var(--ln);
+    }
+
+    .wk__figure {
+      border-bottom: 0;
+      border-right: 1px solid var(--ln);
+    }
+
+    .wk__content {
+      padding: 2.75rem 3rem 2.5rem;
+    }
+
+    .wk__foot {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+    }
+  }
+
+  /* ---- what first means ---- */
+  .wf {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 56rem) {
+    .wf {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+
+  .wf__card {
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--ln2);
+    border-top: 2px solid var(--tx);
+    border-radius: var(--radius-md);
+    background: var(--bg1);
+    transition: transform 0.55s var(--ease);
+  }
+
+  @media (min-width: 64rem) {
+    .wf__card {
+      padding: 2rem;
+    }
+  }
+
+  .wf__n {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: var(--track-label);
+    color: var(--fnt);
+  }
+
+  .wf__title {
+    margin-top: 1.25rem;
+    font-size: clamp(1.375rem, 1.3rem + 0.35vw, 1.5625rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.032em;
+  }
+
+  .wf__text {
+    margin-top: 0.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--mut);
+  }
+
+  /* ---- objections ---- */
+  .wb {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 56rem) {
+    .wb {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+
+  .wb__card {
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--ln);
+    border-radius: var(--radius-md);
+    background: var(--bg0);
+    transition: transform 0.55s var(--ease);
+  }
+
+  @media (min-width: 64rem) {
+    .wb__card {
+      padding: 2rem;
+    }
+  }
+
+  .wb__says {
+    font-size: clamp(1.25rem, 1.18rem + 0.3vw, 1.4375rem);
+    font-weight: 600;
+    line-height: 1.22;
+    letter-spacing: -0.028em;
+  }
+
+  .wb__answer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--ln2);
+    font-size: 0.969rem;
+    line-height: 1.7;
+    color: var(--mut);
+  }
+</style>

@@ -1,0 +1,198 @@
+---
+/**
+ * Chapter 3, third part: who does what. One row per stage of an engagement,
+ * one column per party. A real table on wide screens; on phones each stage
+ * becomes a card with the three parties named inside it.
+ */
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import Arrow from '../layout/Arrow.astro';
+import { responsibilities } from '../../data/assurance-page.ts';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<Section surface="light" labelledby="resp-title">
+  <SectionHead
+    label="Who does what"
+    title="Your teams keep running the systems. Xyvionix answers for the proof."
+    id="resp-title"
+    split
+    text="Xyvionix does not replace platform, security, data or AI teams, and does not supply people to them. A team that builds a system and also certifies it is marking its own work. The two responsibilities are kept apart."
+  >
+    <a href="/how-assurance-works" class="lk ar__link">
+      <span class="ul">The method in full</span>
+      <Arrow />
+    </a>
+  </SectionHead>
+
+  <div class="rs mt-block rv" role="table" aria-label="Who does what at each stage">
+    <div class="rs__head" role="row">
+      <span role="columnheader">Stage</span>
+      <span role="columnheader">The business</span>
+      <span role="columnheader">Your teams</span>
+      <span role="columnheader" class="rs__own-head">Xyvionix</span>
+    </div>
+
+    {
+      responsibilities.map((row, i) => (
+        <div class="rs__row" role="row">
+          <p class="rs__stage" role="rowheader">
+            <span class="rs__n num">{pad(i + 1)}</span>
+            {row.stage}
+          </p>
+          <p class="rs__cell" role="cell">
+            <span class="rs__key">The business</span>
+            {row.business}
+          </p>
+          <p class="rs__cell" role="cell">
+            <span class="rs__key">Your teams</span>
+            {row.teams}
+          </p>
+          <p class="rs__cell rs__cell--own" role="cell">
+            <span class="rs__key">Xyvionix</span>
+            {row.xyvionix}
+          </p>
+        </div>
+      ))
+    }
+  </div>
+</Section>
+
+<style>
+  .ar__link {
+    margin-top: 1.75rem;
+  }
+
+  .rs {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .rs__head {
+    display: none;
+  }
+
+  .rs__row {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+    background: var(--bg1);
+  }
+
+  .rs__stage {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    font-size: 1.375rem;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+  }
+
+  .rs__n {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: var(--track-label);
+    color: var(--fnt);
+  }
+
+  .rs__cell {
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--mut);
+  }
+
+  .rs__key {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  /* the column Xyvionix answers for, set apart by a frame, not by colour */
+  .rs__cell--own {
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    background: var(--tx);
+    color: var(--bg0);
+  }
+
+  .rs__cell--own .rs__key {
+    color: var(--gst);
+  }
+
+  @media (min-width: 64rem) {
+    .rs {
+      gap: 0;
+      border: 1px solid var(--ln2);
+      border-radius: var(--radius-md);
+      background: var(--bg1);
+      overflow: hidden;
+    }
+
+    .rs__head,
+    .rs__row {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) minmax(0, 3fr) minmax(0, 3.4fr);
+      gap: 0;
+      align-items: stretch;
+    }
+
+    .rs__head > span,
+    .rs__row > p {
+      padding: 1.5rem 2rem;
+    }
+
+    .rs__head {
+      font-family: var(--font-mono);
+      font-size: 0.656rem;
+      letter-spacing: var(--track-label);
+      text-transform: uppercase;
+      color: var(--fnt);
+      border-bottom: 1px solid var(--ln2);
+    }
+
+    .rs__own-head {
+      background: var(--tx);
+      color: var(--gst);
+    }
+
+    .rs__row {
+      padding: 0;
+      border: 0;
+      border-bottom: 1px solid var(--ln);
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .rs__row:last-child {
+      border-bottom: 0;
+    }
+
+    .rs__stage {
+      align-self: center;
+    }
+
+    .rs__cell {
+      display: flex;
+      align-items: center;
+    }
+
+    .rs__cell--own {
+      border-radius: 0;
+      font-weight: 500;
+    }
+
+    .rs__key {
+      display: none;
+    }
+  }
+</style>

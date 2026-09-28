@@ -1,0 +1,229 @@
+---
+/**
+ * A table that reads well at every width. On wide screens it is a grid with
+ * a heading row. On phones each row becomes a card, and every value carries
+ * its column name above it, so nothing scrolls sideways and nothing is cut.
+ *
+ * A cell is text, or a state, which is drawn as its mark and its name.
+ */
+import { stateByKey, type AssuranceState } from '../../data/assurances.ts';
+
+type Cell = string | { state: AssuranceState };
+
+interface Props {
+  /** Read out as the name of the table. */
+  label: string;
+  columns: string[];
+  rows: Cell[][];
+  /** Style the first cell of each row as the name of the row. */
+  lead?: boolean;
+  /** Index of a column to set apart, such as the one that describes assurance. */
+  own?: number;
+}
+
+const { label, columns, rows, lead = false, own } = Astro.props;
+const shape = `rt--${columns.length}${lead ? '-lead' : ''}`;
+---
+
+<div class:list={['rt', shape, 'rv']} role="table" aria-label={label}>
+  <div class="rt__head" role="row">
+    {
+      columns.map((column, c) => (
+        <span role="columnheader" class:list={[c === own && 'rt__own-head']}>
+          {column}
+        </span>
+      ))
+    }
+  </div>
+
+  {
+    rows.map((row) => (
+      <div class="rt__row" role="row">
+        {row.map((cell, c) => (
+          <div
+            class:list={['rt__cell', lead && c === 0 && 'rt__cell--lead', c === own && 'rt__cell--own']}
+            role={lead && c === 0 ? 'rowheader' : 'cell'}
+          >
+            <span class="rt__key">{columns[c]}</span>
+            {typeof cell === 'string' ? (
+              <span>{cell}</span>
+            ) : (
+              <span class="rt__state">
+                <span class:list={['st', `st-${cell.state}`]} aria-hidden="true" />
+                {stateByKey[cell.state].label}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  /* ---- phone: one card per row ---- */
+  .rt {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .rt__head {
+    display: none;
+  }
+
+  .rt__row {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+    padding: 1.25rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+    background: var(--bg0);
+  }
+
+  .rt__cell {
+    min-width: 0;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--mut);
+  }
+
+  .rt__key {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .rt__cell--lead {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--tx);
+  }
+
+  .rt__cell--lead .rt__key {
+    display: none;
+  }
+
+  .rt__cell--own {
+    color: var(--tx);
+    font-weight: 500;
+  }
+
+  .rt__state {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--tx);
+  }
+
+  /* ---- wide: a grid with a heading row ---- */
+  @media (min-width: 60rem) {
+    .rt {
+      gap: 0;
+      border: 1px solid var(--ln2);
+      border-radius: var(--radius-md);
+      background: var(--bg0);
+      overflow: hidden;
+    }
+
+    .rt__head,
+    .rt__row {
+      display: grid;
+      gap: 0;
+      align-items: stretch;
+    }
+
+    .rt--2 .rt__head,
+    .rt--2 .rt__row {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .rt--2-lead .rt__head,
+    .rt--2-lead .rt__row {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    }
+
+    .rt--3 .rt__head,
+    .rt--3 .rt__row {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 2fr) minmax(0, 4fr);
+    }
+
+    .rt--3-lead .rt__head,
+    .rt--3-lead .rt__row {
+      grid-template-columns: minmax(0, 2.6fr) minmax(0, 3.4fr) minmax(0, 4fr);
+    }
+
+    .rt--5-lead .rt__head,
+    .rt--5-lead .rt__row {
+      grid-template-columns: minmax(0, 1.5fr) repeat(4, minmax(0, 2fr));
+    }
+
+    .rt--5-lead .rt__head > span,
+    .rt--5-lead .rt__cell {
+      padding: 1.25rem 1.25rem;
+      font-size: 0.906rem;
+    }
+
+    .rt--5-lead .rt__head > span {
+      font-size: 0.656rem;
+    }
+
+    .rt__head {
+      border-bottom: 1px solid var(--ln2);
+      font-family: var(--font-mono);
+      font-size: 0.656rem;
+      letter-spacing: var(--track-label);
+      text-transform: uppercase;
+      color: var(--fnt);
+    }
+
+    .rt__head > span,
+    .rt__cell {
+      padding: 1.35rem 1.75rem;
+    }
+
+    .rt__row {
+      padding: 0;
+      border: 0;
+      border-bottom: 1px solid var(--ln);
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .rt__row:last-child {
+      border-bottom: 0;
+    }
+
+    .rt__cell {
+      display: flex;
+      align-items: center;
+    }
+
+    .rt__key {
+      display: none;
+    }
+
+    .rt__cell--lead {
+      font-size: 1rem;
+    }
+
+    .rt__own-head,
+    .rt__cell--own {
+      background: var(--bg1);
+      border-left: 1px solid var(--ln2);
+    }
+
+    .rt__own-head {
+      color: var(--tx);
+    }
+  }
+</style>

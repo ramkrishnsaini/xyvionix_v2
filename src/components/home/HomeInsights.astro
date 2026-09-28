@@ -1,12 +1,15 @@
 ---
-/** Three insights: featured first, then one each from other clusters. */
+/**
+ * Insights on the home page. Written for a business reader: why each piece
+ * of research matters, what is at stake and what it lets a leader do.
+ * It deliberately shows no counts, reading times or publishing detail.
+ */
+import { getCollection, render } from 'astro:content';
 import Section from '../layout/Section.astro';
 import Arrow from '../layout/Arrow.astro';
-import PostCard from '../editorial/PostCard.astro';
-import { getCollection } from 'astro:content';
-import { entryToRef } from '../../lib/pages.ts';
-import { readingMinutes } from '../../lib/text.ts';
-import { featured } from '../../data/hubs.ts';
+import InsightFigure from '../editorial/InsightFigure.astro';
+import { featured, figureFor, insightImpact, insightThemes } from '../../data/hubs.ts';
+import { pathFor } from '../../data/routes.ts';
 
 const includeDrafts = process.env.XYV_INCLUDE_DRAFTS === '1';
 const entries = (await getCollection('insights', ({ data }) => includeDrafts || data.draft !== true)).sort(
@@ -16,70 +19,537 @@ const entries = (await getCollection('insights', ({ data }) => includeDrafts || 
     a.id.localeCompare(b.id),
 );
 
-// Curated articles first, in the order given. Then one per cluster, to show the breadth of the research.
-const picked: typeof entries = featured.home
+// Curated pieces first, in the order given. Then one per theme not yet shown.
+const SHOWN = 4;
+const picked = featured.home
   .map((slug) => entries.find((e) => e.id === slug))
   .filter((e): e is (typeof entries)[number] => e !== undefined);
-const clustersSeen = new Set<string>(picked.map((e) => e.data.cluster));
-for (const entry of entries) {
-  if (picked.length === 3) break;
-  if (clustersSeen.has(entry.data.cluster)) continue;
-  clustersSeen.add(entry.data.cluster);
-  picked.push(entry);
+const themesShown = new Set<string>(picked.map((e) => e.data.cluster));
+for (const theme of insightThemes) {
+  if (picked.length >= SHOWN) break;
+  if (themesShown.has(theme.cluster)) continue;
+  const next = entries.find((e) => e.data.cluster === theme.cluster);
+  if (next) {
+    picked.push(next);
+    themesShown.add(theme.cluster);
+  }
 }
 
-const posts = picked.map((entry) => ({ page: entryToRef(entry), minutes: readingMinutes(entry.body) }));
-const [lead, ...rest] = posts;
+type Entry = (typeof entries)[number];
+
+/** Why the piece matters. Falls back to its own summary when no statement has been written. */
+const value = (entry: Entry) => {
+  const written = insightImpact[entry.id];
+  if (written) return written;
+  const match = entry.data.summary.match(/^(.+?[.!?])\s+(.*)$/s);
+  return match ? { stake: match[1]!, outcome: match[2]! } : { stake: entry.data.summary, outcome: '' };
+};
+
+const [lead, ...rest] = picked;
+const leadView = lead
+  ? {
+      entry: lead,
+      ...value(lead),
+      covers: (await render(lead)).headings.filter((h) => h.depth === 2).map((h) => h.text).slice(0, 4),
+    }
+  : undefined;
+
+const cards = rest.map((entry) => ({ entry, ...value(entry) }));
+
+const published = new Set<string>(entries.map((e) => e.data.cluster));
+const themes = insightThemes.filter((theme) => published.has(theme.cluster));
+
+const takeaways = [
+  {
+    title: 'See the exposure earlier',
+    text: 'Where proof expires in AI, infrastructure, security and data, while there is still time to act.',
+  },
+  {
+    title: 'Answer with evidence',
+    text: 'What to put in front of a board, an auditor or a regulator when they ask whether it still works.',
+  },
+  {
+    title: 'Put effort where it counts',
+    text: 'Which controls change the outcome, and which only produce a report.',
+  },
+];
+
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 {
-  lead && (
+  leadView && (
     <Section surface="light" labelledby="insights-title">
-      <div class="insights__head rv">
-        <div>
+      <div class="ins__head rv">
+        <div class="ins__intro">
           <p class="lbl">Xyvionix Insights</p>
-          <h2 id="insights-title" class="h2 insights__title">
-            Insights
+          <h2 id="insights-title" class="h2 ins__title">
+            What it costs when proof quietly expires
           </h2>
         </div>
-        <a href="/insights" class="lk">
-          <span class="ul">All insights</span>
-          <Arrow />
-        </a>
+        <div class="ins__aside">
+          <p class="body">
+            Few technology failures that reach a customer, an auditor or a regulator are sudden. The proof had expired
+            months earlier and nobody was told. This research shows where that happens and what it puts at risk, so
+            leaders can see the exposure before it becomes an event.
+          </p>
+        </div>
       </div>
 
-      <div class="posts posts--lead insights__grid">
-        <PostCard page={lead.page} readingTime={lead.minutes} lead />
-        <div class="posts__stack">
-          {rest.map((post) => (
-            <PostCard page={post.page} readingTime={post.minutes} />
-          ))}
+      <ul class="takes rv">
+        {
+          takeaways.map((item, i) => (
+            <li>
+              <span class="ins__n num">{pad(i + 1)}</span>
+              <span class="takes__body">
+                <span class="takes__title">{item.title}</span>
+                <span class="takes__text">{item.text}</span>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <article class="lead rv">
+        <div class="lead__figure">
+          <InsightFigure kind={figureFor(leadView.entry.id, leadView.entry.data.cluster)} uid="lead" size="lg" />
         </div>
+        <div class="lead__body">
+          <p class="meta">
+            <span class="meta__strong">{leadView.entry.data.category}</span>
+            <span class="meta__sep" aria-hidden="true">·</span>
+            <span>Featured</span>
+          </p>
+          <h3 class="lead__title">
+            <a href={pathFor(leadView.entry.id)} data-track="insight_click" data-track-location="home-lead">
+              <span class="ul">{leadView.entry.data.title}</span>
+            </a>
+          </h3>
+
+          <p class="lbl lbl--plain lead__key">Why it matters</p>
+          <p class="lead__finding">{leadView.stake}</p>
+
+          {
+            leadView.outcome && (
+              <>
+                <p class="lbl lbl--plain lead__key">What it lets you do</p>
+                <p class="lead__text">{leadView.outcome}</p>
+              </>
+            )
+          }
+
+          {
+            leadView.covers.length > 0 && (
+              <div class="lead__covers">
+                <p class="lbl lbl--plain">What it sets out</p>
+                <ol class="lead__list">
+                  {leadView.covers.map((heading, i) => (
+                    <li>
+                      <span class="ins__n num">{pad(i + 1)}</span>
+                      <span>{heading}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )
+          }
+
+          <div class="lead__foot">
+            <a href={pathFor(leadView.entry.id)} class="lk" data-track="insight_click" data-track-location="home-lead-link">
+              <span class="ul">Read the full analysis</span>
+              <Arrow />
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <ul class="cards">
+        {
+          cards.map((card, i) => (
+            <li class="rv">
+              <a href={pathFor(card.entry.id)} class="card2" data-track="insight_click" data-track-location="home-cards">
+                <InsightFigure kind={figureFor(card.entry.id, card.entry.data.cluster)} uid={`card-${i}`} />
+                <span class="card2__body">
+                  <span class="meta">
+                    <span class="meta__strong">{card.entry.data.category}</span>
+                  </span>
+                  <span class="card2__title">
+                    <span class="ul">{card.entry.data.title}</span>
+                  </span>
+                  <span class="card2__finding">{card.stake}</span>
+                  {card.outcome && (
+                    <span class="card2__outcome">
+                      <span class="card2__key">What it lets you do</span>
+                      <span>{card.outcome}</span>
+                    </span>
+                  )}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="themes rv">
+        <div class="themes__head">
+          <h3 class="lbl lbl--plain">The questions this research answers</h3>
+          <a href="/insights" class="lk lk--sm" data-track="cta_click" data-track-location="home-insights-all">
+            <span class="ul">All insights</span>
+            <Arrow size="sm" />
+          </a>
+        </div>
+        <ul class="themes__grid">
+          {
+            themes.map((theme) => (
+              <li>
+                <a href="/insights#all-title" class="theme" data-track="listing_click" data-track-location="home-themes">
+                  <span class="theme__label">{theme.title}</span>
+                  <span class="theme__name">{theme.question}</span>
+                  <span class="theme__text">{theme.stake}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
       </div>
     </Section>
   )
 }
 
 <style>
-  .insights__head {
+  /* heading row */
+  .ins__head {
+    display: grid;
+    gap: 2rem 4rem;
+  }
+
+  .ins__title {
+    margin-top: 1.5rem;
+    max-width: 18ch;
+  }
+
+  .ins__aside {
+    align-self: end;
+    max-width: 36rem;
+  }
+
+  .ins__aside .body {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+
+  .ins__n {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: 0.656rem;
+    letter-spacing: var(--track-label);
+    color: var(--fnt);
+  }
+
+  @media (min-width: 64rem) {
+    .ins__head {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    .ins__intro {
+      grid-column: span 6;
+    }
+
+    .ins__aside {
+      grid-column: 7 / span 6;
+    }
+  }
+
+  /* what a leader takes from the research */
+  .takes {
+    margin-top: 3rem;
+    display: grid;
+    border-top: 1px solid var(--ln2);
+  }
+
+  @media (min-width: 48rem) {
+    .takes {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 3rem;
+    }
+  }
+
+  .takes li {
     display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1.5rem;
+    gap: 1rem;
+    align-items: baseline;
+    padding-block: 1.5rem;
+    border-bottom: 1px solid var(--ln);
   }
 
-  .insights__title {
-    margin-top: 1.25rem;
+  .takes__body {
+    display: block;
   }
 
-  .insights__grid {
-    margin-top: 2.5rem;
+  .takes__title {
+    display: block;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    color: var(--tx);
+  }
+
+  .takes__text {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--mut);
+  }
+
+  /* lead */
+  .lead {
+    margin-top: 3rem;
+    display: grid;
+    border: 1px solid var(--ln2);
+    background: var(--bg1);
+  }
+
+  @media (min-width: 64rem) {
+    .lead {
+      margin-top: 3.5rem;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+  }
+
+  .lead__figure {
+    display: grid;
+    min-height: 15rem;
+  }
+
+  .lead__body {
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem;
   }
 
   @media (min-width: 40rem) {
-    .insights__grid {
-      margin-top: 3.5rem;
+    .lead__body {
+      padding: 2.75rem 3rem;
     }
+  }
+
+  .lead__title {
+    margin-top: 1.25rem;
+    font-size: clamp(1.7rem, 1.3rem + 1.5vw, 2.4rem);
+    line-height: 1.1;
+    max-width: 20ch;
+  }
+
+  .lead__key {
+    margin-top: 1.75rem;
+  }
+
+  .lead__finding {
+    margin-top: 0.6rem;
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    color: var(--tx);
+    max-width: 50ch;
+  }
+
+  .lead__text {
+    margin-top: 0.6rem;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--mut);
+    max-width: 54ch;
+  }
+
+  .lead__covers {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--ln);
+  }
+
+  .lead__list {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.7rem 2rem;
+    font-size: 0.906rem;
+    line-height: 1.45;
+    color: var(--tx);
+  }
+
+  @media (min-width: 40rem) {
+    .lead__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .lead__list li {
+    display: flex;
+    gap: 0.85rem;
+    align-items: baseline;
+  }
+
+  .lead__foot {
+    margin-top: auto;
+    padding-top: 2.25rem;
+  }
+
+  /* supporting pieces */
+  .cards {
+    margin-top: 1.25rem;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 48rem) {
+    .cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .cards > li {
+    display: flex;
+  }
+
+  .card2 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--ln);
+    transition: border-color 0.3s;
+  }
+
+  .card2:hover {
+    border-color: var(--ln2);
+  }
+
+  .card2__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+  }
+
+  @media (min-width: 64rem) {
+    .card2__body {
+      padding: 1.75rem;
+    }
+  }
+
+  .card2__title {
+    margin-top: 0.9rem;
+    font-size: 1.1875rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.25;
+    color: var(--tx);
+  }
+
+  .card2__finding {
+    margin-top: 0.75rem;
+    padding-bottom: 1.25rem;
+    font-size: 0.906rem;
+    line-height: 1.65;
+    color: var(--mut);
+  }
+
+  .card2__outcome {
+    display: block;
+    margin-top: auto;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--ln);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--tx);
+  }
+
+  .card2__key {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 400;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  /* the questions the research answers */
+  .themes {
+    margin-top: 3.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--ln2);
+  }
+
+  .themes__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+  }
+
+  .themes__grid {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: 0 2.5rem;
+    border-top: 1px solid var(--ln);
+  }
+
+  @media (min-width: 40rem) {
+    .themes__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .themes__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .themes__grid > li {
+    padding-block: 1.5rem;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .theme {
+    display: block;
+  }
+
+  .theme__label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .theme__name {
+    display: block;
+    margin-top: 0.6rem;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    color: var(--tx);
+  }
+
+  .theme__text {
+    display: block;
+    margin-top: 0.6rem;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--mut);
+  }
+
+  .theme:hover .theme__name {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
   }
 </style>

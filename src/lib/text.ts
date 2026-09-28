@@ -40,3 +40,11 @@ export function truncate(text: string, max: number): string {
   const cut = clean.slice(0, max - 1);
   return `${cut.slice(0, cut.lastIndexOf(' '))}…`;
 }
+
+/** A fragment identifier made from a heading or a term: lower case, hyphens, no punctuation. */
+export function anchorFor(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}

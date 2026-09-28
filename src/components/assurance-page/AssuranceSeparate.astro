@@ -1,0 +1,200 @@
+---
+/**
+ * Chapter 2, first part: why six outcomes and not one score.
+ *
+ * Three systems that a single health score would call healthy. Beside each
+ * score are the six states the score hides. Every mark carries its state as
+ * text for assistive technology.
+ */
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import { stateByKey } from '../../data/assurances.ts';
+import { clusterByKey } from '../../data/clusters.ts';
+import { separateCases, separateOrder } from '../../data/assurance-page.ts';
+
+const columns = separateOrder.map((key) => clusterByKey[key]);
+---
+
+<Section surface="light" alt labelledby="what-title" id="what">
+  <SectionHead
+    label="02 · What"
+    title="Outcomes are assured separately because they fail separately"
+    id="what-title"
+    split
+    text="A single score for the health of an estate hides the one thing a business needs to know: which outcome can no longer be proven. So each outcome has its own evidence, its own threshold and its own state."
+  />
+
+  <div class="sp mt-block">
+    {
+      separateCases.map((item) => (
+        <article class="sp__case rv">
+          <div class="sp__lead">
+            <h3 class="sp__name">{item.name}</h3>
+            <p class="sp__verdict">{item.verdict}</p>
+          </div>
+
+          <div class="sp__score">
+            <p class="sp__key">One score says</p>
+            <p class="sp__healthy">
+              <span class="st st-assured" aria-hidden="true" />
+              Healthy
+            </p>
+          </div>
+
+          <div class="sp__states">
+            <p class="sp__key">Six states show</p>
+            <ul class="sp__grid">
+              {columns.map((column) => {
+                const state = item.states[column.key];
+                return (
+                  <li class:list={['sp__cell', state !== 'assured' && 'sp__cell--lost']}>
+                    <span class:list={['st', `st-${state}`]} aria-hidden="true" />
+                    <span class="sp__area">{column.shortName}</span>
+                    <span class="sp__state">{stateByKey[state].label}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</Section>
+
+<style>
+  .sp {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .sp__case {
+    display: grid;
+    gap: 1.5rem;
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+    background: var(--bg0);
+    transition: transform 0.55s var(--ease);
+  }
+
+  .sp__name {
+    font-size: clamp(1.375rem, 1.3rem + 0.35vw, 1.5625rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.032em;
+  }
+
+  .sp__verdict {
+    margin-top: 0.6rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--mut);
+    max-width: 44ch;
+  }
+
+  .sp__key {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .sp__healthy {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: 0.75rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .sp__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .sp__cell {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.15rem 0.7rem;
+    min-width: 0;
+    padding: 0.75rem 0.85rem;
+    border: 1px solid var(--ln);
+    border-radius: var(--radius-md);
+  }
+
+  .sp__cell .st {
+    grid-row: span 2;
+  }
+
+  /* the outcome the score was hiding */
+  .sp__cell--lost {
+    border-color: var(--tx);
+    background: var(--bg1);
+  }
+
+  .sp__area {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+  }
+
+  .sp__state {
+    font-family: var(--font-mono);
+    font-size: 0.5938rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .sp__cell--lost .sp__state {
+    color: var(--tx);
+  }
+
+  @media (min-width: 40rem) {
+    .sp__case {
+      padding: 2rem;
+    }
+
+    .sp__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .sp__case {
+      grid-template-columns: minmax(0, 3.2fr) minmax(0, 1.5fr) minmax(0, 7.3fr);
+      gap: 2.5rem;
+      align-items: center;
+      padding: 2rem 2.5rem;
+    }
+
+    .sp__score {
+      padding-left: 2.5rem;
+      border-left: 1px solid var(--ln);
+    }
+
+    .sp__grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .sp__cell {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.35rem;
+      padding: 0.85rem 0.75rem;
+    }
+
+    .sp__cell .st {
+      grid-row: auto;
+      margin-bottom: 0.35rem;
+    }
+  }
+</style>

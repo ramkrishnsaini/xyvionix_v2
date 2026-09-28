@@ -1,0 +1,175 @@
+---
+/**
+ * Chapter 7, how to start: four steps, the first of which is small.
+ * The last step is drawn solid: it is the state the other three lead to.
+ */
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import Arrow from '../layout/Arrow.astro';
+import { startSteps } from '../../data/assurance-page.ts';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const last = startSteps.length - 1;
+---
+
+<Section surface="light" labelledby="start-title" id="start">
+  <SectionHead
+    label="07 · How to start"
+    title="Begin with one outcome, not the whole estate"
+    id="start-title"
+    split
+    text="The first baseline is often the most informative result. It separates what the enterprise can prove from what it has been assuming."
+  />
+
+  <ol class="as mt-block">
+    {
+      startSteps.map((step, i) => (
+        <li class:list={['as__step', 'rv', i === last && 'as__step--last']}>
+          <div class="as__top">
+            <span class="as__n num">{pad(i + 1)}</span>
+            <span class:list={['st', i === last ? 'st-assured' : 'st-unassured']} aria-hidden="true" />
+          </div>
+          <h3 class="as__title">{step.title}</h3>
+          <p class="as__text">{step.text}</p>
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="as__next rv">
+    <div>
+      <p class="as__next-title">Not sure which outcome to begin with?</p>
+      <p class="as__next-text">
+        Start from what has changed. The use cases set out the moments when assurance is most often lost.
+      </p>
+    </div>
+    <div class="as__actions">
+      <a href="/use-cases" class="btn btn--ghost" data-track="card_click" data-track-location="assurance-start">
+        See the use cases
+      </a>
+      <a href="/how-assurance-works" class="lk lk--sm">
+        <span class="ul">The method in full</span>
+        <Arrow size="sm" />
+      </a>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .as {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 44rem) {
+    .as {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .as {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .as__step {
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+    background: var(--bg1);
+    transition: transform 0.55s var(--ease);
+  }
+
+  @media (min-width: 64rem) {
+    .as__step {
+      padding: 2rem;
+    }
+  }
+
+  .as__step--last {
+    border-color: var(--tx);
+    background: var(--tx);
+    color: var(--bg0);
+  }
+
+  .as__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .as__n {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: var(--track-label);
+    color: var(--fnt);
+  }
+
+  .as__title {
+    margin-top: 1.5rem;
+    font-size: clamp(1.25rem, 1.2rem + 0.3vw, 1.4375rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .as__text {
+    margin-top: 0.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.62;
+    color: var(--mut);
+  }
+
+  .as__step--last .as__n,
+  .as__step--last .as__text {
+    color: var(--gst);
+  }
+
+  .as__step--last .st {
+    background: var(--bg0);
+  }
+
+  .as__next {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 1.25rem;
+    padding: 1.75rem 1.5rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+  }
+
+  .as__next-title {
+    font-size: clamp(1.25rem, 1.18rem + 0.35vw, 1.5rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+  }
+
+  .as__next-text {
+    margin-top: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--mut);
+  }
+
+  .as__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.75rem;
+  }
+
+  @media (min-width: 64rem) {
+    .as__next {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 3rem;
+      padding: 2.25rem 2.5rem;
+    }
+  }
+</style>

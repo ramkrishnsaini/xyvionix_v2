@@ -29,7 +29,8 @@
     "checkpoint": "node scripts/checkpoint.mjs",
     "docs:research": "node scripts/build-research-doc.mjs",
     "report:similarity": "node scripts/similarity.mjs",
-    "report:final": "node scripts/final-report-numbers.mjs"
+    "report:final": "node scripts/final-report-numbers.mjs",
+    "report:page-duplicates": "node scripts/page-duplicates.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",

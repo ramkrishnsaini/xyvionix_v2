@@ -1,0 +1,157 @@
+---
+/**
+ * The engine drawn as the loop it is: six stages in order, and a return path
+ * from verified closure back to signals. Names only; the section below it on
+ * the page explains each stage.
+ *
+ * Wide screens: the stages run left to right and the return path runs back
+ * underneath. Phones: the stages run top to bottom and the return path runs
+ * back up the right-hand side.
+ */
+import { engineDetail } from '../../data/engine.ts';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const last = engineDetail.length - 1;
+---
+
+<div class="ec rv">
+  <ol class="ec__stages">
+    {
+      engineDetail.map((stage, i) => (
+        <li class:list={['ec__stage', i === last && 'ec__stage--last']}>
+          <span class="ec__n num">{pad(i + 1)}</span>
+          <span class="ec__name">{stage.title}</span>
+          <span class:list={['st', i === 4 ? 'st-degrading' : 'st-assured']} aria-hidden="true" />
+        </li>
+      ))
+    }
+  </ol>
+  <p class="ec__return">
+    <span class="ec__return-line" aria-hidden="true"></span>
+    <span class="ec__return-text">A passing re-test is new evidence. The loop starts again.</span>
+  </p>
+</div>
+
+<style>
+  .ec {
+    position: relative;
+    padding: 1.5rem 3.25rem 1.5rem 1.25rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-xl);
+    background: var(--gls);
+  }
+
+  .ec__stages {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .ec__stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.9rem;
+    min-width: 0;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-md);
+    background: var(--bg0);
+  }
+
+  /* the arrow from one stage to the next */
+  .ec__stage:not(.ec__stage--last)::after {
+    content: '';
+    position: absolute;
+    left: 1.6rem;
+    top: 100%;
+    height: 0.75rem;
+    border-left: 1.5px solid var(--tx);
+  }
+
+  .ec__n {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: var(--track-label);
+    color: var(--fnt);
+  }
+
+  .ec__name {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  /* phone: the return path climbs the right-hand side */
+  .ec__return {
+    margin-top: 1.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--mut);
+  }
+
+  .ec__return-line {
+    position: absolute;
+    top: 2.5rem;
+    bottom: 5.25rem;
+    right: 1.25rem;
+    width: 1.25rem;
+    border: 1.5px dashed var(--tx);
+    border-left: 0;
+    border-radius: 0 0.75rem 0.75rem 0;
+  }
+
+  @media (min-width: 64rem) {
+    .ec {
+      padding: 2.5rem 2.5rem 2rem;
+    }
+
+    .ec__stages {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .ec__stage {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-rows: auto auto;
+      align-items: start;
+      gap: 1rem 0.5rem;
+      padding: 1.25rem 1.1rem;
+    }
+
+    .ec__name {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+
+    .ec__stage:not(.ec__stage--last)::after {
+      left: 100%;
+      top: 50%;
+      width: 1rem;
+      height: 0;
+      border-left: 0;
+      border-top: 1.5px solid var(--tx);
+    }
+
+    /* wide: the return path runs back underneath, from the last stage to the first */
+    .ec__return {
+      position: relative;
+      margin-top: 0;
+      padding-top: 3rem;
+      text-align: center;
+    }
+
+    .ec__return-line {
+      top: 0;
+      bottom: auto;
+      left: calc((100% - 5rem) / 12);
+      right: calc((100% - 5rem) / 12);
+      width: auto;
+      height: 1.75rem;
+      border: 1.5px dashed var(--tx);
+      border-top: 0;
+      border-radius: 0 0 0.75rem 0.75rem;
+    }
+  }
+</style>

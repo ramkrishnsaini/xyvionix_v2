@@ -1,0 +1,307 @@
+---
+/**
+ * A figure for each kind of system on /why-assurance, on an obsidian tile.
+ * Solid is proven, striped is drifting, hollow is breached, dashed is assumed.
+ *
+ *   agent     a chain of steps that ends in an action
+ *   model     four things under a model, each changing at a different moment
+ *   modern    many releases between two reviews
+ *   critical  what is assumed against what has been tested
+ *
+ * Decorative: the text beside it carries the meaning.
+ */
+import type { WhyFigureKind } from '../../data/why-assurance.ts';
+
+interface Props {
+  kind: WhyFigureKind;
+  /** Unique per instance, for pattern ids. */
+  uid: string;
+}
+
+const { kind, uid } = Astro.props;
+const stripes = `wfig-${uid}-stripes`;
+
+const titles: Record<WhyFigureKind, string> = {
+  agent: 'An answer ends on a screen. An action ends in a system.',
+  model: 'Four things move under a model.',
+  modern: 'Many releases between two reviews.',
+  critical: 'What is assumed, and what has been tested.',
+};
+
+const modelRows = [
+  { label: 'MODEL', y: 50, ticks: [168, 262] },
+  { label: 'PROMPT', y: 86, ticks: [140, 204, 286] },
+  { label: 'DATA', y: 122, ticks: [124, 156, 188, 220, 252, 284] },
+  { label: 'PRICE', y: 158, ticks: [232] },
+];
+
+const releases = Array.from({ length: 17 }, (_, i) => 64 + i * 12);
+
+const criticalRows = [
+  { label: 'RECOVERY', y: 56, tested: 58 },
+  { label: 'ACCESS', y: 100, tested: 96 },
+  { label: 'INTEGRITY', y: 144, tested: 40 },
+];
+---
+
+<div class="wfig" aria-hidden="true">
+  <p class="wfig__title">{titles[kind]}</p>
+
+  <svg viewBox="0 0 320 200" aria-hidden="true" focusable="false">
+    <defs>
+      <pattern id={stripes} width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <line class="wfig__stripe" x1="0" y1="0" x2="0" y2="5"></line>
+      </pattern>
+    </defs>
+
+    {
+      kind === 'agent' && (
+        <>
+          <text class="wfig__label" x="20" y="52">ANSWER</text>
+          <line class="wfig__solidline" x1="100" y1="48" x2="196" y2="48" />
+          <rect class="wfig__solid" x="96" y="44" width="8" height="8" />
+          <rect class="wfig__solid" x="144" y="44" width="8" height="8" />
+          <rect class="wfig__dashed" x="192.5" y="43.5" width="9" height="9" stroke-dasharray="2.5 2" />
+          <text class="wfig__label wfig__label--sm" x="96" y="70">READ</text>
+          <text class="wfig__label wfig__label--sm" x="140" y="70">DECIDE</text>
+          <text class="wfig__label wfig__label--sm" x="190" y="70">A PERSON CHECKS</text>
+
+          <text class="wfig__label" x="20" y="128">ACTION</text>
+          <line class="wfig__solidline" x1="100" y1="124" x2="292" y2="124" />
+          <rect class="wfig__solid" x="96" y="120" width="8" height="8" />
+          <rect class="wfig__solid" x="144" y="120" width="8" height="8" />
+          <rect class="wfig__solid" x="192" y="120" width="8" height="8" />
+          <rect class="wfig__surface" x="239" y="119" width="10" height="10" />
+          <rect class="wfig__striped" x="239" y="119" width="10" height="10" fill={`url(#${stripes})`} />
+          <rect class="wfig__surface" x="287" y="119" width="10" height="10" />
+          <rect class="wfig__hollow" x="287" y="119" width="10" height="10" />
+          <text class="wfig__label wfig__label--sm" x="96" y="146">READ</text>
+          <text class="wfig__label wfig__label--sm" x="140" y="146">DECIDE</text>
+          <text class="wfig__label wfig__label--sm" x="190" y="146">CALL</text>
+          <text class="wfig__label wfig__label--sm" x="234" y="146">WRITE</text>
+          <text class="wfig__label wfig__label--sm wfig__label--muted" x="297" y="162" text-anchor="end">DONE</text>
+        </>
+      )
+    }
+
+    {
+      kind === 'model' && (
+        <>
+          <line class="wfig__threshold" x1="100" y1="28" x2="100" y2="176" stroke-dasharray="3 4" />
+          <text class="wfig__label wfig__label--muted" x="100" y="20" text-anchor="middle">EVALUATED</text>
+          {modelRows.map((row) => (
+            <>
+              <text class="wfig__label" x="20" y={row.y + 3}>
+                {row.label}
+              </text>
+              <line class="wfig__solidline" x1="100" y1={row.y} x2={row.ticks[0]} y2={row.y} />
+              <line class="wfig__unknown" x1={row.ticks[0]! + 4} y1={row.y} x2="300" y2={row.y} stroke-dasharray="1.5 5" />
+              <rect class="wfig__solid" x="96" y={row.y - 4} width="8" height="8" />
+              {row.ticks.map((x) => (
+                <line class="wfig__tick" x1={x} y1={row.y - 8} x2={x} y2={row.y + 8} />
+              ))}
+            </>
+          ))}
+        </>
+      )
+    }
+
+    {
+      kind === 'modern' && (
+        <>
+          <text class="wfig__label" x="20" y="52">REVIEWS</text>
+          <line class="wfig__unknown" x1="64" y1="72" x2="256" y2="72" stroke-dasharray="1.5 5" />
+          <rect class="wfig__solid" x="60" y="68" width="8" height="8" />
+          <rect class="wfig__solid" x="252" y="68" width="8" height="8" />
+
+          <text class="wfig__label" x="20" y="116">RELEASES</text>
+          {releases.map((x) => (
+            <line class="wfig__release" x1={x} y1="128" x2={x} y2="146" />
+          ))}
+
+          <text class="wfig__label" x="20" y="176">PLATFORM</text>
+          <line class="wfig__solidline" x1="64" y1="186" x2="176" y2="186" />
+          <rect class="wfig__striped" x="176" y="181" width="56" height="10" fill={`url(#${stripes})`} />
+          <rect class="wfig__hollow" x="236.75" y="181.75" width="22.5" height="8.5" />
+          <text class="wfig__label wfig__label--sm wfig__label--muted" x="300" y="176" text-anchor="end">OUT OF SUPPORT</text>
+        </>
+      )
+    }
+
+    {
+      kind === 'critical' && (
+        <>
+          <text class="wfig__label wfig__label--muted" x="110" y="26">TESTED</text>
+          <text class="wfig__label wfig__label--muted" x="300" y="26" text-anchor="end">ASSUMED</text>
+          {criticalRows.map((row) => (
+            <>
+              <text class="wfig__label" x="20" y={row.y + 3}>
+                {row.label}
+              </text>
+              <rect class="wfig__solid" x="110" y={row.y - 6} width={row.tested} height="12" />
+              <rect
+                class="wfig__dashed"
+                x={110 + row.tested + 4.5}
+                y={row.y - 5.5}
+                width={190 - row.tested - 5}
+                height="11"
+                stroke-dasharray="3 3"
+              />
+            </>
+          ))}
+        </>
+      )
+    }
+  </svg>
+
+  <ul class="wfig__legend">
+    <li><span class="st st--sm st-assured"></span>Proven</li>
+    <li><span class="st st--sm st-degrading"></span>Drifting</li>
+    <li><span class="st st--sm st-unassured"></span>Assumed</li>
+  </ul>
+</div>
+
+<style>
+  /* An obsidian tile on any surface: the figure always uses the dark palette. */
+  .wfig {
+    --tx: #f5f4f1;
+    --mut: #a8a7a0;
+    --fnt: #8a8982;
+    --gst: #4a4944;
+    --bg0: #0c0c0b;
+    --ln2: rgba(245, 244, 241, 0.16);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    height: 100%;
+    min-height: 14rem;
+    padding: 1.5rem 1.25rem;
+    color: var(--tx);
+    background-color: var(--bg0);
+    background-image:
+      linear-gradient(rgba(245, 244, 241, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245, 244, 241, 0.04) 1px, transparent 1px);
+    background-size: 36px 36px;
+    background-position: center;
+  }
+
+  @media (min-width: 64rem) {
+    .wfig {
+      padding: 2rem 2rem 1.75rem;
+    }
+  }
+
+  .wfig svg {
+    width: 100%;
+    max-width: 30rem;
+    height: auto;
+  }
+
+  .wfig__title,
+  .wfig__legend {
+    align-self: stretch;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    line-height: 1.6;
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .wfig__title {
+    color: var(--mut);
+  }
+
+  .wfig__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(245, 244, 241, 0.08);
+  }
+
+  .wfig__legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .wfig__label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 1px;
+    fill: var(--fnt);
+  }
+
+  .wfig__label--muted {
+    fill: var(--mut);
+  }
+
+  .wfig__label--sm {
+    font-size: 7.5px;
+    letter-spacing: 0.6px;
+  }
+
+  .wfig__solidline {
+    fill: none;
+    stroke: var(--tx);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+  }
+
+  .wfig__unknown {
+    stroke: var(--fnt);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+
+  .wfig__tick {
+    stroke: var(--tx);
+    stroke-width: 1.4;
+  }
+
+  .wfig__release {
+    stroke: var(--tx);
+    stroke-width: 1.6;
+  }
+
+  .wfig__threshold {
+    stroke: var(--fnt);
+    stroke-width: 1;
+  }
+
+  .wfig__solid {
+    fill: var(--tx);
+  }
+
+  .wfig__surface {
+    fill: var(--bg0);
+    stroke: var(--bg0);
+    stroke-width: 3;
+  }
+
+  .wfig__hollow {
+    fill: none;
+    stroke: var(--tx);
+    stroke-width: 1.6;
+  }
+
+  .wfig__dashed {
+    fill: none;
+    stroke: var(--fnt);
+    stroke-width: 1.2;
+  }
+
+  .wfig__striped {
+    stroke: var(--ln2);
+    stroke-width: 1;
+  }
+
+  .wfig__stripe {
+    stroke: var(--tx);
+    stroke-width: 2.4;
+  }
+</style>

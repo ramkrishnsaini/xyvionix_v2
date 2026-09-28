@@ -1,0 +1,320 @@
+---
+/**
+ * Hero of the assurance page. Centred, and written for a reader who will read
+ * nothing else: the headline says what Xyvionix does, the line under it says
+ * what the business gains, the figure shows how in three steps, and the last
+ * row names the six outcomes it applies to.
+ */
+import type { Crumb } from '../../lib/breadcrumbs.ts';
+import Breadcrumbs from '../navigation/Breadcrumbs.astro';
+import Arrow from '../layout/Arrow.astro';
+import { clusterByKey } from '../../data/clusters.ts';
+import { heroSteps, separateOrder } from '../../data/assurance-page.ts';
+import { site } from '../../data/site.ts';
+
+interface Props {
+  crumbs: Crumb[];
+  h1: string;
+}
+
+const { crumbs, h1 } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+const areas = separateOrder.map((key) => clusterByKey[key]);
+
+// One sentence to a line, so the headline reads as a before and an after.
+const lines = h1
+  .split('. ')
+  .map((part, i, all) => (i < all.length - 1 ? `${part}.` : part))
+  .filter((part) => part.trim() !== '');
+---
+
+<section class="hero ah">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="glow" aria-hidden="true"></div>
+
+  <div class="shell hero__inner ah__inner">
+    <div class="ah__crumbs">
+      <Breadcrumbs crumbs={crumbs} />
+    </div>
+
+    <p class="lbl lbl--plain lbl--center ah__label">Assurance</p>
+    <h1 class="ah__title">
+      {lines.map((line, i) => (
+        <>
+          {i > 0 && ' '}
+          <span class="ah__title-line">{line}</span>
+        </>
+      ))}
+    </h1>
+    <p class="lede ah__lede">
+      When the board, an auditor or a customer asks whether it still works, you answer with today’s evidence, not with
+      last year’s approval.
+    </p>
+
+    <div class="hero__actions">
+      <a href={site.cta.href} class="btn btn--block" data-track="cta_click" data-track-location="assurance-hero">
+        {site.cta.label}
+      </a>
+      <a href="#how" class="lk">
+        <span class="ul">See it happen, step by step</span>
+        <Arrow />
+      </a>
+    </div>
+
+    <div class="ah__panel">
+      <ol class="ah__steps">
+        {
+          heroSteps.map((step, i) => (
+            <li class="ah__step">
+              <div class="ah__track" aria-hidden="true">
+                <span class:list={['st', `st-${step.state}`]} />
+                <span class:list={['ah__line', `ah__line--${step.state}`]} />
+              </div>
+              <p class="ah__n num">{pad(i + 1)}</p>
+              <h2 class="ah__step-title">{step.title}</h2>
+              <p class="ah__step-text">{step.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="ah__areas">
+        <p class="ah__key">Kept proven</p>
+        <ul class="ah__chips">
+          {
+            areas.map((area) => (
+              <li>
+                <a href={`#area-${area.key}`} class="ah__chip">
+                  <span class="st st--sm st-assured" aria-hidden="true" />
+                  {area.shortName}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ah__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 8.5rem;
+    padding-bottom: 4rem;
+    text-align: center;
+  }
+
+  @media (min-width: 40rem) {
+    .ah__inner {
+      padding-top: 10rem;
+      padding-bottom: 5rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .ah__inner {
+      padding-top: 12rem;
+      padding-bottom: 6rem;
+    }
+  }
+
+  /* Breadcrumbs keep the position they have on every other page: top, at the left edge. */
+  .ah__crumbs {
+    align-self: stretch;
+    text-align: left;
+  }
+
+  .ah__label {
+    margin-top: 2rem;
+  }
+
+  .ah__title {
+    margin-top: 1.25rem;
+    max-width: 19ch;
+    font-size: var(--fs-h1);
+    font-weight: 600;
+    line-height: 1.06;
+    letter-spacing: var(--track-display);
+    text-wrap: balance;
+  }
+
+  @media (min-width: 52rem) {
+    .ah__title {
+      max-width: none;
+    }
+
+    .ah__title-line {
+      display: block;
+    }
+  }
+
+  .ah__lede {
+    margin-top: 1.5rem;
+    max-width: 54ch;
+    text-wrap: pretty;
+  }
+
+  /* ---- how, in three steps ---- */
+  .ah__panel {
+    width: 100%;
+    max-width: 66rem;
+    margin-top: 3.5rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-xl);
+    background: var(--gls);
+    text-align: left;
+  }
+
+  @media (min-width: 64rem) {
+    .ah__panel {
+      margin-top: 4rem;
+    }
+  }
+
+  .ah__steps {
+    display: grid;
+    padding: 1.5rem 1.25rem 0.5rem;
+  }
+
+  /* phone: the track runs down the left edge */
+  .ah__step {
+    position: relative;
+    min-width: 0;
+    padding: 0 0 1.75rem 2rem;
+  }
+
+  .ah__track {
+    position: absolute;
+    top: 0.2rem;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 12px;
+  }
+
+  .ah__line {
+    flex: 1;
+    margin-top: 0.4rem;
+    border-left: 1.5px solid var(--tx);
+  }
+
+  .ah__line--unassured {
+    border-left: 1.5px dashed var(--fnt);
+  }
+
+  .ah__step:last-child .ah__line {
+    display: none;
+  }
+
+  .ah__n,
+  .ah__key {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .ah__step-title {
+    margin-top: 0.5rem;
+    font-size: clamp(1.25rem, 1.18rem + 0.35vw, 1.5rem);
+    font-weight: 600;
+    line-height: 1.18;
+    letter-spacing: -0.03em;
+  }
+
+  .ah__step-text {
+    margin-top: 0.6rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--mut);
+    max-width: 36ch;
+  }
+
+  @media (min-width: 52rem) {
+    .ah__steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      padding: 2.25rem 2.5rem 2.25rem;
+    }
+
+    /* wide: the track runs across the top, from one step into the next */
+    .ah__step {
+      padding: 2rem 2rem 0 0;
+    }
+
+    .ah__track {
+      top: 0;
+      bottom: auto;
+      right: 0;
+      flex-direction: row;
+      width: auto;
+      height: 12px;
+    }
+
+    .ah__line {
+      margin: 0 0.75rem;
+      border-left: 0;
+      border-top: 1.5px solid var(--tx);
+    }
+
+    .ah__line--unassured {
+      border-left: 0;
+      border-top: 1.5px dashed var(--fnt);
+    }
+  }
+
+  /* ---- the six outcomes ---- */
+  .ah__areas {
+    display: grid;
+    gap: 0.9rem;
+    padding: 1.25rem;
+    border-top: 1px solid var(--ln);
+  }
+
+  .ah__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .ah__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 2.5rem;
+    padding: 0 0.95rem;
+    border: 1px solid var(--ln2);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    line-height: 1;
+    color: var(--tx);
+    transition:
+      background-color 0.2s,
+      color 0.2s,
+      border-color 0.2s;
+  }
+
+  .ah__chip:hover {
+    background: var(--tx);
+    border-color: var(--tx);
+    color: var(--bg0);
+  }
+
+  .ah__chip:hover .st {
+    background: var(--bg0);
+  }
+
+  @media (min-width: 52rem) {
+    .ah__areas {
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 2rem;
+      padding: 1.5rem 2.5rem;
+    }
+  }
+</style>

@@ -31,7 +31,7 @@ const primaryAssurance: NavLink[] = clusters
 
 const expansionAssurance: NavLink[] = clusters
   .filter((c) => c.tier === 'expansion')
-  .map((c) => ({ label: c.name, href: pathFor(c.hub) }));
+  .map((c) => ({ label: c.name, href: pathFor(c.hub), description: c.question }));
 
 export const primaryNav: NavItem[] = [
   {
@@ -43,6 +43,7 @@ export const primaryNav: NavItem[] = [
       {
         label: 'Method',
         links: [
+          { label: 'Why assurance comes first', href: '/why-assurance' },
           { label: 'How assurance works', href: '/how-assurance-works' },
           { label: 'The Assurance Engine', href: '/assurance-engine' },
         ],
@@ -76,6 +77,7 @@ export const footerNav: NavGroup[] = [
   {
     label: 'Company',
     links: [
+      { label: 'Why assurance', href: '/why-assurance' },
       { label: 'How assurance works', href: '/how-assurance-works' },
       { label: 'Assurance Engine', href: '/assurance-engine' },
       { label: 'Security and trust', href: '/security-trust' },

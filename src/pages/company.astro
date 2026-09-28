@@ -6,9 +6,7 @@
 import PageLayout from '../layouts/PageLayout.astro';
 import Section from '../components/layout/Section.astro';
 import SectionHead from '../components/layout/SectionHead.astro';
-import Outcomes from '../components/assurance/Outcomes.astro';
 import Arrow from '../components/layout/Arrow.astro';
-import { whyAssuranceIsLost } from '../data/assurances.ts';
 import { site } from '../data/site.ts';
 
 const sells = [
@@ -58,31 +56,11 @@ const principles = [
   pageType="company"
   lede="Xyvionix exists because of a gap that almost every enterprise carries. Technology is proven to work once, at the point it goes live. After that it is assumed to work. Xyvionix is the company answerable for replacing that assumption with current evidence."
   secondary={{ label: 'How assurance works', href: '/how-assurance-works' }}
+  ctaTitle="Talk to the people who would answer for it"
+  ctaText="The first conversation is about one outcome in your estate and what it would take to keep it proven."
 >
-  <Section surface="light" flush labelledby="why-title">
-    <SectionHead
-      label="Why the category exists"
-      title="Critical technology changes continuously. Assurance does not survive that change on its own."
-      id="why-title"
-      split
-    >
-      <p class="body measure-narrow company__aside" slot="head">
-        {site.definition}
-      </p>
-      <dl class="rows rows--open rv">
-        {
-          whyAssuranceIsLost.map((item) => (
-            <div class="row">
-              <dt class="row__term">{item.title}</dt>
-              <dd class="row__desc">{item.text}</dd>
-            </div>
-          ))
-        }
-      </dl>
-    </SectionHead>
-  </Section>
 
-  <Section surface="light" alt labelledby="category-title">
+  <Section surface="light" flush labelledby="category-title">
     <SectionHead label="The category" title={site.category} id="category-title" split>
       <div class="prose">
         <p>
@@ -136,12 +114,6 @@ const principles = [
     </div>
   </Section>
 
-  <Section surface="light" alt labelledby="receives-title">
-    <SectionHead label="What the business receives" title="Four outcomes, held continuously" id="receives-title" />
-    <div class="mt-block">
-      <Outcomes />
-    </div>
-  </Section>
 
   <Section surface="light" labelledby="principles-title">
     <SectionHead
@@ -187,9 +159,6 @@ const principles = [
 </PageLayout>
 
 <style>
-  .company__aside {
-    margin-top: 1.75rem;
-  }
 
   .company__link {
     margin-top: 2rem;

@@ -1,0 +1,225 @@
+---
+/**
+ * Chapter 3, second part: the loop beneath every outcome, shown as what each
+ * stage takes in and what it hands on. The spine down the middle is the loop;
+ * what a stage hands on is what the next one takes in.
+ */
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import Arrow from '../layout/Arrow.astro';
+import { flow } from '../../data/assurance-page.ts';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<Section surface="dark" alt glow labelledby="flow-title">
+  <SectionHead
+    label="The loop"
+    title="What each stage takes in, and what it hands on"
+    id="flow-title"
+    split
+    text="The same six stages run beneath every outcome. Nothing is taken on trust between them: each stage hands on something the next can test."
+  >
+    <a href="/assurance-engine" class="lk af__link">
+      <span class="ul">How the Assurance Engine is designed</span>
+      <Arrow />
+    </a>
+  </SectionHead>
+
+  <div class="af mt-block rv">
+    <div class="af__head" aria-hidden="true">
+      <span class="af__head-in">Takes in</span>
+      <span class="af__head-mid">Stage</span>
+      <span>Hands on</span>
+    </div>
+
+    <ol class="af__rows">
+      {
+        flow.map((item, i) => (
+          <li class="af__row">
+            <p class="af__in">
+              <span class="af__key">Takes in</span>
+              {item.takes}
+            </p>
+            <p class="af__stage">
+              <span class="af__n num">{pad(i + 1)}</span>
+              <span>{item.stage}</span>
+            </p>
+            <p class="af__out">
+              <span class="af__key">Hands on</span>
+              {item.gives}
+            </p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="af__loop">
+      <span class="af__loop-mark" aria-hidden="true"></span>
+      The passing re-test becomes the next reading. The loop does not end.
+    </p>
+  </div>
+</Section>
+
+<style>
+  .af__link {
+    margin-top: 1.75rem;
+  }
+
+  .af {
+    padding: 0.5rem 1.25rem 1.5rem;
+    border: 1px solid var(--ln2);
+    border-radius: var(--radius-xl);
+    background: var(--gls);
+  }
+
+  .af__head {
+    display: none;
+  }
+
+  .af__row {
+    display: grid;
+    gap: 0.9rem;
+    padding-block: 1.5rem;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .af__stage {
+    order: -1;
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+
+  .af__n {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: var(--track-label);
+    color: var(--fnt);
+  }
+
+  .af__in,
+  .af__out {
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .af__in {
+    color: var(--mut);
+  }
+
+  .af__key {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--fnt);
+  }
+
+  .af__loop {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding-top: 1.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--mut);
+  }
+
+  /* a return arrow, drawn: the loop closing back on itself */
+  .af__loop-mark {
+    flex: none;
+    width: 1.5rem;
+    height: 0.9rem;
+    border: 1.5px solid var(--tx);
+    border-right: 0;
+    border-radius: 0.45rem 0 0 0.45rem;
+  }
+
+  @media (min-width: 40rem) {
+    .af {
+      padding: 0.75rem 2rem 1.75rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .af {
+      padding: 1rem 2.5rem 2rem;
+    }
+
+    .af__head,
+    .af__row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 15rem minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .af__head {
+      padding-block: 1.25rem;
+      border-bottom: 1px solid var(--ln2);
+      font-family: var(--font-mono);
+      font-size: 0.656rem;
+      letter-spacing: var(--track-label);
+      text-transform: uppercase;
+      color: var(--fnt);
+    }
+
+    .af__head-in {
+      text-align: right;
+    }
+
+    .af__head-mid {
+      text-align: center;
+    }
+
+    /* the spine */
+    .af__rows {
+      position: relative;
+    }
+
+    .af__rows::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      border-left: 1px dashed var(--gst);
+    }
+
+    .af__row {
+      position: relative;
+      padding-block: 1.4rem;
+    }
+
+    .af__in {
+      text-align: right;
+    }
+
+    .af__stage {
+      order: 0;
+      justify-content: center;
+      padding: 0.8rem 1rem;
+      border: 1px solid var(--ln2);
+      border-radius: 999px;
+      background: var(--bg1);
+      font-size: 1rem;
+      letter-spacing: -0.015em;
+    }
+
+    .af__key {
+      display: none;
+    }
+
+    .af__loop {
+      justify-content: center;
+    }
+  }
+</style>

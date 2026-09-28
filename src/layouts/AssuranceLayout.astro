@@ -1,0 +1,52 @@
+---
+/**
+ * Assurance hub page: one of the six assurance areas. Adds the editorial
+ * overview of the pages that belong to the cluster.
+ */
+import type { CollectionEntry } from 'astro:content';
+import ContentShell from './ContentShell.astro';
+import Section from '../components/layout/Section.astro';
+import SectionHead from '../components/layout/SectionHead.astro';
+import PageList from '../components/clusters/PageList.astro';
+import { byTitle, getChildrenOf, resolveSlugs } from '../lib/pages.ts';
+
+interface Props {
+  entry: CollectionEntry<'assurance'>;
+}
+
+const { entry } = Astro.props;
+
+// Children in the curated order from frontmatter, followed by any other page that names this hub as parent.
+const curated = await resolveSlugs(entry.data.related.assurance);
+const owned = (await getChildrenOf(entry.id)).sort(byTitle);
+const seen = new Set(curated.map((p) => p.slug));
+const children = [...curated, ...owned.filter((p) => !seen.has(p.slug))].filter((p) => p.kind === 'assurance');
+const tier = entry.data.tier === 'expansion' ? 'Assurance area' : 'Primary assurance area';
+---
+
+<ContentShell
+  entry={entry}
+  label={tier}
+  pageType="assurance"
+  section="assurance"
+  schemaKind="service"
+  showReviewed={entry.data.freshnessCritical}
+  secondary={{ label: 'How assurance works', href: '/how-assurance-works' }}
+>
+  {
+    children.length > 0 && (
+      <Section surface="light" alt flush slot="lead" labelledby="covers-title">
+        <SectionHead
+          label="What this assurance covers"
+          title={`What ${entry.data.title} holds under proof`}
+          id="covers-title"
+          split
+          text="Each page below is one outcome held against its own evidence and thresholds. They are assured separately because they fail separately."
+        />
+        <div class="mt-block">
+          <PageList pages={children} location="hub-children" />
+        </div>
+      </Section>
+    )
+  }
+</ContentShell>

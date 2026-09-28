@@ -1,0 +1,37 @@
+---
+/**
+ * The only component that writes head metadata. Canonical and structured data
+ * come early in the head, ahead of stylesheets.
+ */
+import type { Seo } from '../../lib/seo.ts';
+import { site } from '../../data/site.ts';
+import SocialMeta from '../social/SocialMeta.astro';
+import JsonLd from '../schema/JsonLd.astro';
+
+interface Props {
+  seo: Seo;
+}
+
+const { seo } = Astro.props;
+const indexable = seo.robots === 'index, follow';
+---
+
+<title>{seo.title}</title>
+<meta name="description" content={seo.description} />
+{seo.canonical && <link rel="canonical" href={seo.canonical} />}
+<meta name="robots" content={indexable ? 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1' : seo.robots} />
+{seo.articleAuthor && <meta name="author" content={seo.articleAuthor} />}
+
+<SocialMeta seo={seo} />
+
+{seo.schema.length > 0 && <JsonLd data={seo.schema} />}
+
+<meta name="theme-color" content={site.themeColor} />
+<meta name="color-scheme" content="dark light" />
+<link rel="icon" href="/favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="96x96" href="/brand/favicon-96.png" />
+<link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" />
+<link rel="apple-touch-icon" sizes="180x180" href="/brand/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+<link rel="alternate" type="application/rss+xml" title={`${site.name} Insights`} href="/rss.xml" />

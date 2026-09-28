@@ -1,0 +1,68 @@
+---
+/**
+ * Interior page hero on the obsidian surface: breadcrumbs, label, H1, the
+ * definition or direct answer, then optional actions and metadata.
+ */
+import type { AssuranceState } from '../../data/assurances.ts';
+import type { Crumb } from '../../lib/breadcrumbs.ts';
+import { site } from '../../data/site.ts';
+import Breadcrumbs from '../navigation/Breadcrumbs.astro';
+import StateMark from '../assurance/StateMark.astro';
+import Arrow from './Arrow.astro';
+
+interface Props {
+  crumbs: Crumb[];
+  label: string;
+  h1: string;
+  lede: string;
+  /** Shown beside the label. On use cases this is the state the scenario describes. */
+  state?: AssuranceState;
+  showCta?: boolean;
+  secondary?: { label: string; href: string };
+  location?: string;
+}
+
+const { crumbs, label, h1, lede, state, showCta = true, secondary, location = 'hero' } = Astro.props;
+---
+
+<section class="hero hero--page">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="glow" aria-hidden="true"></div>
+  <div class="shell hero__inner">
+    <Breadcrumbs crumbs={crumbs} />
+
+    <div class="hero__head hero__label">
+      <p class="lbl">{label}</p>
+      {state && <StateMark state={state} label="visible" />}
+    </div>
+
+    <h1 class="h1 hero__title">{h1}</h1>
+    <p class="lede hero__lede">{lede}</p>
+
+    {
+      (showCta || secondary) && (
+        <div class="hero__actions hero__actions--start">
+          {showCta && (
+            <a href={site.cta.href} class="btn btn--block" data-track="cta_click" data-track-location={location}>
+              {site.cta.label}
+            </a>
+          )}
+          {secondary && (
+            <a href={secondary.href} class="lk">
+              <span class="ul">{secondary.label}</span>
+              <Arrow />
+            </a>
+          )}
+        </div>
+      )
+    }
+
+    <slot />
+  </div>
+</section>
+
+<style>
+  .hero__label {
+    margin-top: 2rem;
+  }
+</style>

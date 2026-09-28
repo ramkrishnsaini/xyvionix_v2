@@ -1,0 +1,68 @@
+---
+/**
+ * Publication and review dates. "Last reviewed" is shown on fast-changing
+ * technical pages so a reader can judge how current the detail is.
+ */
+import { formatDate, isoDate } from '../../lib/text.ts';
+
+interface Props {
+  published?: Date;
+  modified?: Date;
+  reviewed?: Date;
+  owner?: string;
+  readingTime?: number;
+  showReviewed?: boolean;
+}
+
+const { published, modified, reviewed, owner, readingTime, showReviewed = false } = Astro.props;
+const updated = published && modified && isoDate(modified) !== isoDate(published) ? modified : undefined;
+---
+
+<dl class="aside-note">
+  {
+    owner && (
+      <>
+        <dt>Written by</dt>
+        <dd>{owner}</dd>
+      </>
+    )
+  }
+  {
+    published && (
+      <>
+        <dt>Published</dt>
+        <dd>
+          <time datetime={isoDate(published)}>{formatDate(published)}</time>
+        </dd>
+      </>
+    )
+  }
+  {
+    updated && (
+      <>
+        <dt>Updated</dt>
+        <dd>
+          <time datetime={isoDate(updated)}>{formatDate(updated)}</time>
+        </dd>
+      </>
+    )
+  }
+  {
+    showReviewed && reviewed && (
+      <>
+        <dt>Last reviewed</dt>
+        <dd>
+          <time datetime={isoDate(reviewed)}>{formatDate(reviewed)}</time>
+        </dd>
+      </>
+    )
+  }
+  {
+    readingTime && (
+      <>
+        <dt>Reading time</dt>
+        <dd>{readingTime} min</dd>
+      </>
+    )
+  }
+</dl>

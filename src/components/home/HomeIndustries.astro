@@ -1,0 +1,45 @@
+---
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import Arrow from '../layout/Arrow.astro';
+import { industries } from '../../data/industries.ts';
+import { pathFor } from '../../data/routes.ts';
+import { getPage } from '../../lib/pages.ts';
+
+// Link only to industry pages that are published.
+const rows = await Promise.all(
+  industries.map(async (industry) => ({ ...industry, published: Boolean(await getPage(industry.slug)) })),
+);
+---
+
+<Section surface="light" alt labelledby="industries-title">
+  <SectionHead label="Industries" title="Where the loss of assurance carries consequence" id="industries-title" />
+  <dl class="rows mt-block">
+    {
+      rows.map((row) => (
+        <div class="row row--lg rv">
+          <dt class="row__term row__term--disp">
+            {row.published ? (
+              <a href={pathFor(row.slug)} class="ul">
+                {row.name}
+              </a>
+            ) : (
+              row.name
+            )}
+          </dt>
+          <dd class="row__desc">{row.consequence}</dd>
+        </div>
+      ))
+    }
+  </dl>
+  <a href="/industries" class="lk industries__link rv">
+    <span class="ul">All industries</span>
+    <Arrow />
+  </a>
+</Section>
+
+<style>
+  .industries__link {
+    margin-top: 2.5rem;
+  }
+</style>

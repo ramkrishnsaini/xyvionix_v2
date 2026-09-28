@@ -1,0 +1,54 @@
+---
+/** Bordered card linking to a page. Used for assurance areas and featured items. */
+import type { AssuranceState } from '../../data/assurances.ts';
+import StateMark from '../assurance/StateMark.astro';
+import SignalTrace from '../evidence/SignalTrace.astro';
+import Arrow from '../layout/Arrow.astro';
+
+interface Props {
+  href: string;
+  label: string;
+  title: string;
+  question?: string;
+  text: string;
+  linkText?: string;
+  state?: AssuranceState;
+  trace?: boolean;
+  compact?: boolean;
+  level?: 'h2' | 'h3';
+  location?: string;
+}
+
+const {
+  href,
+  label,
+  title,
+  question,
+  text,
+  linkText,
+  state = 'assured',
+  trace = false,
+  compact = false,
+  level = 'h3',
+  location = 'card',
+} = Astro.props;
+
+const Heading = level;
+---
+
+<article class:list={['card', compact && 'card--compact', 'rv']}>
+  <div class="card__top">
+    <span class="lbl lbl--plain">{label}</span>
+    <StateMark state={state} />
+  </div>
+  <Heading class="h3 card__title">{title}</Heading>
+  {question && <p class="card__question">{question}</p>}
+  <p class="card__text">{text}</p>
+  {trace && <SignalTrace state={state} />}
+  <div class="card__foot">
+    <a href={href} class="lk lk--sm" data-track="card_click" data-track-location={location}>
+      <span class="ul">{linkText ?? title}</span>
+      <Arrow size="sm" />
+    </a>
+  </div>
+</article>

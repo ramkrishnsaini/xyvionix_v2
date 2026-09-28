@@ -1,0 +1,46 @@
+---
+/** The six stages of the Assurance Engine, from signal to verified closure. */
+import { engineStages } from '../../data/assurances.ts';
+import StateMark from './StateMark.astro';
+---
+
+<div class="glass rv">
+  <ol class="rail rail--3 rail--6">
+    {
+      engineStages.map((stage) => (
+        <li>
+          <StateMark state={stage.state ?? 'assured'} size="sm" class="rail__mark" />
+          <p class="rail__title engine__title">{stage.title}</p>
+          <p class="rail__text engine__text">{stage.text}</p>
+        </li>
+      ))
+    }
+  </ol>
+  <p class="mono-note engine__loop">Closure returns as new signal</p>
+</div>
+
+<style>
+  .engine__title {
+    font-size: 0.9375rem;
+  }
+
+  .engine__text {
+    font-size: 0.844rem;
+    line-height: 1.68;
+    margin-top: 0.375rem;
+  }
+
+  .engine__loop {
+    margin-top: 2.5rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--ln);
+    font-size: 0.656rem;
+    letter-spacing: 0.14em;
+  }
+
+  @media (min-width: 64rem) {
+    .engine__loop {
+      text-align: center;
+    }
+  }
+</style>

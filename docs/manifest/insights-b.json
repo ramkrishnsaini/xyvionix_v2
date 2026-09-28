@@ -1,0 +1,68 @@
+[
+  {
+    "slug": "why-production-incidents-recur", "title": "Why production incidents recur",
+    "category": "Production Reliability", "cluster": "reliability", "secondary": [], "parent": "insights", "state": "degrading", "cadence": 180, "fresh": false,
+    "brief": "Post-incident reviews generate actions; few are completed and fewer are verified. Analyses the failure pattern, distinguishes mitigation from cause removal, and gives a closure standard for corrective actions.",
+    "related": { "assurance": ["incident-recurrence-assurance", "slo-assurance"], "useCases": ["cloud-incident-recurrence"], "technologies": ["aws-production-reliability", "azure-production-reliability", "gcp-production-reliability"], "industries": ["saas-production-reliability"], "insights": ["security-findings-vs-verified-closure", "error-budgets-without-consequence"] }
+  },
+  {
+    "slug": "kubernetes-support-windows-upgrade-risk", "title": "Kubernetes support windows and the cost of deferred upgrades",
+    "category": "Production Reliability", "cluster": "reliability", "secondary": ["change"], "parent": "insights", "state": "degrading", "cadence": 90, "fresh": true,
+    "brief": "Upstream and managed-service support windows turn a deferred upgrade into a dated risk with a price. Covers current support policies from research, removed APIs, add-on compatibility, and an upgrade readiness evidence model.",
+    "related": { "assurance": ["kubernetes-reliability-assurance", "release-assurance"], "useCases": ["kubernetes-upgrade-risk"], "technologies": ["eks-reliability-assurance", "aks-reliability-assurance"], "industries": ["saas-production-reliability"], "insights": ["cloud-drift-production-risk"] }
+  },
+  {
+    "slug": "security-findings-vs-verified-closure", "title": "Findings closed, exposure open: remediation versus verification",
+    "category": "Cyber Exposure", "cluster": "cyber", "secondary": [], "parent": "insights", "state": "risk", "cadence": 90, "fresh": true,
+    "brief": "The gap between a closed ticket and a closed exposure. Catalogues how fixes fail to hold (rebuild from old image, reverted configuration, partial rollout, exception never expired) and defines closure criteria based on re-test.",
+    "related": { "assurance": ["vulnerability-remediation-assurance", "cyber-exposure-assurance", "cloud-security-exposure-assurance"], "useCases": ["unverified-vulnerability-closure", "security-remediation-backlog"], "technologies": ["eks-reliability-assurance", "terraform-drift-assurance"], "industries": ["healthcare", "financial-services"], "insights": ["why-production-incidents-recur", "assurance-is-a-state-not-a-report"] }
+  },
+  {
+    "slug": "how-identity-controls-drift", "title": "How identity controls drift",
+    "category": "Cyber Exposure", "cluster": "cyber", "secondary": [], "parent": "insights", "state": "degrading", "cadence": 90, "fresh": true,
+    "brief": "Identity policy rarely fails by being removed; it fails by accumulating exceptions. Traces the common drift paths in enterprise tenants and defines effective-coverage measures that expose them.",
+    "related": { "assurance": ["identity-exposure-assurance", "privileged-access-assurance"], "useCases": ["identity-access-drift"], "technologies": ["entra-id-exposure-assurance", "aws-iam-exposure-assurance"], "industries": ["financial-services", "healthcare"], "insights": ["standing-privilege-evidence-gap", "non-human-identity-exposure"] }
+  },
+  {
+    "slug": "standing-privilege-evidence-gap", "title": "Standing privilege and the evidence gap",
+    "category": "Cyber Exposure", "cluster": "cyber", "secondary": [], "parent": "insights", "state": "risk", "cadence": 90, "fresh": true,
+    "brief": "Access reviews certify that privilege exists, not that it is needed. Compares attestation evidence with usage evidence and sets out a privilege model based on eligibility, time-bound elevation and recorded justification.",
+    "related": { "assurance": ["privileged-access-assurance", "identity-exposure-assurance"], "useCases": ["stale-privileged-access"], "technologies": ["entra-id-exposure-assurance", "aws-iam-exposure-assurance"], "industries": ["financial-services", "insurance"], "insights": ["how-identity-controls-drift", "ai-agent-permission-risk"] }
+  },
+  {
+    "slug": "non-human-identity-exposure", "title": "Non-human identity exposure",
+    "category": "Cyber Exposure", "cluster": "cyber", "secondary": ["ai"], "parent": "insights", "state": "risk", "cadence": 90, "fresh": true,
+    "brief": "Service principals, keys, tokens and now agent identities have no joiner-mover-leaver process. Covers inventory, ownership, credential age, federation in place of secrets, and how AI agents enlarge the population.",
+    "related": { "assurance": ["secrets-exposure-assurance", "identity-exposure-assurance", "mcp-security-assurance"], "useCases": ["identity-access-drift", "ai-agent-with-write-access"], "technologies": ["aws-iam-exposure-assurance", "entra-id-exposure-assurance"], "industries": ["software-technology"], "insights": ["ai-agent-permission-risk", "how-identity-controls-drift"] }
+  },
+  {
+    "slug": "data-freshness-ai-quality", "title": "Data freshness is an AI quality problem",
+    "category": "Data Assurance", "cluster": "data", "secondary": ["ai"], "parent": "insights", "state": "degrading", "cadence": 180, "fresh": false,
+    "brief": "An AI system with a stale corpus answers confidently and wrongly. Traces lag from source to index, shows why pipeline success hides age, and sets out consumer-defined freshness thresholds and deletion propagation.",
+    "related": { "assurance": ["data-freshness-assurance", "production-rag-assurance", "data-pipeline-assurance"], "useCases": ["data-pipeline-freshness-failure", "rag-quality-degradation"], "technologies": ["kafka-pipeline-assurance", "databricks-data-assurance", "rag-vector-search-assurance"], "industries": ["healthcare-ai-assurance"], "insights": ["measuring-production-rag-quality"] }
+  },
+  {
+    "slug": "what-change-failure-rate-proves", "title": "What change failure rate proves, and what it does not",
+    "category": "Change Assurance", "cluster": "change", "secondary": ["reliability"], "parent": "insights", "state": "assured", "cadence": 180, "fresh": true,
+    "brief": "The metric is easy to flatter. Covers current definitions from research, what counts as a failed change, measurement traps, pairing with recovery time and rework, and using it as a threshold rather than a scorecard.",
+    "related": { "assurance": ["release-assurance", "rollback-readiness-assurance", "change-assurance"], "useCases": ["high-change-failure-rate"], "technologies": ["eks-reliability-assurance"], "industries": ["software-technology", "saas-production-reliability"], "insights": ["error-budgets-without-consequence", "why-production-incidents-recur"] }
+  },
+  {
+    "slug": "cloud-commitment-utilisation-risk", "title": "Cloud commitments and utilisation risk",
+    "category": "Technology Value", "cluster": "value", "secondary": [], "parent": "insights", "state": "degrading", "cadence": 180, "fresh": true,
+    "brief": "Commitment discounts convert variable cost into a fixed obligation that architecture change can strand. Covers coverage and utilisation as paired thresholds, expiry tracking, and commitment decisions ahead of migrations. Uses current instrument names from research.",
+    "related": { "assurance": ["cloud-cost-assurance", "technology-value-assurance", "unit-economics-assurance"], "useCases": ["cloud-cost-anomaly"], "technologies": ["aws-production-reliability", "snowflake-data-assurance"], "industries": ["software-technology"], "insights": ["ai-cost-per-business-outcome"] }
+  },
+  {
+    "slug": "continuous-assurance-vs-monitoring", "title": "Continuous assurance is not monitoring",
+    "category": "Assurance Practice", "cluster": "category", "secondary": ["reliability"], "parent": "insights", "state": "assured", "cadence": 365, "fresh": false,
+    "brief": "Monitoring reports what a system is doing; assurance states whether an agreed outcome is still proven and who acts when it is not. Compares monitoring, audit, managed service and assurance across evidence, threshold, ownership and closure.",
+    "related": { "assurance": ["production-observability-assurance", "ai-observability-assurance", "slo-assurance"], "useCases": ["cloud-incident-recurrence"], "technologies": [], "industries": ["financial-services"], "insights": ["assurance-is-a-state-not-a-report", "error-budgets-without-consequence"] }
+  },
+  {
+    "slug": "assurance-is-a-state-not-a-report", "title": "Assurance is a state, not a report",
+    "category": "Assurance Practice", "cluster": "category", "secondary": [], "parent": "insights", "state": "assured", "cadence": 365, "fresh": false,
+    "brief": "The founding argument of the category. Point-in-time attestation describes the past; the four-state model (assured, degrading, at risk, unassured) describes now. Explains evidence expiry and why 'unassured' is distinct from 'failing'.",
+    "related": { "assurance": ["ai-assurance", "production-reliability-assurance", "cyber-exposure-assurance"], "useCases": ["ai-audit-readiness", "untested-disaster-recovery"], "technologies": [], "industries": ["financial-services"], "insights": ["continuous-assurance-vs-monitoring", "security-findings-vs-verified-closure"] }
+  }
+]

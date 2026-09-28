@@ -1,0 +1,29 @@
+---
+/** Baseline, Assure, Correct, Improve. */
+import { operatingStages } from '../../data/assurances.ts';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<ol class="rail rail--4 operating">
+  {
+    operatingStages.map((stage, i) => (
+      <li class="rv">
+        <span class="rail__tick" aria-hidden="true" />
+        <p class="lbl lbl--plain num">Stage {pad(i + 1)}</p>
+        <h3 class="h3 operating__title">{stage.title}</h3>
+        <p class="small operating__text">{stage.text}</p>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .operating__title {
+    margin-top: 0.75rem;
+  }
+
+  .operating__text {
+    margin-top: 0.75rem;
+  }
+</style>

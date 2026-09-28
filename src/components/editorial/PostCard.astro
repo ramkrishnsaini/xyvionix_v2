@@ -1,0 +1,55 @@
+---
+/** Insight teaser: category, reading time, headline and optional summary. */
+import type { PageRef } from '../../lib/pages.ts';
+import { formatDate, isoDate } from '../../lib/text.ts';
+
+interface Props {
+  page: PageRef;
+  readingTime?: number;
+  lead?: boolean;
+  summary?: boolean;
+  level?: 'h2' | 'h3' | 'h4';
+  showDate?: boolean;
+}
+
+const { page, readingTime, lead = false, summary = lead, level = 'h3', showDate = false } = Astro.props;
+const Heading = level;
+---
+
+<article class="post rv" data-filter-item={page.cluster ?? ''}>
+  <a href={page.path} class="post__link" data-track="insight_click">
+    <p class="meta">
+      <span class="meta__strong">{page.label}</span>
+      {
+        readingTime && (
+          <>
+            <span class="meta__sep" aria-hidden="true">
+              ·
+            </span>
+            <span>{readingTime} min read</span>
+          </>
+        )
+      }
+      {
+        showDate && (
+          <>
+            <span class="meta__sep" aria-hidden="true">
+              ·
+            </span>
+            <time datetime={isoDate(page.published)}>{formatDate(page.published)}</time>
+          </>
+        )
+      }
+    </p>
+    <Heading class:list={['post__title', lead && 'post__title--lead']}>
+      <span class="ul">{page.title}</span>
+    </Heading>
+    {summary && <p class="post__text">{page.summary}</p>}
+  </a>
+</article>
+
+<style>
+  .post__link {
+    display: block;
+  }
+</style>

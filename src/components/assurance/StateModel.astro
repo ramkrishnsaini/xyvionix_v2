@@ -1,0 +1,24 @@
+---
+/** The four assurance states. Each mark is paired with its text label. */
+import { states } from '../../data/assurances.ts';
+import StateMark from './StateMark.astro';
+---
+
+<ol class="rail rail--4 rv">
+  {
+    states.map((s) => (
+      <li>
+        <StateMark state={s.key} class="rail__mark" />
+        <p class="rail__title">{s.label}</p>
+        <p class="rail__text">{s.meaning}</p>
+        <p class="mono-note state-model__mark">{s.mark}</p>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .state-model__mark {
+    margin-top: 0.85rem;
+  }
+</style>

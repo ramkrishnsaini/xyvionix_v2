@@ -1,0 +1,234 @@
+---
+/**
+ * Shared structure for every content-collection page. The typed layouts
+ * (AssuranceLayout, ClusterPageLayout, UseCaseLayout, TechnologyLayout,
+ * IndustryLayout, InsightLayout) configure this and add their own modules.
+ *
+ * Order: obsidian hero, optional lead module, prose, what is measured,
+ * questions, related content, closing call to action.
+ */
+import { render } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import PageHero from '../components/layout/PageHero.astro';
+import Section from '../components/layout/Section.astro';
+import SectionHead from '../components/layout/SectionHead.astro';
+import Cta from '../components/layout/Cta.astro';
+import Toc from '../components/editorial/Toc.astro';
+import ReviewMeta from '../components/editorial/ReviewMeta.astro';
+import Sources from '../components/editorial/Sources.astro';
+import Faq from '../components/editorial/Faq.astro';
+import EvidenceList from '../components/evidence/EvidenceList.astro';
+import ThresholdTable from '../components/evidence/ThresholdTable.astro';
+import RelatedContent from '../components/clusters/RelatedContent.astro';
+import { breadcrumbsFor } from '../lib/breadcrumbs.ts';
+import { entryToRef, type AnyEntry } from '../lib/pages.ts';
+import { relatedFor } from '../lib/related.ts';
+import { articleNode, pageGraph, serviceNode } from '../lib/schema.ts';
+import { buildSeo } from '../lib/seo.ts';
+import { readingMinutes, wordCount } from '../lib/text.ts';
+import { site } from '../data/site.ts';
+
+interface Props {
+  entry: AnyEntry;
+  /** Mono label above the H1. */
+  label: string;
+  pageType: string;
+  /** Top-level navigation section this page belongs to. */
+  section: string;
+  schemaKind: 'service' | 'page' | 'article';
+  /** Show the entry's state in the hero. Used where the state describes the scenario. */
+  heroState?: boolean;
+  showReviewed?: boolean;
+  showByline?: boolean;
+  ctaTitle?: string;
+  ctaText?: string;
+  secondary?: { label: string; href: string };
+}
+
+const {
+  entry,
+  label,
+  pageType,
+  section,
+  schemaKind,
+  heroState = false,
+  showReviewed = false,
+  showByline = false,
+  ctaTitle,
+  ctaText,
+  secondary,
+} = Astro.props;
+
+const { data } = entry;
+const page = entryToRef(entry);
+const { Content, headings } = await render(entry);
+const crumbs = await breadcrumbsFor(page);
+const groups = await relatedFor(entry);
+
+const hasEvidence = data.evidence.length > 0;
+const hasThresholds = data.thresholds.length > 0;
+const hasMeasured = hasEvidence || hasThresholds;
+const hasFaqs = data.faqs.length > 0;
+const minutes = readingMinutes(entry.body);
+const author = 'author' in data ? data.author : data.owner;
+const category = 'category' in data ? data.category : undefined;
+
+// Surfaces alternate between the two off-white tones, whichever modules are present.
+const faqAlt = !hasMeasured;
+const relatedAlt = !(hasFaqs ? faqAlt : hasMeasured);
+
+const extraAnchors = [
+  hasMeasured && { slug: 'measured-title', text: 'What is measured' },
+  hasFaqs && { slug: 'questions-title', text: 'Questions buyers ask' },
+  groups.length > 0 && { slug: 'related-title', text: 'Related' },
+].filter((a): a is { slug: string; text: string } => Boolean(a));
+
+const extra =
+  schemaKind === 'service'
+    ? [
+        serviceNode({
+          url: page.url,
+          name: data.title,
+          description: data.description,
+          serviceType: data.title,
+          audience: data.audience,
+        }),
+      ]
+    : schemaKind === 'article'
+      ? [
+          articleNode({
+            url: page.url,
+            headline: data.h1,
+            description: data.description,
+            section: category ?? label,
+            published: data.publishedDate,
+            modified: data.modifiedDate,
+            wordCount: wordCount(entry.body),
+            author,
+          }),
+        ]
+      : [];
+
+const schema = pageGraph({
+  url: page.url,
+  name: data.seoTitle,
+  description: data.description,
+  image: `${site.url}${page.ogImage}`,
+  imageCaption: `${site.name}: ${data.title}`,
+  published: data.publishedDate,
+  modified: data.modifiedDate,
+  reviewed: data.lastReviewed,
+  crumbs,
+  mainEntity: schemaKind === 'service' ? `${page.url}#service` : schemaKind === 'article' ? `${page.url}#article` : undefined,
+  extra,
+});
+
+const seo = buildSeo({
+  slug: entry.id,
+  title: data.seoTitle,
+  description: data.description,
+  pageName: data.title,
+  ogTitle: data.ogTitle,
+  ogDescription: data.ogDescription,
+  ogQuestion: data.ogQuestion,
+  index: !data.noindex,
+  type: schemaKind === 'article' ? 'article' : 'website',
+  published: data.publishedDate,
+  modified: data.modifiedDate,
+  section: category,
+  author: schemaKind === 'article' ? author : undefined,
+  schema: [schema],
+  breadcrumbs: crumbs,
+});
+---
+
+<BaseLayout seo={seo} slug={entry.id} pageType={pageType} section={section}>
+  <PageHero
+    crumbs={crumbs}
+    label={label}
+    h1={data.h1}
+    lede={data.lede}
+    state={heroState ? data.state : undefined}
+    showCta={schemaKind !== 'article'}
+    secondary={secondary}
+  />
+
+  <slot name="lead" />
+
+  <Section surface="light" flush>
+    <div class="article">
+      <aside class="article__aside">
+        <Toc headings={headings} extra={extraAnchors} />
+        <ReviewMeta
+          owner={showByline ? author : undefined}
+          published={showByline ? data.publishedDate : undefined}
+          modified={showByline ? data.modifiedDate : undefined}
+          reviewed={data.lastReviewed}
+          showReviewed={showReviewed}
+          readingTime={showByline ? minutes : undefined}
+        />
+      </aside>
+      <div class="article__main">
+        <div class="prose">
+          <Content />
+        </div>
+        <slot name="after-prose" />
+        <Sources items={data.sources} />
+      </div>
+    </div>
+  </Section>
+
+  {
+    hasMeasured && (
+      <Section surface="light" alt labelledby="measured-title">
+        <SectionHead
+          label="Evidence and thresholds"
+          title="What is measured"
+          id="measured-title"
+          split
+          text="Assurance is held by evidence tested against thresholds. The evidence below is what has to exist, stay current and be attributable to a point in time."
+        />
+        {hasEvidence && (
+          <div class="mt-block">
+            <h3 class="lbl lbl--plain">Evidence required</h3>
+            <div class="measured__block">
+              <EvidenceList items={data.evidence} />
+            </div>
+          </div>
+        )}
+        {hasThresholds && (
+          <div class="mt-block">
+            <h3 class="lbl lbl--plain">Threshold model</h3>
+            <ThresholdTable rows={data.thresholds} subject={data.title} />
+          </div>
+        )}
+      </Section>
+    )
+  }
+
+  {
+    hasFaqs && (
+      <Section surface="light" alt={faqAlt} labelledby="questions-title">
+        <Faq items={data.faqs} />
+      </Section>
+    )
+  }
+
+  <slot name="before-related" />
+
+  {
+    groups.length > 0 && (
+      <Section surface="light" alt={relatedAlt} labelledby="related-title">
+        <RelatedContent groups={groups} />
+      </Section>
+    )
+  }
+
+  <Cta title={ctaTitle} text={ctaText} location={`${pageType}-cta`} />
+</BaseLayout>
+
+<style>
+  .measured__block {
+    margin-top: 1.25rem;
+  }
+</style>

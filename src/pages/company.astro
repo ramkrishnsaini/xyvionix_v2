@@ -1,0 +1,238 @@
+---
+/**
+ * Company page. States what Xyvionix is and is not. Makes no claim about
+ * customers, size, offices, history, awards or partnerships.
+ */
+import PageLayout from '../layouts/PageLayout.astro';
+import Section from '../components/layout/Section.astro';
+import SectionHead from '../components/layout/SectionHead.astro';
+import Outcomes from '../components/assurance/Outcomes.astro';
+import Arrow from '../components/layout/Arrow.astro';
+import { whyAssuranceIsLost } from '../data/assurances.ts';
+import { site } from '../data/site.ts';
+
+const sells = [
+  { title: 'Assurance coverage', text: 'A defined set of outcomes held under continuing proof.' },
+  { title: 'Evidence', text: 'Tested results, retained and attributable, that survive examination.' },
+  { title: 'Measurable thresholds', text: 'Boundaries agreed with the business and owned by a named person.' },
+  { title: 'Corrective ownership', text: 'Remediation carried to completion rather than handed back as a finding.' },
+  { title: 'Verified closure', text: 'Closure confirmed by re-test, recorded with the evidence that supports it.' },
+  { title: 'Continuing accountability', text: 'Someone answerable when the evidence fails.' },
+];
+
+const doesNotSell = [
+  'Engineers, developers or any other people by the hour, day or month',
+  'Staffing, resource augmentation or offshore capacity',
+  'Outsourced operation of systems as a general managed service',
+  'Software development or cloud migration projects',
+  'Advisory reports that end with recommendations for someone else to carry out',
+];
+
+const principles = [
+  {
+    title: 'Proof before opinion',
+    text: 'A statement about a system is supported by a test that could have failed, or it is recorded as an assumption.',
+  },
+  {
+    title: 'Unknown is not acceptable',
+    text: 'Where no current evidence exists, the state is Unassured. It is never reported as satisfactory by default.',
+  },
+  {
+    title: 'The business sets the threshold',
+    text: 'Engineering convention informs a threshold. The people who carry the consequence decide it.',
+  },
+  {
+    title: 'Corrections are owned',
+    text: 'Finding a problem creates an obligation to see it closed, not a document to send.',
+  },
+  {
+    title: 'The same standard, applied inward',
+    text: 'Access, data handling and claims made by Xyvionix are held to the standard it applies to the systems it assures.',
+  },
+];
+---
+
+<PageLayout
+  slug="company"
+  label="Company"
+  pageType="company"
+  lede="Xyvionix exists because of a gap that almost every enterprise carries. Technology is proven to work once, at the point it goes live. After that it is assumed to work. Xyvionix is the company answerable for replacing that assumption with current evidence."
+  secondary={{ label: 'How assurance works', href: '/how-assurance-works' }}
+>
+  <Section surface="light" flush labelledby="why-title">
+    <SectionHead
+      label="Why the category exists"
+      title="Critical technology changes continuously. Assurance does not survive that change on its own."
+      id="why-title"
+      split
+    >
+      <p class="body measure-narrow company__aside" slot="head">
+        {site.definition}
+      </p>
+      <dl class="rows rows--open rv">
+        {
+          whyAssuranceIsLost.map((item) => (
+            <div class="row">
+              <dt class="row__term">{item.title}</dt>
+              <dd class="row__desc">{item.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </SectionHead>
+  </Section>
+
+  <Section surface="light" alt labelledby="category-title">
+    <SectionHead label="The category" title={site.category} id="category-title" split>
+      <div class="prose">
+        <p>
+          Enterprises have mature practices for building technology, running it and auditing it. What they lack is a
+          function that holds a continuing answer to a simple question: is this outcome still being met, and what is
+          the proof?
+        </p>
+        <p>
+          Monitoring produces signals and leaves the judgement to whoever is watching. Audit produces a judgement
+          about a period that has ended. Managed services perform agreed activity and report that it was performed.
+          None of them is accountable for the outcome remaining true.
+        </p>
+        <p>
+          Continuous Technology Assurance is that accountability. It defines the outcome in the business's terms,
+          agrees the threshold, gathers evidence from the running system, holds a current state and owns the
+          correction when the state falls short. The method is described in
+          <a href="/how-assurance-works">How assurance works</a>.
+        </p>
+      </div>
+    </SectionHead>
+  </Section>
+
+  <Section surface="light" labelledby="sells-title">
+    <SectionHead
+      label="What Xyvionix sells"
+      title="Assurance, not labour"
+      id="sells-title"
+      split
+      text="The distinction is deliberate and it shapes everything about how the company works. An enterprise that needs more people should hire them. An enterprise that needs to know whether its technology still does what the business depends on needs something else."
+    />
+    <div class="sells mt-block">
+      <div class="rv">
+        <h3 class="lbl lbl--plain">What is sold</h3>
+        <dl class="rows sells__rows">
+          {
+            sells.map((item) => (
+              <div class="row">
+                <dt class="row__term">{item.title}</dt>
+                <dd class="row__desc">{item.text}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+      <div class="rv">
+        <h3 class="lbl lbl--plain">What is not sold</h3>
+        <ul class="nots">
+          {doesNotSell.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    </div>
+  </Section>
+
+  <Section surface="light" alt labelledby="receives-title">
+    <SectionHead label="What the business receives" title="Four outcomes, held continuously" id="receives-title" />
+    <div class="mt-block">
+      <Outcomes />
+    </div>
+  </Section>
+
+  <Section surface="light" labelledby="principles-title">
+    <SectionHead
+      label="Operating principles"
+      title="How Xyvionix decides what to do"
+      id="principles-title"
+      split
+    >
+      <dl class="rows rows--open rv">
+        {
+          principles.map((item) => (
+            <div class="row">
+              <dt class="row__term">{item.title}</dt>
+              <dd class="row__desc">{item.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </SectionHead>
+  </Section>
+
+  <Section surface="light" alt labelledby="who-title">
+    <SectionHead label="Who it is for" title="Enterprises where loss of assurance has consequence" id="who-title" split>
+      <div class="prose">
+        <p>
+          Xyvionix is designed for enterprises operating across North America, the United Kingdom, Europe and
+          Australia, in sectors where a technology failure is a regulatory, clinical or commercial event:
+          <a href="/financial-services">financial services</a>, <a href="/insurance">insurance</a>,
+          <a href="/healthcare">healthcare</a>, and <a href="/software-technology">software and technology</a>.
+        </p>
+        <p>
+          The people who engage Xyvionix are those who are asked for the proof: the chief information officer, the
+          chief technology officer, the chief information security officer, the head of AI, platform and reliability
+          leadership, technology risk, and the governance functions that answer to a board or a regulator.
+        </p>
+      </div>
+      <a href="/security-trust" class="lk company__link">
+        <span class="ul">How Xyvionix handles access and data</span>
+        <Arrow />
+      </a>
+    </SectionHead>
+  </Section>
+</PageLayout>
+
+<style>
+  .company__aside {
+    margin-top: 1.75rem;
+  }
+
+  .company__link {
+    margin-top: 2rem;
+  }
+
+  .sells {
+    display: grid;
+    gap: 3rem 4rem;
+  }
+
+  @media (min-width: 64rem) {
+    .sells {
+      grid-template-columns: 7fr 5fr;
+    }
+  }
+
+  .sells__rows {
+    margin-top: 1.25rem;
+  }
+
+  .nots {
+    margin-top: 1.25rem;
+    border-top: 1px solid var(--ln);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--mut);
+  }
+
+  .nots li {
+    display: flex;
+    gap: 0.9rem;
+    align-items: baseline;
+    padding-block: 1.1rem;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  .nots li::before {
+    content: "";
+    flex: none;
+    width: 9px;
+    height: 9px;
+    border: 1px dashed var(--fnt);
+    position: relative;
+    top: 1px;
+  }
+</style>

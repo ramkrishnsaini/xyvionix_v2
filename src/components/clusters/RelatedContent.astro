@@ -1,0 +1,50 @@
+---
+/** Related-content module. Real links with descriptive text, grouped by relationship. */
+import type { RelatedGroup } from '../../lib/related.ts';
+
+interface Props {
+  groups: RelatedGroup[];
+  headingId?: string;
+  title?: string;
+}
+
+const { groups, headingId = 'related-title', title = 'Where this connects' } = Astro.props;
+---
+
+{
+  groups.length > 0 && (
+    <>
+      <div class="module-head rv">
+        <p class="lbl">Related</p>
+        <h2 id={headingId} class="h2">
+          {title}
+        </h2>
+      </div>
+      <div class:list={['related', 'mt-block', groups.length > 2 && 'related--3']}>
+        {groups.map((group) => (
+          <div class="rv">
+            <h3 class="lbl lbl--plain">{group.label}</h3>
+            <p class="small related__context">{group.context}</p>
+            <ul class="related__list">
+              {group.pages.map((page) => (
+                <li class="related__item">
+                  <a href={page.path} class="related__link" data-track="related_click" data-track-location={group.key}>
+                    <span class="related__title ul">{page.title}</span>
+                    <span class="related__text">{page.summary}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </>
+  )
+}
+
+<style>
+  .related__context {
+    margin-top: 0.5rem;
+    font-size: 0.844rem;
+  }
+</style>

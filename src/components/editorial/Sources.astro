@@ -1,0 +1,36 @@
+---
+/** Primary sources behind facts stated on the page. */
+interface Props {
+  items: { title: string; url: string }[];
+  headingId?: string;
+}
+
+const { items, headingId = 'sources-title' } = Astro.props;
+---
+
+{
+  items.length > 0 && (
+    <section class="sources-block" aria-labelledby={headingId}>
+      <h2 id={headingId} class="lbl lbl--plain">
+        Sources
+      </h2>
+      <ol class="sources">
+        {items.map((item) => (
+          <li>
+            <a href={item.url} rel="noopener external">
+              {item.title}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+
+<style>
+  .sources-block {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--ln);
+  }
+</style>

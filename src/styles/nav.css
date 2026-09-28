@@ -1,0 +1,239 @@
+/* Fixed obsidian navigation. Never inverts, whatever section is beneath it. */
+
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  color: var(--ob-tx);
+  --tx: var(--ob-tx);
+  --mut: var(--ob-mut);
+  --fnt: var(--ob-fnt);
+  --gst: #4a4944;
+  --ln: var(--ob-ln);
+  --ln2: rgba(245, 244, 241, 0.16);
+  --bg0: var(--ob-bg0);
+  color-scheme: dark;
+}
+
+.nav__shell {
+  padding-top: 1rem;
+}
+
+@media (min-width: 40rem) {
+  .nav__shell {
+    padding-top: 1.25rem;
+  }
+}
+
+.nav__bar {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--ob-ln);
+  padding-inline: 1rem;
+}
+
+/* The glass sits on its own layer. If the bar itself carried the backdrop filter, the
+   dropdown panel inside it would be composited with the filter and show the page through. */
+.nav__bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgba(12, 12, 11, 0.86);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+}
+
+@media (min-width: 64rem) {
+  .nav__bar {
+    padding-inline: 1.5rem;
+  }
+}
+
+.nav__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  height: 58px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: none;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: var(--track-display);
+  color: var(--ob-tx);
+}
+
+.nav__list {
+  display: none;
+  align-items: center;
+  gap: 1.9rem;
+  font-size: 0.875rem;
+  color: var(--ob-mut);
+}
+
+@media (min-width: 68rem) {
+  .nav__list {
+    display: flex;
+  }
+}
+
+.nav__item {
+  position: relative;
+}
+
+.nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-block: 0.5rem;
+  color: var(--ob-mut);
+  transition: color 0.2s;
+}
+
+.nav__link:hover,
+.nav__link[aria-current="page"],
+.nav__link[aria-expanded="true"] {
+  color: var(--ob-tx);
+}
+
+.nav__caret {
+  transition: transform 0.25s var(--ease);
+}
+
+.nav__link[aria-expanded="true"] .nav__caret {
+  transform: rotate(180deg);
+}
+
+/* assurance panel */
+.nav__panel {
+  position: absolute;
+  left: -1.5rem;
+  top: calc(100% + 0.9rem);
+  width: min(46rem, calc(100vw - 4rem));
+  padding: 1.75rem;
+  border: 1px solid var(--ob-ln);
+  border-radius: var(--radius-lg);
+  /* Opaque: a nested backdrop filter does not blur the page, so text would show through. */
+  background: #0f0f0e;
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7);
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1.5rem 2.5rem;
+}
+
+.nav__group-label {
+  font-family: var(--font-mono);
+  font-size: 0.656rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ob-fnt);
+}
+
+.nav__group-list {
+  margin-top: 0.85rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.nav__group + .nav__group {
+  margin-top: 1.5rem;
+}
+
+.nav__sub {
+  display: block;
+  padding: 0.5rem 0;
+  color: var(--ob-tx);
+  font-size: 0.906rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.nav__sub-desc {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ob-mut);
+}
+
+.nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav__cta {
+  display: none;
+}
+
+@media (min-width: 40rem) {
+  .nav__cta {
+    display: inline-flex;
+  }
+}
+
+.nav__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--ob-tx);
+  border-radius: var(--radius);
+}
+
+@media (min-width: 68rem) {
+  .nav__toggle {
+    display: none;
+  }
+}
+
+/* mobile menu */
+.nav__mobile {
+  border-top: 1px solid var(--ob-ln);
+  padding-block: 0.75rem 1rem;
+  max-height: calc(100vh - 7rem);
+  overflow-y: auto;
+  font-size: 0.9375rem;
+  color: var(--ob-mut);
+}
+
+@media (min-width: 68rem) {
+  .nav__mobile {
+    display: none;
+  }
+}
+
+.nav__mobile a {
+  display: block;
+  padding-block: 0.75rem;
+  border-bottom: 1px solid var(--ob-ln);
+}
+
+.nav__mobile a:hover,
+.nav__mobile a[aria-current="page"] {
+  color: var(--ob-tx);
+}
+
+.nav__mobile .nav__msub {
+  padding-left: 1rem;
+  font-size: 0.875rem;
+}
+
+.nav__mobile .btn {
+  margin-top: 1rem;
+  border-bottom: 0;
+  text-align: center;
+  color: var(--ob-bg0);
+  padding-block: 0.8rem;
+}

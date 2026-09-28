@@ -1,0 +1,126 @@
+---
+/** Technologies hub. Platforms are grouped by the assurance problem they create. */
+import PageLayout from '../layouts/PageLayout.astro';
+import Section from '../components/layout/Section.astro';
+import SectionHead from '../components/layout/SectionHead.astro';
+import PageCard from '../components/clusters/PageCard.astro';
+import PageList from '../components/clusters/PageList.astro';
+import { featured } from '../data/hubs.ts';
+import { technologyGroups } from '../data/technologies.ts';
+import { byTitle, getPagesByKind, resolveSlugs } from '../lib/pages.ts';
+
+const all = (await getPagesByKind('technologies')).filter((p) => p.index).sort(byTitle);
+const lead = await resolveSlugs(featured.technologies);
+
+const groups = technologyGroups
+  .map((group) => ({ ...group, pages: all.filter((p) => p.label === group.key) }))
+  .filter((group) => group.pages.length > 0);
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<PageLayout
+  slug="technologies"
+  label="Technologies"
+  pageType="hub"
+  lede="Assurance is gathered on the platforms an enterprise already runs. Each platform has its own lifecycle, its own automatic changes and its own way of failing, so what has to be re-proven differs from one to the next. These pages connect a platform to the assurance problem it creates."
+  secondary={{ label: 'Assurance areas', href: '/assurance' }}
+  ctaTitle="What must stay proven on the platforms you run?"
+>
+  <Section surface="light" flush labelledby="premise-title">
+    <SectionHead label="Premise" title="A platform is a calendar of changes you did not schedule" id="premise-title" split>
+      <div class="prose">
+        <p>
+          Cloud, AI and data platforms change on their vendors' timetables. Model versions are retired. Kubernetes
+          versions leave support. Managed services upgrade themselves inside maintenance windows. Default settings
+          move. Each of these is a production change that arrives without a change request.
+        </p>
+        <p>
+          Evidence gathered before such a change describes a system that no longer exists. The pages in this section
+          therefore ask the same three questions of every platform: what expires, on whose calendar, and what has to
+          be re-proven when it does.
+        </p>
+        <p>
+          Xyvionix is independent of the vendors named here. It is not a reseller or a partner of any of them, and
+          these pages are not descriptions of services for a platform. Platform detail changes quickly, so every
+          technology page shows the date it was last reviewed against vendor documentation.
+        </p>
+      </div>
+    </SectionHead>
+  </Section>
+
+  {
+    lead.length > 0 && (
+      <Section surface="light" alt labelledby="featured-title">
+        <SectionHead label="Start here" title="Three platforms, three different kinds of expiry" id="featured-title" />
+        <div class="grid-3 mt-block">
+          {lead.map((page, i) => (
+            <PageCard
+              href={page.path}
+              label={`Platform ${pad(i + 1)}`}
+              title={page.title}
+              text={page.summary}
+              location="technologies-featured"
+            />
+          ))}
+        </div>
+      </Section>
+    )
+  }
+
+  <Section surface="light" labelledby="all-title">
+    <SectionHead
+      label="All technologies"
+      title="Grouped by the problem, not the vendor"
+      id="all-title"
+      split
+      text="Two platforms from different vendors often share an assurance problem, and two services from one vendor often do not. The groups below follow the problem."
+    />
+
+    <div class="filters tech__filters rv" data-filter-group role="group" aria-label="Filter technologies by group" hidden>
+      <button type="button" class="chip" data-filter="" aria-pressed="true">All</button>
+      {
+        groups.map((group) => (
+          <button type="button" class="chip" data-filter={group.key} aria-pressed="false">
+            {group.name}
+          </button>
+        ))
+      }
+    </div>
+
+    {
+      groups.map((group) => (
+        <div class="group" data-filter-section={group.key}>
+          <div class="group__head rv">
+            <h3 class="h3">{group.name}</h3>
+            <p class="body group__text">{group.description}</p>
+          </div>
+          <PageList pages={group.pages} location={`technologies-${group.key}`} />
+        </div>
+      ))
+    }
+  </Section>
+
+  <script>
+    import '../scripts/hub-filter.ts';
+  </script>
+</PageLayout>
+
+<style>
+  .tech__filters {
+    margin-top: 3rem;
+  }
+
+  .group {
+    margin-top: 4rem;
+  }
+
+  .group__head {
+    max-width: 62ch;
+    margin-bottom: 2rem;
+  }
+
+  .group__text {
+    margin-top: 1rem;
+  }
+</style>

@@ -1,0 +1,68 @@
+[
+  {
+    "slug": "why-ai-evaluation-fails-after-launch", "title": "Why AI evaluation fails after launch",
+    "category": "AI Assurance", "cluster": "ai", "secondary": [], "parent": "insights", "state": "degrading", "cadence": 90, "fresh": true,
+    "brief": "Enterprise AI passes review once and is rarely examined again. Explains the four ways evaluation evidence expires (test set ageing, judge drift, traffic shift, silent system change) and what an evaluation regime that survives launch tests and how often.",
+    "related": { "assurance": ["llm-evaluation-assurance", "ai-assurance", "model-change-assurance"], "useCases": ["production-ai-going-live"], "technologies": ["azure-ai-assurance"], "industries": ["financial-services-ai-assurance"], "insights": ["measuring-production-rag-quality", "model-retirement-is-a-production-change"] }
+  },
+  {
+    "slug": "measuring-production-rag-quality", "title": "Measuring production RAG quality",
+    "category": "AI Assurance", "cluster": "ai", "secondary": ["data"], "parent": "insights", "state": "assured", "cadence": 90, "fresh": true,
+    "brief": "A measurement method: separate retrieval from generation, define metrics for each, sample production traffic, set thresholds per use, and attribute a failure to corpus, index, retriever or generator. Includes a metric table.",
+    "related": { "assurance": ["production-rag-assurance", "llm-evaluation-assurance"], "useCases": ["rag-quality-degradation"], "technologies": ["rag-vector-search-assurance"], "industries": ["healthcare-ai-assurance"], "insights": ["data-freshness-ai-quality", "why-ai-evaluation-fails-after-launch"] }
+  },
+  {
+    "slug": "ai-agent-permission-risk", "title": "AI agent permission risk",
+    "category": "AI Assurance", "cluster": "ai", "secondary": ["cyber"], "parent": "insights", "state": "risk", "cadence": 90, "fresh": true,
+    "brief": "Agents inherit the permissions of whatever credential they are given and exercise them at machine speed under adversarial input. A control model: identity per agent, scope per task, approval by consequence, reversibility, action audit.",
+    "related": { "assurance": ["ai-agent-assurance", "privileged-access-assurance", "mcp-security-assurance"], "useCases": ["ai-agent-with-write-access"], "technologies": ["entra-id-exposure-assurance", "azure-ai-assurance"], "industries": ["financial-services-ai-assurance"], "insights": ["mcp-servers-trust-boundary", "human-oversight-evidence", "non-human-identity-exposure"] }
+  },
+  {
+    "slug": "ai-cost-per-business-outcome", "title": "AI cost per business outcome",
+    "category": "Technology Value", "cluster": "value", "secondary": ["ai"], "parent": "insights", "state": "assured", "cadence": 90, "fresh": true,
+    "brief": "Token price is the wrong unit. Shows how to define an outcome unit, attribute full cost including retries, tool calls and failed attempts, and set a threshold. Worked example labelled illustrative.",
+    "related": { "assurance": ["ai-cost-assurance", "unit-economics-assurance", "technology-value-assurance"], "useCases": ["ai-cost-spike"], "technologies": ["vllm-production-assurance"], "industries": ["software-technology"], "insights": ["cloud-commitment-utilisation-risk"] }
+  },
+  {
+    "slug": "model-retirement-is-a-production-change", "title": "Model retirement is a production change",
+    "category": "AI Assurance", "cluster": "ai", "secondary": ["change"], "parent": "insights", "state": "degrading", "cadence": 90, "fresh": true,
+    "brief": "Providers publish retirement dates and upgrade aliases on their own calendar. Treats each as a scheduled production change: inventory, notice tracking, re-evaluation gate, staged cutover. Uses current provider lifecycle policies from research.",
+    "related": { "assurance": ["model-change-assurance", "llm-evaluation-assurance", "release-assurance"], "useCases": ["model-provider-migration"], "technologies": ["azure-ai-assurance", "aws-bedrock-assurance", "vertex-ai-assurance"], "industries": ["insurance-claims-ai-assurance"], "insights": ["why-ai-evaluation-fails-after-launch"] }
+  },
+  {
+    "slug": "mcp-servers-trust-boundary", "title": "MCP servers are a trust boundary",
+    "category": "AI Assurance", "cluster": "ai", "secondary": ["cyber"], "parent": "insights", "state": "risk", "cadence": 90, "fresh": true,
+    "brief": "Every connected tool server can influence agent behaviour through descriptions and results. Explains the trust boundary, the documented risk classes, and the inventory, authorisation and change-detection controls that make the boundary assurable. Defensive framing.",
+    "related": { "assurance": ["mcp-security-assurance", "ai-agent-assurance", "ai-security-assurance"], "useCases": ["ai-agent-with-write-access"], "technologies": ["azure-ai-assurance"], "industries": ["financial-services-ai-assurance"], "insights": ["ai-agent-permission-risk", "non-human-identity-exposure"] }
+  },
+  {
+    "slug": "human-oversight-evidence", "title": "Human oversight that leaves evidence",
+    "category": "AI Assurance", "cluster": "ai", "secondary": [], "parent": "insights", "state": "degrading", "cadence": 90, "fresh": true,
+    "brief": "Approval steps degrade into rubber stamps. Defines measurable oversight: override rate, review time, reviewer load, sampled disagreement, escalation outcomes, and the point at which a human approval no longer counts as a control.",
+    "related": { "assurance": ["ai-agent-assurance", "ai-governance-assurance"], "useCases": ["ai-agent-with-write-access", "ai-audit-readiness"], "technologies": ["azure-ai-assurance"], "industries": ["insurance-claims-ai-assurance", "healthcare-ai-assurance"], "insights": ["ai-audit-evidence-requirements", "ai-agent-permission-risk"] }
+  },
+  {
+    "slug": "ai-audit-evidence-requirements", "title": "What AI audit evidence requires",
+    "category": "AI Assurance", "cluster": "ai", "secondary": [], "parent": "insights", "state": "unassured", "cadence": 90, "fresh": true,
+    "brief": "Maps what examiners and auditors ask for to the operating evidence that answers it: inventory, version history, evaluation records, monitoring, incident log, oversight records. Checklist table. Accurate on current regulatory timelines; not legal advice.",
+    "related": { "assurance": ["ai-governance-assurance", "llm-evaluation-assurance", "ai-observability-assurance"], "useCases": ["ai-audit-readiness"], "technologies": ["azure-ai-assurance", "aws-bedrock-assurance"], "industries": ["financial-services-ai-assurance", "insurance-claims-ai-assurance"], "insights": ["human-oversight-evidence", "assurance-is-a-state-not-a-report"] }
+  },
+  {
+    "slug": "disaster-recovery-plan-never-tested", "title": "The disaster recovery plan that has never been tested is not a plan",
+    "category": "Production Reliability", "cluster": "reliability", "secondary": [], "parent": "insights", "state": "unassured", "cadence": 180, "fresh": false,
+    "brief": "Why recovery objectives on paper diverge from recovery in practice: dependency order, stale runbooks, restore that was never timed, credentials that live in the failed region. How to structure a first exercise and what evidence it produces.",
+    "related": { "assurance": ["disaster-recovery-assurance", "production-reliability-assurance"], "useCases": ["untested-disaster-recovery"], "technologies": ["aws-production-reliability", "azure-production-reliability"], "industries": ["financial-services", "healthcare"], "insights": ["cloud-drift-production-risk", "why-production-incidents-recur"] }
+  },
+  {
+    "slug": "error-budgets-without-consequence", "title": "Error budgets without consequence are dashboards",
+    "category": "Production Reliability", "cluster": "reliability", "secondary": [], "parent": "insights", "state": "degrading", "cadence": 180, "fresh": false,
+    "brief": "An error budget only works if exhausting it changes what the organisation does. Covers budget policy, who holds authority, burn-rate response, and the signs that an SLO programme has become reporting.",
+    "related": { "assurance": ["slo-assurance", "production-observability-assurance", "release-assurance"], "useCases": ["high-change-failure-rate"], "technologies": ["gcp-production-reliability"], "industries": ["saas-production-reliability"], "insights": ["continuous-assurance-vs-monitoring", "what-change-failure-rate-proves"] }
+  },
+  {
+    "slug": "cloud-drift-production-risk", "title": "Cloud drift as production risk",
+    "category": "Production Reliability", "cluster": "reliability", "secondary": ["cyber"], "parent": "insights", "state": "degrading", "cadence": 180, "fresh": false,
+    "brief": "Drift is usually treated as hygiene. Shows how it becomes recovery failure, security regression and failed deployment, how to rank drift by consequence, and why drift age is the threshold that matters.",
+    "related": { "assurance": ["cloud-drift-assurance", "disaster-recovery-assurance", "cloud-security-exposure-assurance"], "useCases": ["cloud-configuration-drift"], "technologies": ["terraform-drift-assurance"], "industries": ["financial-services"], "insights": ["disaster-recovery-plan-never-tested", "security-findings-vs-verified-closure"] }
+  }
+]

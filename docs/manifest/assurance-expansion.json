@@ -1,0 +1,121 @@
+[
+  {
+    "slug": "cloud-cost-assurance",
+    "title": "Cloud Cost Assurance",
+    "kind": "child", "cluster": "value", "secondary": [], "parent": "technology-value-assurance",
+    "state": "assured", "cadence": 180, "fresh": false,
+    "ogQuestion": "Is cloud spend still inside the envelope the business agreed?",
+    "audience": ["FinOps Leadership", "CIO", "CTO"],
+    "intent": "Commercial: holding cloud cost against agreed thresholds with owned correction",
+    "brief": "Cost is assured through allocation coverage, anomaly response time, commitment utilisation and waste age. Correction is owned to a verified change in spend. Absorbs cost anomaly and commitment topics.",
+    "related": {
+      "assurance": ["unit-economics-assurance", "ai-cost-assurance", "cloud-drift-assurance"],
+      "useCases": ["cloud-cost-anomaly", "ai-cost-spike"],
+      "technologies": ["aws-production-reliability", "databricks-data-assurance", "snowflake-data-assurance"],
+      "industries": ["software-technology"],
+      "insights": ["cloud-commitment-utilisation-risk"]
+    }
+  },
+  {
+    "slug": "unit-economics-assurance",
+    "title": "Unit Economics Assurance",
+    "kind": "child", "cluster": "value", "secondary": ["ai"], "parent": "technology-value-assurance",
+    "state": "assured", "cadence": 180, "fresh": false,
+    "ogQuestion": "What does one unit of business outcome cost today?",
+    "audience": ["CFO office", "FinOps Leadership", "CTO", "Product Leadership"],
+    "intent": "Commercial: continuing proof of technology cost per unit of business outcome",
+    "brief": "Unit cost moves with usage, pricing and architecture. Covers unit definition, allocation integrity, shared-cost treatment, margin thresholds and detection of unit-cost regression after release.",
+    "related": {
+      "assurance": ["cloud-cost-assurance", "ai-cost-assurance", "release-assurance"],
+      "useCases": ["cloud-cost-anomaly", "ai-cost-spike"],
+      "technologies": ["vllm-production-assurance", "snowflake-data-assurance"],
+      "industries": ["software-technology", "saas-production-reliability"],
+      "insights": ["ai-cost-per-business-outcome"]
+    }
+  },
+  {
+    "slug": "data-freshness-assurance",
+    "title": "Data Freshness Assurance",
+    "kind": "child", "cluster": "data", "secondary": ["ai"], "parent": "data-assurance",
+    "state": "assured", "cadence": 180, "fresh": false,
+    "ogQuestion": "How old is the data behind today's decision?",
+    "audience": ["Chief Data Officer", "Head of Data Engineering", "Head of AI"],
+    "intent": "Commercial: continuing proof that data arrives within the age the consuming outcome tolerates",
+    "brief": "Freshness is defined by the consumer, not the pipeline schedule. Covers end-to-end data age, consumer-defined tolerance, silent staleness, and propagation into reports, decisions and AI retrieval.",
+    "related": {
+      "assurance": ["data-pipeline-assurance", "data-quality-assurance", "production-rag-assurance"],
+      "useCases": ["data-pipeline-freshness-failure", "rag-quality-degradation"],
+      "technologies": ["kafka-pipeline-assurance", "databricks-data-assurance", "snowflake-data-assurance"],
+      "industries": ["insurance", "healthcare"],
+      "insights": ["data-freshness-ai-quality"]
+    }
+  },
+  {
+    "slug": "data-quality-assurance",
+    "title": "Data Quality Assurance",
+    "kind": "child", "cluster": "data", "secondary": [], "parent": "data-assurance",
+    "state": "assured", "cadence": 180, "fresh": false,
+    "ogQuestion": "Is the data still fit for the decision that uses it?",
+    "audience": ["Chief Data Officer", "Head of Data Engineering", "Technology Risk"],
+    "intent": "Commercial: continuing proof that data meets the quality its consumers depend on",
+    "brief": "Quality rules age as sources and semantics change. Covers rule coverage of critical fields, contract conformance, distribution shift, reconciliation and ownership of each failed expectation through to correction.",
+    "related": {
+      "assurance": ["data-freshness-assurance", "data-pipeline-assurance", "llm-evaluation-assurance"],
+      "useCases": ["schema-change-production-impact", "data-pipeline-freshness-failure"],
+      "technologies": ["databricks-data-assurance", "snowflake-data-assurance"],
+      "industries": ["healthcare", "insurance", "financial-services"],
+      "insights": ["data-freshness-ai-quality"]
+    }
+  },
+  {
+    "slug": "data-pipeline-assurance",
+    "title": "Data Pipeline Assurance",
+    "kind": "child", "cluster": "data", "secondary": ["reliability"], "parent": "data-assurance",
+    "state": "assured", "cadence": 180, "fresh": false,
+    "ogQuestion": "Did every pipeline deliver complete data, on time, in order?",
+    "audience": ["Head of Data Engineering", "VP Platform", "Chief Data Officer"],
+    "intent": "Commercial: continuing proof that pipelines deliver complete, timely, correct data and can recover",
+    "brief": "A green run is not a correct delivery. Covers completeness, lateness, schema change handling, replay and backfill capability, and orchestration platform currency.",
+    "related": {
+      "assurance": ["data-freshness-assurance", "data-quality-assurance", "disaster-recovery-assurance"],
+      "useCases": ["data-pipeline-freshness-failure", "schema-change-production-impact"],
+      "technologies": ["kafka-pipeline-assurance", "databricks-data-assurance", "snowflake-data-assurance"],
+      "industries": ["insurance", "software-technology"],
+      "insights": ["data-freshness-ai-quality"]
+    }
+  },
+  {
+    "slug": "release-assurance",
+    "title": "Release Assurance",
+    "kind": "child", "cluster": "change", "secondary": ["reliability"], "parent": "change-assurance",
+    "state": "assured", "cadence": 180, "fresh": false,
+    "ogQuestion": "What does each release prove before it reaches customers?",
+    "audience": ["VP Engineering", "VP Platform", "Technology Risk"],
+    "intent": "Commercial: release evidence and production validation held against thresholds",
+    "brief": "A release is assured by evidence gathered before and after deployment. Covers gate validity, progressive exposure, post-deployment verification, provenance of what was shipped and change failure rate. Absorbs deployment and production validation topics.",
+    "related": {
+      "assurance": ["rollback-readiness-assurance", "slo-assurance", "model-change-assurance"],
+      "useCases": ["high-change-failure-rate", "schema-change-production-impact"],
+      "technologies": ["eks-reliability-assurance", "aks-reliability-assurance", "terraform-drift-assurance"],
+      "industries": ["software-technology", "saas-production-reliability"],
+      "insights": ["what-change-failure-rate-proves"]
+    }
+  },
+  {
+    "slug": "rollback-readiness-assurance",
+    "title": "Rollback Readiness Assurance",
+    "kind": "child", "cluster": "change", "secondary": ["reliability"], "parent": "change-assurance",
+    "state": "assured", "cadence": 180, "fresh": false,
+    "ogQuestion": "Can the last change be reversed inside the time that matters?",
+    "audience": ["VP Engineering", "Head of SRE", "Technology Risk"],
+    "intent": "Commercial: continuing proof that change can be reversed within an agreed time",
+    "brief": "Rollback is a capability that silently disappears with irreversible migrations, state changes and dependency upgrades. Covers exercised rollback time, irreversible-change identification, data migration reversibility and rollback of models and configuration.",
+    "related": {
+      "assurance": ["release-assurance", "disaster-recovery-assurance", "model-change-assurance"],
+      "useCases": ["high-change-failure-rate", "schema-change-production-impact", "kubernetes-upgrade-risk"],
+      "technologies": ["eks-reliability-assurance", "terraform-drift-assurance"],
+      "industries": ["saas-production-reliability"],
+      "insights": ["what-change-failure-rate-proves"]
+    }
+  }
+]

@@ -1,0 +1,27 @@
+---
+/**
+ * Use case: a situation in which assurance is lost. The state mark in the
+ * hero is the state the scenario describes, named in text beside it.
+ */
+import type { CollectionEntry } from 'astro:content';
+import ContentShell from './ContentShell.astro';
+
+interface Props {
+  entry: CollectionEntry<'useCases'>;
+}
+
+const { entry } = Astro.props;
+---
+
+<ContentShell
+  entry={entry}
+  label="Use case"
+  pageType="useCases"
+  section="use-cases"
+  schemaKind="page"
+  heroState
+  showReviewed={entry.data.freshnessCritical}
+  ctaTitle="Is this the situation you are in?"
+  ctaText="Name the system and the outcome that must remain true. Xyvionix establishes what evidence proves it and where assurance stands today."
+  secondary={{ label: 'All use cases', href: '/use-cases' }}
+/>

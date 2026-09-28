@@ -1,0 +1,16 @@
+---
+/**
+ * Writes one JSON-LD block. "<" is escaped so content can never close the
+ * script element. A data block is not executed, so it is compatible with a
+ * script-src 'self' policy.
+ */
+interface Props {
+  data: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const { data } = Astro.props;
+const blocks = Array.isArray(data) ? data : [data];
+const serialise = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
+---
+
+{blocks.map((block) => <script type="application/ld+json" set:html={serialise(block)} />)}

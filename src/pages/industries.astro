@@ -1,0 +1,135 @@
+---
+/** Industries hub. Each sector is introduced by what continuing proof means there. */
+import PageLayout from '../layouts/PageLayout.astro';
+import Section from '../components/layout/Section.astro';
+import SectionHead from '../components/layout/SectionHead.astro';
+import Arrow from '../components/layout/Arrow.astro';
+import { industries } from '../data/industries.ts';
+import { industryNotes } from '../data/hubs.ts';
+import { byTitle, getChildrenOf, getPage } from '../lib/pages.ts';
+
+const sectors = (
+  await Promise.all(
+    industries.map(async (industry) => ({
+      industry,
+      page: await getPage(industry.slug),
+      note: industryNotes.find((n) => n.slug === industry.slug)?.proof ?? '',
+      children: (await getChildrenOf(industry.slug)).filter((p) => p.kind === 'industries' && p.index).sort(byTitle),
+    })),
+  )
+).filter((s) => s.page !== undefined);
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<PageLayout
+  slug="industries"
+  label="Industries"
+  pageType="hub"
+  lede="The method of assurance is the same in every sector. What differs is the consequence of losing it, who asks for the proof, and how long the evidence has to survive. Xyvionix is designed for four sectors in which technology failure is a regulatory, clinical or commercial event rather than an engineering one."
+  secondary={{ label: 'Assurance areas', href: '/assurance' }}
+  ctaTitle="Which outcome carries the most consequence for you?"
+>
+  <Section surface="light" flush labelledby="why-title">
+    <SectionHead label="Why sector matters" title="The same failure carries a different consequence" id="why-title" split>
+      <div class="prose">
+        <p>
+          A recovery exercise that overruns its target is an engineering finding in one company and a breach of a
+          stated tolerance in another. A model that changes behaviour after a vendor update is a quality problem in
+          one setting and an unexplained decision about a customer in another.
+        </p>
+        <p>
+          Sector determines three things. It determines which outcomes must be proven, because supervisors, customers
+          or clinical safety require it. It determines how current the proof must be. And it determines how long the
+          evidence must be retained, which is often far longer than the system that produced it stays unchanged.
+        </p>
+        <p>
+          Each industry page describes those three things for its sector, names the regulatory and audit context with
+          dates, and links to the assurance areas and use cases that apply. Xyvionix does not give legal or
+          regulatory advice. The pages state facts and the evidence those facts imply.
+        </p>
+      </div>
+    </SectionHead>
+  </Section>
+
+  {
+    sectors.map(({ industry, page, note, children }, i) => (
+      <Section surface="light" alt={i % 2 === 0} labelledby={`sector-${industry.key}`}>
+        <div class="sector">
+          <div class="sector__head rv">
+            <p class="lbl lbl--plain num">Sector {pad(i + 1)}</p>
+            <h2 id={`sector-${industry.key}`} class="h2 sector__title">
+              <a href={page!.path} class="ul">
+                {industry.name}
+              </a>
+            </h2>
+            <p class="sector__lead">{industry.consequence}</p>
+          </div>
+          <div class="sector__body rv">
+            <h3 class="lbl lbl--plain">What continuing proof means</h3>
+            <p class="body sector__text">{note}</p>
+            <p class="body sector__text">{page!.summary}</p>
+            <a href={page!.path} class="lk sector__link" data-track="listing_click" data-track-location="industries-hub">
+              <span class="ul">Assurance for {industry.name.toLowerCase()}</span>
+              <Arrow />
+            </a>
+            {children.length > 0 && (
+              <div class="sector__more">
+                <h3 class="lbl lbl--plain">Specific to this sector</h3>
+                <ul class="related__list">
+                  {children.map((child) => (
+                    <li class="related__item">
+                      <a href={child.path} class="related__link">
+                        <span class="related__title ul">{child.title}</span>
+                        <span class="related__text">{child.summary}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      </Section>
+    ))
+  }
+</PageLayout>
+
+<style>
+  .sector {
+    display: grid;
+    gap: 2.5rem 4rem;
+  }
+
+  @media (min-width: 64rem) {
+    .sector {
+      grid-template-columns: 5fr 7fr;
+    }
+  }
+
+  .sector__title {
+    margin-top: 1.25rem;
+  }
+
+  .sector__lead {
+    margin-top: 1.5rem;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    font-weight: 500;
+    color: var(--tx);
+    max-width: 38ch;
+  }
+
+  .sector__text {
+    margin-top: 1rem;
+    max-width: 60ch;
+  }
+
+  .sector__link {
+    margin-top: 1.75rem;
+  }
+
+  .sector__more {
+    margin-top: 3rem;
+  }
+</style>

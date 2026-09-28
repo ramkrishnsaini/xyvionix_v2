@@ -1,0 +1,168 @@
+---
+/** Use-case hub. Grouped by what changed, with a filter that is an enhancement only. */
+import PageLayout from '../layouts/PageLayout.astro';
+import Section from '../components/layout/Section.astro';
+import SectionHead from '../components/layout/SectionHead.astro';
+import PageCard from '../components/clusters/PageCard.astro';
+import PageList from '../components/clusters/PageList.astro';
+import StateMark from '../components/assurance/StateMark.astro';
+import { states } from '../data/assurances.ts';
+import { featured, useCaseGroups, useCaseQuestions } from '../data/hubs.ts';
+import { byTitle, getPagesByKind, resolveSlugs } from '../lib/pages.ts';
+
+const all = (await getPagesByKind('useCases')).filter((p) => p.index).sort(byTitle);
+const lead = await resolveSlugs(featured.useCases);
+
+const groups = useCaseGroups
+  .map((group) => ({ ...group, pages: all.filter((p) => p.cluster !== null && group.clusters.includes(p.cluster)) }))
+  .filter((group) => group.pages.length > 0);
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<PageLayout
+  slug="use-cases"
+  label="Use cases"
+  pageType="hub"
+  lede="Assurance is rarely lost in a single event. It is lost when something changes and the proof that depended on it is not re-established. These use cases describe the situations in which that happens, the outcome at risk in each, and what it takes to return to a state that can be proven."
+  secondary={{ label: 'How assurance works', href: '/how-assurance-works' }}
+  ctaTitle="Is one of these the situation you are in?"
+>
+  {
+    lead.length > 0 && (
+      <Section surface="light" flush labelledby="featured-title">
+        <SectionHead
+          label="Start here"
+          title="Three situations most enterprises meet first"
+          id="featured-title"
+          split
+          text="Each mark shows the state the situation describes. A hollow square is a breached threshold. A dashed square means there is no current evidence at all, which is not the same as failing."
+        />
+        <div class="grid-3 mt-block">
+          {lead.map((page, i) => (
+            <PageCard
+              href={page.path}
+              label={`Use case ${pad(i + 1)}`}
+              title={page.title}
+              text={page.summary}
+              state={page.state}
+              trace
+              location="use-cases-featured"
+            />
+          ))}
+        </div>
+      </Section>
+    )
+  }
+
+  <Section surface="light" alt labelledby="read-title">
+    <SectionHead
+      label="How to read a use case"
+      title="Every use case answers the same ten questions"
+      id="read-title"
+      split
+      text="The structure is fixed so that situations can be compared, and so that a reader can tell quickly whether a page describes their problem."
+    >
+      <ol class="questions rv">
+        {
+          useCaseQuestions.map((question, i) => (
+            <li>
+              <span class="lbl lbl--plain num">{pad(i + 1)}</span>
+              <span>{question}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </SectionHead>
+  </Section>
+
+  <Section surface="light" labelledby="all-title">
+    <SectionHead
+      label="All use cases"
+      title="Grouped by what changed"
+      id="all-title"
+      split
+      text="The groups follow how a problem is first noticed, not which team owns the technology. Many situations touch more than one assurance area, and each page links to the areas that apply."
+    />
+
+    <div class="legend rv" aria-label="State marks used on this page">
+      {states.map((s) => <StateMark state={s.key} label="visible" />)}
+    </div>
+
+    <div class="filters rv" data-filter-group role="group" aria-label="Filter use cases by group" hidden>
+      <button type="button" class="chip" data-filter="" aria-pressed="true">All</button>
+      {
+        groups.map((group) => (
+          <button type="button" class="chip" data-filter={group.key} aria-pressed="false">
+            {group.short}
+          </button>
+        ))
+      }
+    </div>
+
+    {
+      groups.map((group) => (
+        <div class="group" data-filter-section={group.key}>
+          <div class="group__head rv">
+            <h3 class="h3">{group.title}</h3>
+            <p class="body group__text">{group.text}</p>
+          </div>
+          <PageList pages={group.pages} marks location={`use-cases-${group.key}`} />
+        </div>
+      ))
+    }
+  </Section>
+
+  <script>
+    import '../scripts/hub-filter.ts';
+  </script>
+</PageLayout>
+
+<style>
+  .questions {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--ln);
+    font-size: 0.969rem;
+    color: var(--tx);
+  }
+
+  .questions li {
+    display: flex;
+    gap: 1.25rem;
+    align-items: baseline;
+    padding-block: 0.9rem;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  @media (min-width: 48rem) {
+    .questions {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 3rem;
+    }
+  }
+
+  .legend {
+    margin-top: 3rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+  }
+
+  .filters {
+    margin-top: 2rem;
+  }
+
+  .group {
+    margin-top: 4rem;
+  }
+
+  .group__head {
+    max-width: 62ch;
+    margin-bottom: 2rem;
+  }
+
+  .group__text {
+    margin-top: 1rem;
+  }
+</style>

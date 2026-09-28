@@ -1,0 +1,146 @@
+[
+  {
+    "slug": "cloud-configuration-drift",
+    "title": "Cloud Configuration Drift",
+    "cluster": "reliability", "secondary": ["cyber", "change"], "parent": "use-cases",
+    "state": "degrading", "cadence": 180, "fresh": false,
+    "audience": ["VP Platform", "Technology Risk", "Cloud Security"],
+    "intent": "Problem: running infrastructure no longer matches code, approvals or the recovery environment",
+    "brief": "Out-of-band fixes, console changes and partial applies separate running state from declared state. Covers detection, drift age, which drift matters, reconciliation ownership and proof of restored parity.",
+    "related": {
+      "assurance": ["cloud-drift-assurance", "cloud-security-exposure-assurance", "disaster-recovery-assurance"],
+      "useCases": ["untested-disaster-recovery", "identity-access-drift"],
+      "technologies": ["terraform-drift-assurance", "aws-production-reliability", "azure-production-reliability"],
+      "industries": ["financial-services"],
+      "insights": ["cloud-drift-production-risk"]
+    }
+  },
+  {
+    "slug": "identity-access-drift",
+    "title": "Identity Access Drift",
+    "cluster": "cyber", "secondary": [], "parent": "use-cases",
+    "state": "degrading", "cadence": 90, "fresh": true,
+    "audience": ["CISO", "Identity Engineering", "Internal Audit"],
+    "intent": "Problem: effective access has moved away from intended policy",
+    "brief": "Policy looks intact while exclusions, guests, group nesting and application consents widen effective access. Covers measuring effective versus intended access, exception expiry and verified reduction.",
+    "related": {
+      "assurance": ["identity-exposure-assurance", "privileged-access-assurance", "secrets-exposure-assurance"],
+      "useCases": ["stale-privileged-access", "cloud-configuration-drift"],
+      "technologies": ["entra-id-exposure-assurance", "aws-iam-exposure-assurance"],
+      "industries": ["financial-services", "healthcare"],
+      "insights": ["how-identity-controls-drift"]
+    }
+  },
+  {
+    "slug": "stale-privileged-access",
+    "title": "Stale Privileged Access",
+    "cluster": "cyber", "secondary": [], "parent": "use-cases",
+    "state": "risk", "cadence": 90, "fresh": true,
+    "audience": ["CISO", "Identity Engineering", "Internal Audit"],
+    "intent": "Problem: privileged assignments persist after the need has ended",
+    "brief": "Standing administrators, unused roles, former project access and unrotated emergency accounts. Covers usage-based identification, removal ownership, re-verification after removal and preventing re-accumulation.",
+    "related": {
+      "assurance": ["privileged-access-assurance", "identity-exposure-assurance"],
+      "useCases": ["identity-access-drift", "ai-agent-with-write-access"],
+      "technologies": ["entra-id-exposure-assurance", "aws-iam-exposure-assurance"],
+      "industries": ["financial-services", "insurance"],
+      "insights": ["standing-privilege-evidence-gap"]
+    }
+  },
+  {
+    "slug": "security-remediation-backlog",
+    "title": "Security Remediation Backlog",
+    "cluster": "cyber", "secondary": [], "parent": "use-cases",
+    "state": "risk", "cadence": 90, "fresh": true,
+    "audience": ["CISO", "Vulnerability Management", "VP Engineering"],
+    "intent": "Problem: open findings exceed remediation capacity and age past agreed windows",
+    "brief": "A backlog is a threshold breach that has been normalised. Covers reducing the set to reachable, exploited and consequential exposure, ownership assignment, age thresholds and exception governance.",
+    "related": {
+      "assurance": ["vulnerability-remediation-assurance", "cloud-security-exposure-assurance"],
+      "useCases": ["unverified-vulnerability-closure", "cloud-configuration-drift"],
+      "technologies": ["eks-reliability-assurance", "aws-iam-exposure-assurance"],
+      "industries": ["healthcare", "software-technology"],
+      "insights": ["security-findings-vs-verified-closure"]
+    }
+  },
+  {
+    "slug": "unverified-vulnerability-closure",
+    "title": "Unverified Vulnerability Closure",
+    "cluster": "cyber", "secondary": ["change"], "parent": "use-cases",
+    "state": "unassured", "cadence": 90, "fresh": true,
+    "audience": ["CISO", "Internal Audit", "Vulnerability Management"],
+    "intent": "Problem: findings are marked closed without evidence that the exposure is gone",
+    "brief": "Tickets close on a deployed fix; exposure returns on rebuild, scale-out or reverted configuration. Covers closure criteria, re-test evidence, regression detection and reopening rules.",
+    "related": {
+      "assurance": ["vulnerability-remediation-assurance", "release-assurance", "cloud-drift-assurance"],
+      "useCases": ["security-remediation-backlog"],
+      "technologies": ["eks-reliability-assurance", "aks-reliability-assurance", "terraform-drift-assurance"],
+      "industries": ["financial-services"],
+      "insights": ["security-findings-vs-verified-closure"]
+    }
+  },
+  {
+    "slug": "data-pipeline-freshness-failure",
+    "title": "Data Pipeline Freshness Failure",
+    "cluster": "data", "secondary": ["ai"], "parent": "use-cases",
+    "state": "risk", "cadence": 180, "fresh": false,
+    "audience": ["Head of Data Engineering", "Chief Data Officer", "Head of AI"],
+    "intent": "Problem: data arrived late or stopped arriving and consumers were not told",
+    "brief": "Pipelines succeeded while data aged. Covers consumer-side freshness measurement, lag sources, downstream impact tracing, backfill verification and freshness thresholds by consumer.",
+    "related": {
+      "assurance": ["data-freshness-assurance", "data-pipeline-assurance", "production-rag-assurance"],
+      "useCases": ["rag-quality-degradation", "schema-change-production-impact"],
+      "technologies": ["kafka-pipeline-assurance", "databricks-data-assurance", "snowflake-data-assurance"],
+      "industries": ["insurance", "healthcare"],
+      "insights": ["data-freshness-ai-quality"]
+    }
+  },
+  {
+    "slug": "schema-change-production-impact",
+    "title": "Schema Change Production Impact",
+    "cluster": "data", "secondary": ["change"], "parent": "use-cases",
+    "state": "risk", "cadence": 180, "fresh": false,
+    "audience": ["Head of Data Engineering", "VP Engineering"],
+    "intent": "Problem: an upstream schema or semantic change broke or silently corrupted downstream consumers",
+    "brief": "A column changes meaning or type and downstream systems keep running on wrong data. Covers contract enforcement, compatibility checks, blast-radius mapping through lineage and verified downstream correction.",
+    "related": {
+      "assurance": ["data-quality-assurance", "data-pipeline-assurance", "release-assurance", "rollback-readiness-assurance"],
+      "useCases": ["data-pipeline-freshness-failure", "high-change-failure-rate"],
+      "technologies": ["kafka-pipeline-assurance", "databricks-data-assurance", "snowflake-data-assurance"],
+      "industries": ["insurance"],
+      "insights": ["data-freshness-ai-quality", "what-change-failure-rate-proves"]
+    }
+  },
+  {
+    "slug": "cloud-cost-anomaly",
+    "title": "Cloud Cost Anomaly",
+    "cluster": "value", "secondary": [], "parent": "use-cases",
+    "state": "risk", "cadence": 180, "fresh": false,
+    "audience": ["FinOps Leadership", "CTO", "VP Platform"],
+    "intent": "Problem: an unexpected cost increase must be attributed, corrected and prevented",
+    "brief": "Detection is rarely the gap; attribution and owned correction are. Covers time to attribute, allocation coverage, correction ownership, verification in billing data and preventing recurrence.",
+    "related": {
+      "assurance": ["cloud-cost-assurance", "unit-economics-assurance"],
+      "useCases": ["ai-cost-spike", "cloud-configuration-drift"],
+      "technologies": ["aws-production-reliability", "databricks-data-assurance", "snowflake-data-assurance"],
+      "industries": ["software-technology"],
+      "insights": ["cloud-commitment-utilisation-risk", "ai-cost-per-business-outcome"]
+    }
+  },
+  {
+    "slug": "high-change-failure-rate",
+    "title": "High Change Failure Rate",
+    "cluster": "change", "secondary": ["reliability"], "parent": "use-cases",
+    "state": "risk", "cadence": 180, "fresh": false,
+    "audience": ["VP Engineering", "Head of SRE", "CTO"],
+    "intent": "Problem: too many releases cause incidents, rollbacks or rework",
+    "brief": "Release risk shows up as failed changes and unplanned rework. Covers honest measurement, failure classification, gate effectiveness, exposure control and the threshold at which release pace must change. Canonical page for release risk.",
+    "related": {
+      "assurance": ["release-assurance", "rollback-readiness-assurance", "incident-recurrence-assurance"],
+      "useCases": ["cloud-incident-recurrence", "schema-change-production-impact"],
+      "technologies": ["eks-reliability-assurance", "terraform-drift-assurance"],
+      "industries": ["saas-production-reliability", "software-technology"],
+      "insights": ["what-change-failure-rate-proves"]
+    }
+  }
+]

@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xyvionix — Continuous Technology Assurance</title>
+<meta name="description" content="Xyvionix continuously verifies that AI systems, production infrastructure, security controls and critical data still meet the outcomes the business depends on — and drives corrective action when they do not.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%230C0C0B'/%3E%3Cline x1='0' y1='12' x2='24' y2='12' stroke='%23555550' stroke-width='1.2' stroke-dasharray='2.5 2.5'/%3E%3Cpath d='M0 20 L6 18 L10 15 L14 9 L18 6 L24 4' stroke='%23F5F4F1' stroke-width='1.8' fill='none'/%3E%3Crect x='9' y='9' width='6' height='6' fill='%23F5F4F1'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        bg0:'var(--bg0)', bg1:'var(--bg1)', bg2:'var(--bg2)',
+        text:'var(--tx)', muted:'var(--mut)', faint:'var(--fnt)', ghost:'var(--gst)',
+        line:'var(--ln)', line2:'var(--ln2)'
+      },
+      fontFamily:{
+        sans:['"Instrument Sans"','system-ui','sans-serif'],
+        mono:['"JetBrains Mono"','ui-monospace','monospace']
+      },
+      maxWidth:{ shell:'82rem' },
+      borderRadius:{ DEFAULT:'2px', sm:'2px', md:'4px', lg:'8px', xl:'12px' }
+    }
+  }
+}
+</script>
+<style>
+  :root{color-scheme:dark;
+    --bg0:#0C0C0B;--bg1:#121211;--bg2:#181816;
+    --tx:#F5F4F1;--mut:#A8A7A0;--fnt:#6E6D66;--gst:#4A4944;
+    --ln:rgba(245,244,241,.08);--ln2:rgba(245,244,241,.16);
+    --gls:linear-gradient(180deg,rgba(245,244,241,.035),rgba(245,244,241,.015))}
+  .light{
+    --bg0:#FAFAF8;--bg1:#F1F1EE;--bg2:#E9E9E4;
+    --tx:#171715;--mut:#55544D;--fnt:#8B8A82;--gst:#CFCEC6;
+    --ln:rgba(23,23,21,.1);--ln2:rgba(23,23,21,.22);
+    --gls:linear-gradient(180deg,rgba(23,23,21,.028),rgba(23,23,21,.012));
+    color:var(--tx);color-scheme:light}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg0);color:var(--tx);-webkit-font-smoothing:antialiased;font-family:"Instrument Sans",system-ui,sans-serif;overflow-x:hidden}
+  ::selection{background:var(--tx);color:var(--bg0)}
+  .disp{letter-spacing:-0.035em;font-weight:600}
+  .lbl{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--fnt);display:inline-flex;align-items:center;gap:.65rem}
+  .lbl::before{content:"";width:24px;border-top:1px dashed var(--gst)}
+  .lbl-c::before{display:none}
+  .num{font-variant-numeric:tabular-nums}
+  a:focus-visible,button:focus-visible{outline:1.5px solid var(--tx);outline-offset:3px}
+
+
+  .grid-bg{background-image:linear-gradient(rgba(245,244,241,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(245,244,241,.035) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 75% 65% at 50% 28%,#000 25%,transparent 78%)}
+  .glowW{position:absolute;border-radius:9999px;filter:blur(110px);pointer-events:none;background:rgba(245,244,241,.027)}
+
+  .glass{background:var(--gls);border:1px solid var(--ln)}
+
+  .btn-w{background:var(--tx);color:var(--bg0);transition:transform .25s,box-shadow .3s}
+  .btn-w:hover{transform:translateY(-1px);box-shadow:0 14px 44px -14px rgba(0,0,0,.4)}
+
+  .rv{opacity:0;transform:translateY(16px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  .ln{stroke-dasharray:var(--l);stroke-dashoffset:var(--l);transition:stroke-dashoffset 1.8s cubic-bezier(.3,.7,.3,1) .25s}
+  .in .ln,.in-now .ln{stroke-dashoffset:0}
+  .arw{transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+  .lk:hover .arw{transform:translateX(4px)}
+  .ul{background-image:linear-gradient(currentColor,currentColor);background-size:0 1px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s}
+  .lk:hover .ul,a.ul:hover{background-size:100% 1px}
+
+  /* monochrome state marks: fill density = state */
+  .st{width:12px;height:12px;flex:none}
+  .st-assured{background:var(--tx)}
+  .st-degrading{background:repeating-linear-gradient(45deg,var(--tx) 0 2px,transparent 2px 4px);border:1px solid var(--ln2)}
+  .st-risk{border:1.5px solid var(--tx);background:transparent}
+  .st-unassured{border:1px dashed var(--fnt);background:transparent}
+
+  @media(prefers-reduced-motion:reduce){
+    .rv{opacity:1;transform:none;transition:none}
+    .ln{stroke-dashoffset:0;transition:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<header class="fixed top-0 inset-x-0 z-50" style="--tx:#F5F4F1;--mut:#A8A7A0;--fnt:#6E6D66;--gst:#4A4944;--ln:rgba(245,244,241,.08);--bg0:#0C0C0B">
+  <div class="mx-auto max-w-shell px-5 sm:px-8 lg:px-12 pt-4 sm:pt-5">
+    <div class="rounded-lg backdrop-blur-xl px-4 lg:px-6" style="background:rgba(12,12,11,.82);border:1px solid rgba(245,244,241,.09)">
+      <div class="flex h-[58px] items-center justify-between gap-8">
+        <a href="#" class="flex items-center gap-3 shrink-0" aria-label="Xyvionix">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <line x1="0" y1="12" x2="24" y2="12" stroke="#6E6D66" stroke-width="1.2" stroke-dasharray="2.5 2.5"/>
+            <path d="M0 20 L6 18 L10 15 L14 9 L18 6 L24 4" stroke="#F5F4F1" stroke-width="1.8" fill="none" stroke-linejoin="round"/>
+            <rect x="9" y="9" width="6" height="6" fill="#F5F4F1"/>
+          </svg>
+          <span class="disp text-[18px]">Xyvionix</span>
+        </a>
+        <nav class="hidden lg:flex items-center gap-9 text-[14px] text-muted">
+          <a href="#assures" class="hover:text-text transition-colors">Assurance</a>
+          <a href="#engine" class="hover:text-text transition-colors">How it works</a>
+          <a href="#industries" class="hover:text-text transition-colors">Industries</a>
+          <a href="#insights" class="hover:text-text transition-colors">Insights</a>
+          <a href="#" class="hover:text-text transition-colors">Company</a>
+        </nav>
+        <div class="flex items-center gap-3">
+          <a href="#contact" class="btn-w hidden sm:inline-flex items-center rounded px-4.5 px-5 py-2 text-[13.5px] font-semibold">
+            Assess an assurance priority
+          </a>
+          <button id="mb" class="lg:hidden p-2 -mr-1" aria-label="Menu" aria-expanded="false">
+            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14" stroke="#F5F4F1" stroke-width="1.4"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="mn" class="hidden lg:hidden border-t border-line py-3">
+        <div class="flex flex-col text-[15px] text-muted">
+          <a href="#assures" class="py-3 border-b border-line">Assurance</a>
+          <a href="#engine" class="py-3 border-b border-line">How it works</a>
+          <a href="#industries" class="py-3 border-b border-line">Industries</a>
+          <a href="#insights" class="py-3 border-b border-line">Insights</a>
+          <a href="#" class="py-3">Company</a>
+          <a href="#contact" class="btn-w mt-4 mb-2 inline-flex justify-center rounded px-5 py-3 font-semibold text-[14px]">Assess an assurance priority</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<section class="relative">
+  <div class="absolute inset-0 grid-bg" aria-hidden="true"></div>
+  <div class="glowW" style="width:900px;height:600px;left:50%;transform:translateX(-50%);top:-260px"></div>
+  <div class="relative mx-auto max-w-shell px-5 sm:px-8 lg:px-12 pt-36 sm:pt-44 lg:pt-56 pb-16 sm:pb-24 lg:pb-32">
+    <p class="rv in lbl lbl-c justify-center w-full text-center">Continuous Technology Assurance</p>
+    <h1 class="rv in disp mx-auto mt-7 max-w-[17ch] text-center text-[2.5rem] sm:text-[3.6rem] lg:text-[5rem] leading-[1.04] sm:leading-[1.02]">
+      Critical technology must be continuously proven.
+    </h1>
+    <p class="rv in mx-auto mt-8 max-w-[56ch] text-center text-[16px] sm:text-[17.5px] leading-[1.68] text-muted">
+      Xyvionix continuously verifies that AI systems, production infrastructure, security
+      controls and critical data still meet the outcomes the business depends on — and
+      drives corrective action when they do not.
+    </p>
+    <div class="rv in mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-7">
+      <a href="#contact" class="btn-w inline-flex w-full sm:w-auto justify-center items-center rounded px-7 py-3.5 text-[15px] font-semibold">
+        Assess an assurance priority
+      </a>
+      <a href="#engine" class="lk inline-flex items-center gap-2.5 text-[15px] font-medium text-text">
+        <span class="ul">How assurance works</span>
+        <svg class="arw" width="15" height="10" viewBox="0 0 15 10" fill="none" aria-hidden="true"><path d="M0 5h13M9.5 1.2 13.3 5l-3.8 3.8" stroke="currentColor" stroke-width="1.2"/></svg>
+      </a>
+    </div>
+
+    <!-- assurance evidence field -->
+    <figure class="rv in mt-16 sm:mt-20 lg:mt-24 mx-auto max-w-[880px]">
+      <div class="glass rounded-xl p-5 sm:p-8 lg:p-10 backdrop-blur-sm">
+        <svg viewBox="0 0 800 360" class="w-full h-auto" role="img" aria-labelledby="hT hD">
+          <title id="hT">Assurance evidence field — illustrative</title>
+          <desc id="hD">A confidence trace measured against a dashed required threshold. Solid square marks show verifications; where the trace crosses below the threshold assurance is lost and corrective action restores it.</desc>
+          <line x1="40" y1="300" x2="760" y2="300" stroke="rgba(245,244,241,.12)" stroke-width="1"/>
+          <line x1="40" y1="40" x2="40" y2="300" stroke="rgba(245,244,241,.12)" stroke-width="1"/>
+          <line x1="40" y1="118" x2="760" y2="118" stroke="rgba(245,244,241,.05)" stroke-width="1"/>
+          <line x1="40" y1="224" x2="760" y2="224" stroke="rgba(245,244,241,.05)" stroke-width="1"/>
+
+          <line x1="40" y1="178" x2="760" y2="178" stroke="#6E6D66" stroke-width="1" stroke-dasharray="3 4"/>
+          <text x="40" y="168" font-family="JetBrains Mono, monospace" font-size="10.5" letter-spacing="1" fill="#6E6D66">REQUIRED THRESHOLD</text>
+
+          <path d="M40 128 C110 112, 150 120, 200 126 C260 133, 296 152, 340 190 C376 220, 404 206, 444 174 C492 136, 550 128, 610 122 C670 117, 720 116, 760 114"
+                fill="rgba(245,244,241,.045)" stroke="none" transform="translate(0,10)"/>
+          <path class="ln" style="--l:920"
+                d="M40 128 C110 112, 150 120, 200 126 C260 133, 296 152, 340 190 C376 220, 404 206, 444 174 C492 136, 550 128, 610 122 C670 117, 720 116, 760 114"
+                fill="none" stroke="#F5F4F1" stroke-width="1.6"/>
+
+          <g fill="#F5F4F1">
+            <rect x="106" y="107" width="7" height="7"/><rect x="196" y="121" width="7" height="7"/>
+            <rect x="440" y="169" width="7" height="7"/><rect x="546" y="123" width="7" height="7"/><rect x="676" y="112" width="7" height="7"/>
+          </g>
+          <rect x="334" y="184" width="11" height="11" fill="none" stroke="#F5F4F1" stroke-width="1.6"/>
+          <line x1="340" y1="196" x2="340" y2="252" stroke="#6E6D66" stroke-width="1" stroke-dasharray="2 3"/>
+          <text x="348" y="250" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1" fill="#A8A7A0">CORRECTIVE ACTION</text>
+          <text x="332" y="86" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1" fill="#A8A7A0">ASSURANCE LOST</text>
+          <line x1="340" y1="90" x2="340" y2="180" stroke="#6E6D66" stroke-width="1" stroke-dasharray="2 3"/>
+
+          <g transform="translate(40,332)">
+            <rect x="0" y="-8" width="8" height="8" fill="#F5F4F1"/>
+            <text x="16" y="0" font-family="Instrument Sans, sans-serif" font-size="13.5" fill="#F5F4F1">Assured</text>
+            <text x="86" y="0" font-family="Instrument Sans, sans-serif" font-size="12.5" fill="#6E6D66">· illustrative model, not live data</text>
+          </g>
+          <text x="760" y="332" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1" fill="#6E6D66">EVIDENCE · THRESHOLD · STATE</text>
+        </svg>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<!-- ═══ BAND ═══ -->
+<section class="border-y border-line bg-bg1">
+  <div class="mx-auto max-w-shell px-5 sm:px-8 lg:px-12 py-5">
+    <p class="text-center font-mono text-[11px] sm:text-[12px] tracking-[.16em] uppercase text-faint">
+      AI Trust&ensp;·&ensp;Production Reliability&ensp;·&ensp;Cyber Exposure&ensp;·&ensp;Technology Value&ensp;·&ensp;Data Integrity&ensp;·&ensp;Change Risk
+    </p>
+  </div>
+</section>
+
+<!-- ═══ WHY ═══ -->
+<section class="light bg-bg0 relative">
+  <div class="relative mx-auto max-w-shell px-5 sm:px-8 lg:px-12 py-20 sm:py-28 lg:py-36">
+    <div class="grid lg:grid-cols-12 gap-x-16 gap-y-12">
+      <div class="lg:col-span-5 rv">
+        <p class="lbl">Why the category exists</p>
+        <h2 class="disp mt-6 text-[1.85rem] sm:text-[2.4rem] lg:text-[3rem] leading-[1.1]">
+          Critical technology changes continuously. Assurance does not survive that change on its own.
+        </h2>
+        <p class="mt-7 text-[16px] leading-[1.7] text-muted max-w-[42ch]">
+          Every enterprise proves a system works once, at the point it goes live. Almost
+          none can prove it still works today.
+        </p>
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7">
+        <dl>
+          <div class="rv grid sm:grid-cols-12 gap-x-8 gap-y-1.5 py-6 border-b border-line">
+            <dt class="sm:col-span-4 text-[15.5px] font-semibold">AI changes</dt>
+            <dd class="sm:col-span-8 text-[15px] leading-[1.72] text-muted">Models, data, routing and retrieved context shift beneath a system that was correct when it launched.</dd>
+          </div>
+          <div class="rv grid sm:grid-cols-12 gap-x-8 gap-y-1.5 py-6 border-b border-line">
+            <dt class="sm:col-span-4 text-[15.5px] font-semibold">Infrastructure drifts</dt>
+            <dd class="sm:col-span-8 text-[15px] leading-[1.72] text-muted">Reliability and environment parity erode quietly unless they are continuously verified.</dd>
+          </div>
+          <div class="rv grid sm:grid-cols-12 gap-x-8 gap-y-1.5 py-6 border-b border-line">
+            <dt class="sm:col-span-4 text-[15.5px] font-semibold">Threats evolve</dt>
+            <dd class="sm:col-span-8 text-[15px] leading-[1.72] text-muted">An exposure closed last quarter does not stay closed. Controls decay as estates change.</dd>
+          </div>
+          <div class="rv grid sm:grid-cols-12 gap-x-8 gap-y-1.5 py-6 border-b border-line">
+            <dt class="sm:col-span-4 text-[15.5px] font-semibold">Data degrades</dt>
+            <dd class="sm:col-span-8 text-[15px] leading-[1.72] text-muted">Freshness and quality drift without visible failure. Systems keep answering, less correctly.</dd>
+          </div>
+          <div class="rv grid sm:grid-cols-12 gap-x-8 gap-y-1.5 py-6 border-b border-line">
+            <dt class="sm:col-span-4 text-[15.5px] font-semibold">Economics move</dt>
+            <dd class="sm:col-span-8 text-[15px] leading-[1.72] text-muted">Unit cost changes continuously as usage, pricing and architecture evolve.</dd>
+          </div>
+          <div class="rv grid sm:grid-cols-12 gap-x-8 gap-y-1.5 py-6">
+            <dt class="sm:col-span-4 text-[15.5px] font-semibold">Change accumulates</dt>
+            <dd class="sm:col-span-8 text-[15px] leading-[1.72] text-muted">Every release introduces new operating assumptions that no one revisits.</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WHAT XYVIONIX ASSURES ═══ -->
+<section id="assures" class="light bg-bg1 border-t border-line">
+  <div class="mx-auto max-w-shell px-5 sm:px-8 lg:px-12 py-20 sm:py-28 lg:py-36">
+    <div class="rv max-w-[54ch]">
+      <p class="lbl">What Xyvionix assures</p>
+      <h2 class="disp mt-6 text-[1.85rem] sm:text-[2.4rem] lg:text-[3rem] leading-[1.1]">The outcomes that cannot be left to assumption</h2>
+    </div>
+
+    <div class="mt-14 sm:mt-16 lg:mt-20 grid md:grid-cols-3 gap-5">
+      <article class="rv border border-line p-7 lg:p-9">
+        <div class="flex items-center justify-between">
+          <span class="lbl lbl-c">Assurance 01</span>
+          <span class="st st-assured" aria-hidden="true"></span>
+        </div>
+        <h3 class="disp mt-6 text-[1.35rem] sm:text-[1.5rem] leading-[1.16]">AI Assurance</h3>
+        <p class="mt-4 text-[15px] leading-[1.65] text-text font-medium">
+          Can we still prove this system answers correctly, safely and within cost?
+        </p>
+        <p class="mt-4 text-[14.5px] leading-[1.72] text-muted">
+          Retrieval accuracy, grounding, safety boundaries and unit economics verified
+          against thresholds on every change — not measured once at launch.
+        </p>
+        <svg viewBox="0 0 280 30" class="mt-6 w-full h-[30px]" role="img" aria-label="Illustrative assurance signal traced against a threshold.">
+          <line x1="0" y1="19" x2="280" y2="19" style="stroke:var(--gst)" stroke-width="1" stroke-dasharray="2.5 3"/>
+          <polyline points="0,13 28,10 56,14 84,11 112,16 140,12 168,9 196,13 224,10 252,8 280,11" fill="none" style="stroke:var(--tx)" stroke-width="1.3"/>
+          <g style="fill:var(--tx)"><rect x="54" y="12" width="4" height="4"/><rect x="138" y="10" width="4" height="4"/><rect x="222" y="8" width="4" height="4"/><rect x="276" y="9" width="5" height="5"/></g>
+        </svg>
+        <p class="mt-2 font-mono text-[9.5px] tracking-[.12em] text-ghost">ILLUSTRATIVE ASSURANCE SIGNAL</p>
+        <a href="#" class="lk mt-6 inline-flex items-center gap-2.5 text-[14px] font-semibold">
+          <span class="ul">AI Assurance</span>
+          <svg class="arw" width="14" height="9" viewBox="0 0 15 10" fill="none" aria-hidden="true"><path d="M0 5h13M9.5 1.2 13.3 5l-3.8 3.8" stroke="currentColor" stroke-width="1.2"/></svg>
+        </a>
+      </article>
+
+      <article class="rv border border-line p-7 lg:p-9">
+        <div class="flex items-center justify-between">
+          <span class="lbl lbl-c">Assurance 02</span>
+          <span class="st st-assured" aria-hidden="true"></span>
+        </div>
+        <h3 class="disp mt-6 text-[1.35rem] sm:text-[1.5rem] leading-[1.16]">Production Reliability Assurance</h3>
+        <p class="mt-4 text-[15px] leading-[1.65] text-text font-medium">
+          Can we still prove the business will keep running under real conditions?
+        </p>
+        <p class="mt-4 text-[14.5px] leading-[1.72] text-muted">
+          Service levels, recovery capability and environment parity tested rather than
+          documented, with drift surfaced before it becomes an incident.
+        </p>
+        <a href="#" class="lk mt-7 inline-flex items-center gap-2.5 text-[14px] font-semibold">
+          <span class="ul">Production Reliability</span>
+          <svg class="arw" width="14" height="9" viewBox="0 0 15 10" fill="none" aria-hidden="true"><path d="M0 5h13M9.5 1.2 13.3 5l-3.8 3.8" stroke="currentColor" stroke-width="1.2"/></svg>
+        </a>
+      </article>
+
+      <article class="rv border border-line p-7 lg:p-9">
+        <div class="flex items-center justify-between">
+          <span class="lbl lbl-c">Assurance 03</span>
+          <span class="st st-degrading" aria-hidden="true"></span>
+        </div>
+        <h3 class="disp mt-6 text-[1.35rem] sm:text-[1.5rem] leading-[1.16]">Cyber Exposure Assurance</h3>
+        <p class="mt-4 text-[15px] leading-[1.65] text-text font-medium">
+          Can we still prove what was closed has stayed closed?
+        </p>
+        <p class="mt-4 text-[14.5px] leading-[1.72] text-muted">
+          Identity and cloud exposure re-verified continuously, with remediation owned
+          through to confirmed closure and evidence retained for audit.
+        </p>
+        <a href="#" class="lk mt-7 inline-flex items-center gap-2.5 text-[14px] font-semibold">
+          <span class="ul">Cyber Exposure</span>
+          <svg class="arw" width="14" height="9" viewBox="0 0 15 10" fill="none" aria-hidden="true"><path d="M0 5h13M9.5 1.2 13.3 5l-3.8 3.8" stroke="currentColor" stroke-width="1.2"/></svg>
+        </a>
+      </article>
+    </div>
+
+    <div class="rv mt-12 pt-8 border-t border-line flex flex-wrap items-baseline gap-x-10 gap-y-3">
+      <p class="lbl lbl-c">Also assured</p>
+      <div class="flex flex-wrap gap-x-8 gap-y-2 text-[15px] text-muted">
+        <span>Technology Value</span><span class="text-ghost">·</span><span>Data</span><span class="text-ghost">·</span><span>Change</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATE MODEL ═══ -->
+<section class="light bg-bg0 border-t border-line">
+  <div class="mx-auto max-w-shell px-5 sm:px-8 lg:px-12 py-20 sm:py-28 lg:py-36">
+    <div class="rv grid lg:grid-cols-12 gap-x-16 gap-y-8">
+      <div class="lg:col-span-5">
+        <p class="lbl">The state model</p>
+        <h2 class="disp mt-6 text-[1.85rem] sm:text-[2.4rem] lg:text-[3rem] leading-[1.1]">Assurance is a state, not a report</h2>
+      </div>
+      <p class="lg:col-span-6 lg:col-start-7 self-end text-[16px] leading-[1.7] text-muted max-w-[46ch]">
+        Every system under assurance holds one of four states, determined by evidence
+        against agreed thresholds. The state is current, not historical — and it is
+        legible without colour: solid means proven, hollow means breached.
+      </p>
+    </div>
+
+    <div class="rv mt-14 lg:mt-20 relative">
+      <div class="hidden lg:block absolute top-0 inset-x-0 h-px bg-line2"></div>
+      <ol class="relative border-l border-line pl-8 space-y-9 sm:border-l-0 sm:pl-0 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-x-10 sm:gap-y-9 lg:grid-cols-4 lg:pt-12">
+        <li class="relative">
+          <span class="st st-assured absolute -left-[38.5px] top-[4px] sm:static sm:mb-4 sm:block lg:absolute lg:left-0 lg:-top-[30px]"></span>
+          <p class="text-[16.5px] font-semibold">Assured</p>
+          <p class="mt-2 text-[14.5px] leading-[1.7] text-muted max-w-[40ch]">Current evidence proves the outcome is being met within threshold.</p>
+        </li>
+        <li class="relative">
+          <span class="st st-degrading absolute -left-[38.5px] top-[4px] sm:static sm:mb-4 sm:block lg:absolute lg:left-0 lg:-top-[30px]"></span>
+          <p class="text-[16.5px] font-semibold">Degrading</p>
+          <p class="mt-2 text-[14.5px] leading-[1.7] text-muted max-w-[40ch]">Evidence shows movement toward the threshold. Corrective action begins here.</p>
+        </li>
+        <li class="relative">
+          <span class="st st-risk absolute -left-[38.5px] top-[4px] sm:static sm:mb-4 sm:block lg:absolute lg:left-0 lg:-top-[30px]"></span>
+          <p class="text-[16.5px] font-semibold">At risk</p>
+          <p class="mt-2 text-[14.5px] leading-[1.7] text-muted max-w-[40ch]">Threshold breached. The outcome can no longer be proven as agreed.</p>
+        </li>
+        <li class="relative">
+          <span class="st st-unassured absolute -left-[38.5px] top-[4px] sm:static sm:mb-4 sm:block lg:absolute lg:left-0 lg:-top-[30px]"></span>
+          <p class="text-[16.5px] font-semibold">Unassured</p>
+          <p class="mt-2 text-[14.5px] leading-[1.7] text-muted max-w-[40ch]">No current evidence exists. The system&rsquo;s condition is unknown, not acceptable.</p>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ASSURANCE ENGINE ═══ -->
+<section id="engine" class="relative border-t border-line bg-bg1">
+  <div class="glowW" style="width:700px;height:500px;left:50%;transform:translateX(-50%);top:-180px"></div>
+  <div class="relative mx-auto max-w-shell px-5 sm:px-8 lg:px-12 py-20 sm:py-28 lg:py-40">
+    <div class="rv grid lg:grid-cols-12 gap-x-16 gap-y-8">
+      <div class="lg:col-span-5">
+        <p class="lbl">The assurance engine</p>
+        <h2 class="disp mt-6 text-[1.85rem] sm:text-[2.4rem] lg:text-[3rem] leading-[1.1]">The intelligence layer beneath continuous assurance</h2>
+      </div>
+      <p class="lg:col-span-6 lg:col-start-7 self-end text-[16px] leading-[1.7] text-muted max-w-[46ch]">
+        Signals from the estate become evidence. Evidence is tested against thresholds.
+        Thresholds determine state. State that falls short triggers corrective action,
+        which closes only when closure is verified.
+      </p>
+    </div>
+
+    <div class="rv mt-14 lg:mt-20 glass rounded-xl p-7 sm:p-10 lg:p-12">
+      <ol class="relative border-l border-line pl-8 space-y-8 md:border-l-0 md:pl-0 md:space-y-0 md:grid md:grid-cols-3 md:gap-x-10 md:gap-y-10 lg:grid-cols-6 lg:gap-x-7">
+        <li class="relative">
+          <span class="st st-assured absolute -left-[38.5px] top-[4px] md:static md:mb-4 md:block" style="width:9px;height:9px"></span>
+          <p class="text-[15px] font-semibold">Signals</p>
+          <p class="mt-1.5 text-[13.5px] leading-[1.68] text-muted">Telemetry, configuration, cost and usage drawn from the estate.</p>
+        </li>
+        <li class="relative">
+          <span class="st st-assured absolute -left-[38.5px] top-[4px] md:static md:mb-4 md:block" style="width:9px;height:9px"></span>
+          <p class="text-[15px] font-semibold">Evidence</p>
+          <p class="mt-1.5 text-[13.5px] leading-[1.68] text-muted">Tested, retained and attributable to a point in time.</p>
+        </li>
+        <li class="relative">
+          <span class="st st-assured absolute -left-[38.5px] top-[4px] md:static md:mb-4 md:block" style="width:9px;height:9px"></span>
+          <p class="text-[15px] font-semibold">Thresholds</p>
+          <p class="mt-1.5 text-[13.5px] leading-[1.68] text-muted">Agreed with the business, not set by engineering convention.</p>
+        </li>
+        <li class="relative">
+          <span class="st st-assured absolute -left-[38.5px] top-[4px] md:static md:mb-4 md:block" style="width:9px;height:9px"></span>
+          <p class="text-[15px] font-semibold">State</p>
+          <p class="mt-1.5 text-[13.5px] leading-[1.68] text-muted">Current rather than historical. Held, not reported.</p>
+        </li>
+        <li class="relative">
+          <span class="st st-degrading absolute -left-[38.5px] top-[4px] md:static md:mb-4 md:block" style="width:9px;height:9px"></span>
+          <p class="text-[15px] font-semibold">Corrective action</p>
+          <p class="mt-1.5 text-[13.5px] leading-[1.68] text-muted">Owned through to completion, not escalated back to the client.</p>
+        </li>
+        <li class="relative">
+          <span class="st st-assured absolute -left-[38.5px] top-[4px] md:static md:mb-4 md:block" style="width:9px;height:9px"></span>
+          <p class="text-[15px] font-semibold">Verified closure</p>
+          <p class="mt-1.5 text-[13.5px] leading-[1.68] text-muted">Re-tested before it is closed. Closure returns as new signal.</p>
+        </li>
+      </ol>
+      <p class="mt-10 pt-7 border-t border-line font-mono text-[10.5px] tracking-[.14em] text-faint lg:text-center uppercase">Closure returns as new signal</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ OPERATING MODEL ═══ -->
+<section class="light bg-bg0 border-t border-line">
+  <div class="mx-auto max-w-shell px-5 sm:px-8 lg:px-12 py-20 sm:py-28 lg:py-36">
+    <div class="rv max-w-[54ch]">
+      <p class="lbl">Operating model</p>
+      <h2 class="disp mt-6 text-[1.85rem] sm:text-[2.4rem] lg:text-[3rem] leading-[1.1]">How Xyvionix acts on the evidence</h2>
+    </div>
+
+    <div class="mt-14 lg:mt-20 relative">
+      <div class="hidden lg:block absolute top-0 inset-x-0 h-px bg-line2"></div>
+      <ol class="relative border-l border-line pl-8 space-y-10 sm:border-l-0 sm:pl-0 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-x-12 sm:gap-y-12 lg:grid-cols-4 lg:pt-12">
+        <li class="rv relative">
+          <span class="hidden lg:block absolute left-0 -top-[49px] h-3.5 w-px bg-text"></span>
+          <p class="lbl lbl-c num">Stage 01</p>
+          <h3 class="disp mt-3 text-[1.35rem] sm:text-[1.5rem]">Baseline</h3>
+          <p class="mt-3 text-[14.5px] leading-[1.72] text-muted">The outcome is defined in the enterprise&rsquo;s own terms, thresholds are agreed, and the present condition is measured and recorded.</p>
+        </li>
+        <li class="rv relative">
+          <span class="hidden lg:block absolute left-0 -top-[49px] h-3.5 w-px bg-text"></span>
+          <p class="lbl lbl-c num">Stage 02</p>
+          <h3 class="disp mt-3 text-[1.35rem] sm:text-[1.5rem]">Assure</h3>
+          <p class="mt-3 text-[14.5px] leading-[1.72] text-muted">Evidence is gathered continuously and tested against the thresholds. State is maintained as a current fact rather than a periodic report.</p>
+        </li>
+        <li class="rv relative">
+          <span class="hidden lg:block absolute left-0 -top-[49px] h-3.5 w-px bg-text"></span>
+          <p class="lbl lbl-c num">Stage 03</p>
+          <h3 class="disp mt-3 text-[1.35rem] sm:text-[1.5rem]">Correct</h3>
+          <p class="mt-3 text-[14.5px] leading-[1.72] text-muted">Where assurance is lost, remediation is owned by Xyvionix and carried through to closure that is verified, not asserted.</p>
+        </li>
+        <li class="rv relative">
+          <span class="hidden lg:block absolute left-0 -top-[49px] h-3.5 w-px bg-text"></span>
+          <p class="lbl lbl-c num">Stage 04</p>
+          <h3 class="disp mt-3 text-[1.35rem] sm:text-[1.5rem]">Improve</h3>
+          <p class="mt-3 text-[14.5px] leading-[1.72] text-muted">Thresholds are raised as the business requires more, and the causes of recurring loss are engineered out rather than re-remediated.</p>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ OUTCOMES ═══ -->
+<section class="light bg-bg1 border-t border-line">
+  <div class="mx-auto max-w-shell px-5 sm:px-8 lg:px-12 py-20 sm:py-28 lg:py-36">
+    <div class="rv max-w-[54ch]">
+      <p class="lbl">What the business receives</p>
+      <h2 class="disp mt-6 text-[1.85rem] sm:text-[2.4rem] lg:text-[3rem] leading-[1.1]">Four outcomes, held continuously</h2>
+    </div>
+    <div class="mt-14 sm:mt-16 lg:mt-20 grid md:grid-cols-2 gap-x-12 lg:gap-x-20 gap-y-12 sm:gap-y-16">
+      <div class="rv flex gap-6 sm:gap-8">
+        <span class="disp text-[2.4rem] sm:text-[3.2rem] leading-none text-ghost num shrink-0">01</span>
+        <div class="pt-1.5">
+          <h3 class="disp text-[1.3rem] sm:text-[1.5rem]">Proof</h3>
+          <p class="mt-2.5 text-[14.5px] leading-[1.72] text-muted max-w-[38ch]">A current answer to whether the outcome can still be proven — available at any moment, not at quarter end.</p>
+        </div>
+      </div>
+      <div class="rv flex gap-6 sm:gap-8">
+        <span class="disp text-[2.4rem] sm:text-[3.2rem] leading-none text-ghost num shrink-0">02</span>
+        <div class="pt-1.5">
+          <h3 class="disp text-[1.3rem] sm:text-[1.5rem]">Evidence</h3>
+          <p class="mt-2.5 text-[14.5px] leading-[1.72] text-muted max-w-[38ch]">Proof that survives executive review, internal audit and external examination without reconstruction.</p>
+        </div>
+      </div>
+      <div class="rv flex gap-6 sm:gap-8">
+        <span class="disp text-[2.4rem] sm:text-[3.2rem] leading-none text-ghost num shrink-0">03</span>
+        <div class="pt-1.5">
+          <h3 class="disp text-[1.3rem] sm:text-[1.5rem]">Corrective ownership</h3>
+          <p class="mt-2.5 text-[14.5px] leading-[1.72] text-muted max-w-[38ch]">Remediation carried by Xyvionix and continued until closure is verified — not a finding handed back to the client.</p>
+        </div>
+      </div>
+      <div class="rv flex gap-6 sm:gap-8">
+        <span class="disp text-[2.4rem] sm:text-[3.2rem] leading-none text-ghost num shrink-0">04</span>
+        <div class="pt-1.5">
+          <h3 class="disp text-[1.3rem] sm:text-[1.5rem]">Accountability</h3>
+          <p class="mt-2.5 text-[14.5px] leading-[1.72] text-muted max-w-[38ch]">Someone answerable when the evidence fails — against thresholds the business agreed, not against activity performed.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TRUST ═══ -->
+<section class="light bg-bg0 border-t border-line">
+  <div class="mx-auto max-w-shell px-5 sm:px-8 lg:px-12 py-20 sm:py-28 lg:py-36">
+    <div class="grid lg:grid-cols-12 gap-x-16 gap-y-12">
+      <div class="lg:col-span-5 rv">
+        <p class="lbl">Security and trust</p>
+        <h2 class="disp mt-6 text-[1.85rem] sm:text-[2.4rem] lg:text-[2.8rem] leading-[1.12]">Assurance requires access. Access requires proof of its own.</h2>
+        <p class="mt-7 text-[16px] leading-[1.7] text-muted max-w-[40ch]">
+          Xyvionix holds the same standard it applies to its clients. The posture is
+          published so security and procurement can evaluate it before a conversation begins.
+        </p>
+        <a href="#" class="lk mt-8 inline-flex items-center gap-2.5 text-[15px] font-semibold">
+          <span class="ul">Trust and assurance overview</span>
+          <svg class="arw" width="15" height="10" viewBox="0 0 15 10" fill="none" aria-hidden="true"><path d="M0 5h13M9.5 1.2 13.3 5l-3.8 3.8" stroke="currentColor" stroke-width="1.2"/></svg>
+        </a>
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7 rv">
+        <dl>
+          <div class="grid sm:grid-cols-12 gap-x-8 gap-y-1.5 py-5.5 py-6 border-b border-line">
+            <dt class="sm:col-span-4 text-[15px] font-semibold">Bounded access</dt>
+            <dd class="sm:col-span-8 text-[14.5px] leading-[1.7] text-muted">Read-only by standing default. Elevation granted per approved change, time-bound and recorded.</dd>
+          </div>
+          <div class="grid sm:grid-cols-12 gap-x-8 gap-y-1.5 py-6 border-b border-line">
+            <dt class="sm:col-span-4 text-[15px] font-semibold">Data residency</dt>
+            <dd class="sm:col-span-8 text-[14.5px] leading-[1.7] text-muted">Enterprise data remains in the enterprise&rsquo;s own jurisdiction and infrastructure.</dd>
+          </div>
+          <div class="grid sm:grid-cols-12 gap-x-8 gap-y-1.5 py-6 border-b border-line">
+            <dt class="sm:col-span-4 text-[15px] font-semibold">Evidence trail</dt>
+            <dd class="sm:col-span-8 text-[14.5px] leading-[1.7] text-muted">Every action taken under assurance is attributable, retained and available for examination.</dd>
+          </div>
+          <div class="grid sm:grid-cols-12 gap-x-8 gap-y-1.5 py-6 border-b border-line">
+            <dt class="sm:col-span-4 text-[15px] font-semibold">Attestation</dt>
+            <dd class="sm:col-span-8 text-[14.5px] leading-[1.7] text-muted">A SOC 2 readiness programme is planned; ISO 27001 to follow. Status confirmed in writing before any engagement.</dd>
+          </div>
+          <div class="grid sm:grid-cols-12 gap-x-8 gap-y-1.5 py-6">
+            <dt class="sm:col-span-4 text-[15px] font-semibold">Continuity</dt>
+            <dd class="sm:col-span-8 text-[14.5px] leading-[1.7] text-muted">A documented transition provision in every engagement. Nothing is held that cannot be handed back.</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ INDUSTRIES ═══ -->
+<section id="industries" class="light bg-bg1 border-t border-line">
+  <div class="mx-auto max-w-shell px-5 sm:px-8 lg:px-12 py-20 sm:py-28 lg:py-36">
+    <div class="rv max-w-[54ch]">
+      <p class="lbl">Industries</p>
+      <h2 class="disp mt-6 text-[1.85rem] sm:text-[2.4rem] lg:text-[3rem] leading-[1.1]">Where the loss of assurance carries consequence</h2>
+    </div>
+    <dl class="mt-14 lg:mt-20 border-t border-line">
+      <div class="rv grid sm:grid-cols-12 gap-x-10 gap-y-2 py-8 border-b border-line">
+        <dt class="sm:col-span-4 disp text-[1.25rem] sm:text-[1.4rem]">Financial services</dt>
+        <dd class="sm:col-span-8 text-[15px] leading-[1.72] text-muted sm:self-center">Where auditability, resilience and control over AI decisions are business requirements rather than engineering preferences.</dd>
+      </div>
+      <div class="rv grid sm:grid-cols-12 gap-x-10 gap-y-2 py-8 border-b border-line">
+        <dt class="sm:col-span-4 disp text-[1.25rem] sm:text-[1.4rem]">Insurance</dt>
+        <dd class="sm:col-span-8 text-[15px] leading-[1.72] text-muted sm:self-center">Where model decisions and operational continuity must remain explainable long after the model that made them has changed.</dd>
+      </div>
+      <div class="rv grid sm:grid-cols-12 gap-x-10 gap-y-2 py-8 border-b border-line">
+        <dt class="sm:col-span-4 disp text-[1.25rem] sm:text-[1.4rem]">Healthcare</dt>
+        <dd class="sm:col-span-8 text-[15px] leading-[1.72] text-muted sm:self-center">Where data integrity, access control and uptime carry direct clinical and regulatory consequence.</dd>
+      </div>
+      <div class="rv grid sm:grid-cols-12 gap-x-10 gap-y-2 py-8 border-b border-line">
+        <dt class="sm:col-span-4 disp text-[1.25rem] sm:text-[1.4rem]">Software and technology</dt>
+        <dd class="sm:col-span-8 text-[15px] leading-[1.72] text-muted sm:self-center">Where reliability and technology economics translate directly into product value and gross margin.</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<!-- ═══ INSIGHTS ═══ -->
+<section id="insights" class="light bg-bg0 border-t border-line">
+  <div class="mx-auto max-w-shell px-5 sm:px-8 lg:px-12 py-20 sm:py-28 lg:py-36">
+    <div class="rv flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <p class="lbl">Xyvionix Insights</p>
+        <h2 class="disp mt-5 text-[1.85rem] sm:text-[2.4rem] lg:text-[3rem] leading-[1.1]">Insights</h2>
+      </div>
+      <a href="#" class="lk inline-flex items-center gap-2.5 text-[15px] font-semibold">
+        <span class="ul">All insights</span>
+        <svg class="arw" width="15" height="10" viewBox="0 0 15 10" fill="none" aria-hidden="true"><path d="M0 5h13M9.5 1.2 13.3 5l-3.8 3.8" stroke="currentColor" stroke-width="1.2"/></svg>
+      </a>
+    </div>
+
+    <div class="mt-10 sm:mt-14 grid lg:grid-cols-12 gap-x-16 gap-y-12">
+      <article class="rv lg:col-span-7">
+        <a href="#" class="group block">
+          <div class="flex items-center gap-3 font-mono text-[10.5px] tracking-[.12em] uppercase">
+            <span class="text-muted">AI Assurance</span><span class="text-ghost">·</span><span class="text-faint">12 min</span>
+          </div>
+          <h3 class="disp mt-5 text-[1.6rem] sm:text-[2rem] lg:text-[2.4rem] leading-[1.14]">
+            <span class="ul">Why enterprise AI passes review once and is never examined again</span>
+          </h3>
+          <p class="mt-5 text-[15.5px] leading-[1.7] text-muted max-w-[54ch]">
+            Model routing changes, retrieval corpora drift and safety boundaries move — yet
+            the approval that let a system into production is almost never revisited. What an
+            assurance regime for AI would actually test, and how often.
+          </p>
+        </a>
+      </article>
+      <div class="lg:col-span-4 lg:col-start-9">
+        <article class="rv pb-9 border-b border-line">
+          <a href="#" class="group block">
+            <div class="flex items-center gap-3 font-mono text-[10.5px] tracking-[.12em] uppercase">
+              <span class="text-muted">Reliability</span><span class="text-ghost">·</span><span class="text-faint">8 min</span>
+            </div>
+            <h3 class="disp mt-3.5 text-[1.15rem] sm:text-[1.3rem] leading-[1.22]"><span class="ul">The disaster recovery plan that has never been tested is not a plan</span></h3>
+          </a>
+        </article>
+        <article class="rv pt-9">
+          <a href="#" class="group block">
+            <div class="flex items-center gap-3 font-mono text-[10.5px] tracking-[.12em] uppercase">
+              <span class="text-muted">Cyber exposure</span><span class="text-ghost">·</span><span class="text-faint">9 min</span>
+            </div>
+            <h3 class="disp mt-3.5 text-[1.15rem] sm:text-[1.3rem] leading-[1.22]"><span class="ul">Findings closed, exposure open: the gap between remediation and verification</span></h3>
+          </a>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section id="contact" class="relative border-t border-line">
+  <div class="glowW" style="width:800px;height:520px;left:50%;transform:translateX(-50%);bottom:-260px"></div>
+  <div class="relative mx-auto max-w-shell px-5 sm:px-8 lg:px-12 py-24 sm:py-32 lg:py-44 text-center">
+    <p class="rv lbl lbl-c justify-center">Begin</p>
+    <h2 class="rv disp mx-auto mt-6 max-w-[22ch] text-[2rem] sm:text-[2.8rem] lg:text-[3.6rem] leading-[1.07]">
+      Which outcome would you most want proven today?
+    </h2>
+    <p class="rv mx-auto mt-7 max-w-[52ch] text-[16px] leading-[1.7] text-muted">
+      Start with one outcome that matters. Xyvionix establishes what must be true,
+      what evidence proves it, and where assurance stands today.
+    </p>
+    <div class="rv mt-10">
+      <a href="#" class="btn-w inline-flex items-center rounded px-8 py-4 text-[15.5px] font-semibold">Assess an assurance priority</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="border-t border-line bg-bg1">
+  <div class="mx-auto max-w-shell px-5 sm:px-8 lg:px-12 py-14 sm:py-16">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-12 gap-x-12 gap-y-12">
+      <div class="lg:col-span-4">
+        <div class="flex items-center gap-3">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <line x1="0" y1="12" x2="24" y2="12" stroke="#6E6D66" stroke-width="1.2" stroke-dasharray="2.5 2.5"/>
+            <path d="M0 20 L6 18 L10 15 L14 9 L18 6 L24 4" stroke="#F5F4F1" stroke-width="1.8" fill="none" stroke-linejoin="round"/>
+            <rect x="9" y="9" width="6" height="6" fill="#F5F4F1"/>
+          </svg>
+          <span class="disp text-[17px]">Xyvionix</span>
+        </div>
+        <p class="mt-5 text-[14px] leading-[1.75] text-muted max-w-[36ch]">
+          Continuous Technology Assurance. Proving that critical enterprise technology
+          still delivers the outcome the business depends on. Designed for enterprises
+          operating across North America, the United Kingdom, Europe and Australia.
+        </p>
+      </div>
+      <div class="lg:col-span-2 lg:col-start-6">
+        <p class="font-mono text-[10.5px] tracking-[.14em] uppercase text-faint">Assurance</p>
+        <ul class="mt-4 space-y-2.5 text-[14px] text-muted">
+          <li><a href="#" class="ul hover:text-text">AI Assurance</a></li>
+          <li><a href="#" class="ul hover:text-text">Production Reliability</a></li>
+          <li><a href="#" class="ul hover:text-text">Cyber Exposure</a></li>
+          <li><a href="#" class="ul hover:text-text">Technology Value</a></li>
+          <li><a href="#" class="ul hover:text-text">Data</a></li>
+          <li><a href="#" class="ul hover:text-text">Change</a></li>
+        </ul>
+      </div>
+      <div class="lg:col-span-2">
+        <p class="font-mono text-[10.5px] tracking-[.14em] uppercase text-faint">Company</p>
+        <ul class="mt-4 space-y-2.5 text-[14px] text-muted">
+          <li><a href="#engine" class="ul hover:text-text">How it works</a></li>
+          <li><a href="#industries" class="ul hover:text-text">Industries</a></li>
+          <li><a href="#" class="ul hover:text-text">About</a></li>
+          <li><a href="#" class="ul hover:text-text">Trust</a></li>
+        </ul>
+      </div>
+      <div class="lg:col-span-2">
+        <p class="font-mono text-[10.5px] tracking-[.14em] uppercase text-faint">Resources</p>
+        <ul class="mt-4 space-y-2.5 text-[14px] text-muted">
+          <li><a href="#insights" class="ul hover:text-text">Insights</a></li>
+          <li><a href="#" class="ul hover:text-text">Knowledge base</a></li>
+          <li><a href="#contact" class="ul hover:text-text">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="mt-14 pt-6 border-t border-line flex flex-wrap items-center justify-between gap-4 text-[13px] text-faint">
+      <p>© 2026 Xyvionix</p>
+      <div class="flex gap-7">
+        <a href="#" class="ul hover:text-text">Privacy</a>
+        <a href="#" class="ul hover:text-text">Terms</a>
+        <a href="#" class="ul hover:text-text">Subprocessors</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var b=document.getElementById('mb'), n=document.getElementById('mn');
+  b.addEventListener('click',function(){var o=n.classList.toggle('hidden')===false;b.setAttribute('aria-expanded',String(o));});
+  n.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){n.classList.add('hidden');b.setAttribute('aria-expanded','false');});});
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.14,rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('.rv:not(.in)').forEach(function(el){io.observe(el);});
+})();
+</script>
+</body>
+</html>

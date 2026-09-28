@@ -1,0 +1,32 @@
+---
+/**
+ * Flat route for every content entry: /<slug>.
+ *
+ * getContentEntries() runs the routing check before any path is returned, so
+ * the build fails on an empty, invalid, duplicate or reserved slug.
+ */
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import { getContentEntries } from '../lib/pages.ts';
+import AssuranceLayout from '../layouts/AssuranceLayout.astro';
+import ClusterPageLayout from '../layouts/ClusterPageLayout.astro';
+import UseCaseLayout from '../layouts/UseCaseLayout.astro';
+import TechnologyLayout from '../layouts/TechnologyLayout.astro';
+import IndustryLayout from '../layouts/IndustryLayout.astro';
+import InsightLayout from '../layouts/InsightLayout.astro';
+
+export const getStaticPaths = (async () => {
+  const entries = await getContentEntries();
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { entry } = Astro.props;
+---
+
+{entry.collection === 'assurance' && entry.data.kind === 'hub' && <AssuranceLayout entry={entry} />}
+{entry.collection === 'assurance' && entry.data.kind === 'child' && <ClusterPageLayout entry={entry} />}
+{entry.collection === 'useCases' && <UseCaseLayout entry={entry} />}
+{entry.collection === 'technologies' && <TechnologyLayout entry={entry} />}
+{entry.collection === 'industries' && <IndustryLayout entry={entry} />}
+{entry.collection === 'insights' && <InsightLayout entry={entry} />}

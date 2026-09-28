@@ -1,0 +1,112 @@
+---
+/**
+ * Site search over a static JSON index. Marked noindex and left out of the
+ * sitemap. Without script the page still lists every section as links.
+ */
+import PageLayout from '../layouts/PageLayout.astro';
+import Section from '../components/layout/Section.astro';
+import { primaryNav } from '../data/navigation.ts';
+---
+
+<PageLayout
+  slug="search"
+  label="Search"
+  pageType="utility"
+  section="search"
+  lede="Search assurance areas, use cases, industries, technologies and insights."
+  heroCta={false}
+  closingCta={false}
+>
+  <Section surface="light" flush>
+    <form class="search" role="search" data-search-form action="/search" method="get">
+      <label class="field__label" for="search-input">Search this site</label>
+      <div class="search__box search__row">
+        <input
+          class="input"
+          id="search-input"
+          name="q"
+          type="search"
+          autocomplete="off"
+          spellcheck="false"
+          aria-describedby="search-count"
+          aria-controls="search-results"
+        />
+        <button type="submit" class="btn">Search</button>
+      </div>
+    </form>
+
+    <p class="search__count search__status" id="search-count" role="status" aria-live="polite" data-search-count></p>
+
+    <ul class="listing search__results" id="search-results" data-search-results></ul>
+
+    <noscript>
+      <p class="notice">Search needs JavaScript. Every page is also reachable from the sections below.</p>
+    </noscript>
+
+    <div class="search__browse">
+      <h2 class="lbl lbl--plain">Browse by section</h2>
+      <ul class="related__list">
+        {
+          primaryNav.map((item) => (
+            <li class="related__item">
+              <a href={item.href} class="related__link">
+                <span class="related__title ul">{item.label}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Section>
+
+  <template data-search-template>
+    <li class="listing__item">
+      <a class="listing__link" href="/">
+        <div>
+          <p class="meta"><span class="meta__strong" data-kind></span><span class="meta__sep" aria-hidden="true">·</span><span data-cluster></span></p>
+          <h2 class="listing__title search__title"><span class="ul" data-title></span></h2>
+        </div>
+        <p class="listing__text" data-summary></p>
+      </a>
+    </li>
+  </template>
+
+  <script>
+    import '../scripts/search.ts';
+  </script>
+</PageLayout>
+
+<style>
+  .search {
+    max-width: 46rem;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .search__row .input {
+    flex: 1;
+  }
+
+  .search__status {
+    margin-top: 2rem;
+    min-height: 1.2em;
+  }
+
+  .search__results {
+    margin-top: 1rem;
+    border-top: 0;
+  }
+
+  .search__results:not(:empty) {
+    border-top: 1px solid var(--ln);
+  }
+
+  .search__title {
+    margin-top: 0.6rem;
+  }
+
+  .search__browse {
+    margin-top: 5rem;
+    max-width: 30rem;
+  }
+</style>

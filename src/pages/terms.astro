@@ -1,0 +1,84 @@
+---
+/** Website terms of use. Engagement terms are agreed separately in writing. */
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { company, site } from '../data/site.ts';
+import { pendingInputs, pendingSentence } from '../data/legal.ts';
+
+const owner = company.legalName ?? site.name;
+---
+
+<LegalLayout
+  slug="terms"
+  label="Terms"
+  lede="These terms govern use of this website. They do not govern assurance engagements, which are covered by a written agreement between Xyvionix and the enterprise concerned."
+  pending={pendingSentence(pendingInputs.terms)}
+>
+  <h2 id="about">About these terms</h2>
+  <p>
+    This website is operated by {owner}. By using it you accept these terms. If you do not accept them, please do not
+    use the website.
+  </p>
+
+  <h2 id="information">Information, not advice</h2>
+  <p>
+    The content of this website is general information about technology assurance. It is not legal, regulatory,
+    financial or professional advice, and it should not be relied on as such. References to laws, regulations and
+    standards state facts as understood on the review date shown on each page. They are not a statement of what any
+    organisation must do to comply.
+  </p>
+
+  <h2 id="illustrative">Illustrative material</h2>
+  <p>
+    Diagrams, traces, threshold models and worked examples on this website are illustrative. They explain a method.
+    They do not show live data, results achieved for any organisation or the performance of any product.
+  </p>
+
+  <h2 id="third-parties">Third-party names and sources</h2>
+  <p>
+    Product and company names mentioned on this website belong to their owners. {site.name} is independent of the
+    vendors it writes about and is not their reseller or partner unless a page states otherwise. Links to third-party
+    sources are provided as references. {site.name} is not responsible for the content of those sites.
+  </p>
+
+  <h2 id="accuracy">Accuracy and currency</h2>
+  <p>
+    Technology changes quickly. Pages show the date they were last reviewed, and content may be out of date after
+    that date. {site.name} works to keep content accurate and will correct errors that are reported, but does not
+    warrant that the content is complete or current.
+  </p>
+
+  <h2 id="use">Use of content</h2>
+  <p>
+    The content of this website is owned by {owner} or used with permission. You may read, link to, quote and cite it
+    with attribution. You may not present it as your own or republish substantial parts of it without permission.
+  </p>
+  <p>
+    Search engines and AI systems may crawl and index this website in line with the instructions in
+    <a href="/robots.txt">robots.txt</a>.
+  </p>
+
+  <h2 id="acceptable">Acceptable use</h2>
+  <p>
+    You must not attempt to gain unauthorised access to this website, interfere with its operation or use it to
+    distribute harmful code. Good-faith security research is welcomed under the
+    <a href="/security">security policy</a>.
+  </p>
+
+  <h2 id="liability">Liability</h2>
+  <p>
+    To the extent the law allows, {owner} is not liable for loss arising from use of, or reliance on, this website.
+    Nothing in these terms excludes liability that cannot be excluded by law.
+  </p>
+
+  <h2 id="law">Governing law</h2>
+  {
+    company.governingLaw ? (
+      <p>These terms are governed by {company.governingLaw}.</p>
+    ) : (
+      <p>The governing law and courts for these terms will be stated here once confirmed.</p>
+    )
+  }
+
+  <h2 id="changes">Changes</h2>
+  <p>These terms may be updated. The date at the top of the page shows when they last changed.</p>
+</LegalLayout>

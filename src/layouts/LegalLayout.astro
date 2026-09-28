@@ -1,0 +1,57 @@
+---
+/**
+ * Legal and policy pages. Plain reading layout with a status note where a
+ * company input is still outstanding, so nothing is published as settled
+ * before counsel has reviewed it.
+ */
+import PageLayout from './PageLayout.astro';
+import Section from '../components/layout/Section.astro';
+import { formatDate, isoDate } from '../lib/text.ts';
+import { getStaticPage } from '../data/static-pages.ts';
+
+interface Props {
+  slug: string;
+  label: string;
+  lede: string;
+  /** Shown when the page still needs a company or legal input before launch. */
+  pending?: string;
+}
+
+const { slug, label, lede, pending } = Astro.props;
+const page = getStaticPage(slug);
+const updated = new Date(page.modifiedDate);
+---
+
+<PageLayout slug={slug} label={label} lede={lede} pageType="legal" section="company" heroCta={false} closingCta={false}>
+  <Section surface="light" flush>
+    <div class="legal">
+      <p class="mono-note legal__date">
+        Last updated <time datetime={isoDate(updated)}>{formatDate(updated)}</time>
+      </p>
+      {
+        pending && (
+          <p class="notice legal__notice" role="note">
+            <strong>Pending review.</strong> {pending}
+          </p>
+        )
+      }
+      <div class="prose legal__body">
+        <slot />
+      </div>
+    </div>
+  </Section>
+</PageLayout>
+
+<style>
+  .legal {
+    max-width: 46rem;
+  }
+
+  .legal__notice {
+    margin-top: 1.5rem;
+  }
+
+  .legal__body {
+    margin-top: 2.5rem;
+  }
+</style>

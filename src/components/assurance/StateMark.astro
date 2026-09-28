@@ -1,0 +1,36 @@
+---
+/**
+ * Monochrome assurance state mark. Fill density carries the state, so it reads
+ * without colour, in print and on either surface.
+ *
+ * `label` controls how the state is announced:
+ *   'visible' - mark plus visible text label (default for standalone use)
+ *   'hidden'  - mark plus screen-reader text
+ *   'none'    - decorative, used when adjacent text already names the state
+ */
+import { stateByKey, type AssuranceState } from '../../data/assurances.ts';
+
+interface Props {
+  state: AssuranceState;
+  label?: 'visible' | 'hidden' | 'none';
+  size?: 'sm' | 'md' | 'lg';
+  class?: string;
+}
+
+const { state, label = 'none', size = 'md', class: className } = Astro.props;
+const def = stateByKey[state];
+const sizeClass = size === 'md' ? '' : `st--${size}`;
+---
+
+{
+  label === 'visible' ? (
+    <span class:list={['state', className]}>
+      <span class:list={['st', `st-${state}`, sizeClass]} aria-hidden="true" />
+      <span>{def.label}</span>
+    </span>
+  ) : label === 'hidden' ? (
+    <span class:list={['st', `st-${state}`, sizeClass, className]} role="img" aria-label={`State: ${def.label}`} />
+  ) : (
+    <span class:list={['st', `st-${state}`, sizeClass, className]} aria-hidden="true" />
+  )
+}

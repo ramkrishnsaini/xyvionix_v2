@@ -1,0 +1,46 @@
+---
+/**
+ * Layout for pages implemented as .astro files: hubs, method, trust, company,
+ * contact and legal. Metadata comes from src/data/static-pages.ts.
+ */
+import BaseLayout from './BaseLayout.astro';
+import PageHero from '../components/layout/PageHero.astro';
+import Cta from '../components/layout/Cta.astro';
+import { staticPageContext } from '../lib/static-seo.ts';
+
+interface Props {
+  slug: string;
+  label: string;
+  lede: string;
+  pageType: string;
+  section?: string;
+  heroCta?: boolean;
+  closingCta?: boolean;
+  ctaTitle?: string;
+  ctaText?: string;
+  secondary?: { label: string; href: string };
+  extraSchema?: Array<Record<string, unknown> | null>;
+}
+
+const {
+  slug,
+  label,
+  lede,
+  pageType,
+  section,
+  heroCta = true,
+  closingCta = true,
+  ctaTitle,
+  ctaText,
+  secondary,
+  extraSchema = [],
+} = Astro.props;
+
+const { page, seo, crumbs } = await staticPageContext(slug, extraSchema);
+---
+
+<BaseLayout seo={seo} slug={slug} pageType={pageType} section={section ?? slug}>
+  <PageHero crumbs={crumbs} label={label} h1={page.h1} lede={lede} showCta={heroCta} secondary={secondary} />
+  <slot />
+  {closingCta && <Cta title={ctaTitle} text={ctaText} location={`${pageType}-cta`} />}
+</BaseLayout>

@@ -1,0 +1,22 @@
+---
+/** What the business receives: proof, evidence, corrective ownership, accountability. */
+import { outcomes } from '../../data/assurances.ts';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<div class="outcomes">
+  {
+    outcomes.map((o, i) => (
+      <div class="outcome rv">
+        <span class="outcome__n" aria-hidden="true">
+          {pad(i + 1)}
+        </span>
+        <div class="outcome__body">
+          <h3 class="h3">{o.title}</h3>
+          <p class="outcome__text">{o.text}</p>
+        </div>
+      </div>
+    ))
+  }
+</div>

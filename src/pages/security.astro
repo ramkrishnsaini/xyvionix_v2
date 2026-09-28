@@ -1,0 +1,92 @@
+---
+/** Security policy and vulnerability disclosure. */
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { company, site } from '../data/site.ts';
+import { pendingInputs, pendingSentence } from '../data/legal.ts';
+
+const email = company.securityEmail;
+---
+
+<LegalLayout
+  slug="security"
+  label="Security policy"
+  lede="Xyvionix welcomes reports of security vulnerabilities in its own systems. This policy explains what is in scope, how to report, what to expect in return and the commitments made to people who report in good faith."
+  pending={pendingSentence(pendingInputs.security)}
+>
+  <h2 id="reporting">Reporting a vulnerability</h2>
+  {
+    email ? (
+      <p>
+        Send reports to <a href={`mailto:${email}`}>{email}</a>. Machine-readable contact details are published at
+        <a href="/.well-known/security.txt">/.well-known/security.txt</a>.
+      </p>
+    ) : (
+      <p>
+        A dedicated security contact address will be published here and at <code>/.well-known/security.txt</code>. Until
+        it is, send reports through the <a href="/contact">contact page</a> and state that the message is a security
+        report. Do not include exploit detail in the first message. A secure channel will be arranged.
+      </p>
+    )
+  }
+  <p>A useful report includes:</p>
+  <ul>
+    <li>the address or component affected</li>
+    <li>a description of the issue and its potential impact</li>
+    <li>the steps needed to reproduce it</li>
+    <li>the date and time of testing, and the source address used</li>
+  </ul>
+
+  <h2 id="scope">Scope</h2>
+  <p>This policy covers systems operated by {site.name}, including:</p>
+  <ul>
+    <li>this website, {site.url.replace('https://', '')}, and its subdomains</li>
+    <li>services operated by {site.name} that are reachable from the internet</li>
+  </ul>
+  <p>The following are out of scope:</p>
+  <ul>
+    <li>
+      systems belonging to enterprises that {site.name} works with. Report those to the enterprise concerned, under its
+      own policy
+    </li>
+    <li>third-party services used by {site.name}. Report those to the provider</li>
+    <li>findings from automated scanners submitted without evidence that the issue is exploitable</li>
+    <li>denial of service, volumetric or resource exhaustion testing</li>
+    <li>social engineering of staff, and physical attacks</li>
+    <li>missing security headers or best-practice suggestions with no demonstrated impact</li>
+  </ul>
+
+  <h2 id="conduct">Testing conduct</h2>
+  <p>When testing, please:</p>
+  <ul>
+    <li>use only the access needed to demonstrate the issue</li>
+    <li>stop and report as soon as you encounter data that is not yours, and do not copy, retain or disclose it</li>
+    <li>avoid degrading the service for others</li>
+    <li>do not use an issue to move into other systems</li>
+    <li>give reasonable time for a fix before disclosing publicly</li>
+  </ul>
+
+  <h2 id="response">What to expect</h2>
+  <p>
+    Reports are read by a person. {site.name} will acknowledge a report, assess it, keep the reporter informed of
+    progress and say when the issue has been resolved. A fix is treated as complete when re-testing shows the issue is
+    gone, which is the same standard of closure {site.name} applies in its assurance work.
+  </p>
+  <p>
+    {site.name} does not currently operate a paid bug bounty. With the reporter's agreement, a contribution can be
+    acknowledged publicly once the issue is resolved.
+  </p>
+
+  <h2 id="safe-harbour">Good-faith research</h2>
+  <p>
+    {site.name} will not pursue legal action against, or ask law enforcement to investigate, a person who discovers and
+    reports a vulnerability in good faith and in line with this policy. This does not extend to conduct outside this
+    policy, and it cannot bind any third party.
+  </p>
+
+  <h2 id="related">Related</h2>
+  <p>
+    The access model, data handling and attestation status are set out on the
+    <a href="/security-trust">security and trust</a> page. The third parties that process data for {site.name} are
+    listed under <a href="/subprocessors">subprocessors</a>.
+  </p>
+</LegalLayout>

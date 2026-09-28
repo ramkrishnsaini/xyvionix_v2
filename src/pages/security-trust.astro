@@ -1,0 +1,111 @@
+---
+/**
+ * Trust overview for security and procurement teams. States the operating
+ * model and the attestation position plainly. Claims no certification.
+ */
+import PageLayout from '../layouts/PageLayout.astro';
+import Section from '../components/layout/Section.astro';
+import SectionHead from '../components/layout/SectionHead.astro';
+import Arrow from '../components/layout/Arrow.astro';
+import { company } from '../data/site.ts';
+import { attestationStatus } from '../data/trust.ts';
+import { trustSections } from '../data/trust-detail.ts';
+---
+
+<PageLayout
+  slug="security-trust"
+  label="Security and trust"
+  pageType="core"
+  section="company"
+  lede="An assurance function is given access to systems that matter. It has to be able to prove how that access is bounded, what happens to the data it reads and how the enterprise can end the arrangement. This page sets out the position so that security and procurement teams can evaluate it before a conversation begins."
+  secondary={{ label: 'Security policy and disclosure', href: '/security' }}
+>
+  <Section surface="light" flush labelledby="status-title">
+    <SectionHead
+      label="Attestation status"
+      title="What Xyvionix holds today, stated plainly"
+      id="status-title"
+      split
+      text="A company that sells proof should not leave its own position to inference. Xyvionix does not currently hold an independent security attestation."
+    >
+      <dl class="rows rows--open rv">
+        <div class="row">
+          <dt class="row__term">SOC 2</dt>
+          <dd class="row__desc">{attestationStatus.soc2}</dd>
+        </div>
+        <div class="row">
+          <dt class="row__term">ISO/IEC 27001</dt>
+          <dd class="row__desc">{attestationStatus.iso27001}</dd>
+        </div>
+        <div class="row">
+          <dt class="row__term">Confirmation</dt>
+          <dd class="row__desc">{attestationStatus.note}</dd>
+        </div>
+      </dl>
+    </SectionHead>
+  </Section>
+
+  {
+    trustSections.map((section, i) => (
+      <Section surface="light" alt={i % 2 === 0} labelledby={`${section.id}-title`} id={section.id}>
+        <SectionHead label={section.label} title={section.title} id={`${section.id}-title`} split text={section.intro}>
+          <dl class="rows rows--open rv trust__rows">
+            {section.items.map((item) => (
+              <div class="row">
+                <dt class="row__term">{item.title}</dt>
+                <dd class="row__desc">{item.text}</dd>
+              </div>
+            ))}
+          </dl>
+        </SectionHead>
+      </Section>
+    ))
+  }
+
+  <Section surface="light" alt labelledby="further-title">
+    <SectionHead label="Further detail" title="Documents for due diligence" id="further-title" split>
+      <ul class="listing rv">
+        <li class="listing__item">
+          <a href="/security" class="listing__link">
+            <h3 class="listing__title"><span class="ul">Security policy and vulnerability disclosure</span></h3>
+            <p class="listing__text">How to report a vulnerability, what is in scope and how reports are handled.</p>
+          </a>
+        </li>
+        <li class="listing__item">
+          <a href="/subprocessors" class="listing__link">
+            <h3 class="listing__title"><span class="ul">Subprocessors</span></h3>
+            <p class="listing__text">Third parties that process data on behalf of Xyvionix, and how changes are notified.</p>
+          </a>
+        </li>
+        <li class="listing__item">
+          <a href="/privacy" class="listing__link">
+            <h3 class="listing__title"><span class="ul">Privacy notice</span></h3>
+            <p class="listing__text">How personal information submitted through this website is handled.</p>
+          </a>
+        </li>
+      </ul>
+      {
+        company.securityEmail ? (
+          <p class="body trust__contact">
+            Security questions and questionnaires: <a class="ul" href={`mailto:${company.securityEmail}`}>{company.securityEmail}</a>
+          </p>
+        ) : (
+          <a href="/contact" class="lk trust__contact">
+            <span class="ul">Send a security questionnaire or due diligence request</span>
+            <Arrow />
+          </a>
+        )
+      }
+    </SectionHead>
+  </Section>
+</PageLayout>
+
+<style>
+  .trust__rows {
+    margin-top: 2rem;
+  }
+
+  .trust__contact {
+    margin-top: 2rem;
+  }
+</style>

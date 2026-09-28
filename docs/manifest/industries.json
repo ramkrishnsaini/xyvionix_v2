@@ -1,0 +1,74 @@
+[
+  {
+    "slug": "financial-services", "title": "Financial Services", "kind": "primary",
+    "cluster": "industry", "secondary": ["ai", "reliability", "cyber"], "parent": "industries", "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Can resilience and control be evidenced on demand?",
+    "audience": ["CIO", "CTO", "CISO", "Technology Risk", "Operational Resilience"],
+    "intent": "Industry: continuous technology assurance for banks, payments, asset managers and market infrastructure",
+    "brief": "Operational resilience regimes require tested tolerances and retained evidence, not documented intent. Covers important business services, resilience testing, model risk and AI decisions, third-party dependency, identity and privileged access, audit evidence.",
+    "related": { "assurance": ["production-reliability-assurance", "ai-assurance", "cyber-exposure-assurance", "disaster-recovery-assurance", "privileged-access-assurance"], "useCases": ["untested-disaster-recovery", "ai-audit-readiness", "stale-privileged-access", "cloud-configuration-drift"], "technologies": ["azure-production-reliability", "aws-production-reliability", "entra-id-exposure-assurance", "kafka-pipeline-assurance"], "industries": ["financial-services-ai-assurance", "insurance"], "insights": ["disaster-recovery-plan-never-tested", "ai-audit-evidence-requirements", "standing-privilege-evidence-gap"] }
+  },
+  {
+    "slug": "insurance", "title": "Insurance", "kind": "primary",
+    "cluster": "industry", "secondary": ["ai", "data"], "parent": "industries", "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Can a model decision be explained after the model has changed?",
+    "audience": ["CIO", "Chief Data Officer", "Head of AI", "Technology Risk", "Chief Actuary office"],
+    "intent": "Industry: continuous technology assurance for insurers and intermediaries",
+    "brief": "Decisions in underwriting, pricing and claims must remain explainable long after the model and data that made them changed. Covers decision record retention, model and data versioning, data freshness in pricing, platform resilience at peak claim events.",
+    "related": { "assurance": ["ai-assurance", "data-assurance", "ai-governance-assurance", "model-change-assurance", "data-quality-assurance"], "useCases": ["ai-audit-readiness", "data-pipeline-freshness-failure", "schema-change-production-impact", "model-provider-migration"], "technologies": ["databricks-data-assurance", "snowflake-data-assurance", "aws-bedrock-assurance"], "industries": ["insurance-claims-ai-assurance", "financial-services"], "insights": ["ai-audit-evidence-requirements", "model-retirement-is-a-production-change", "data-freshness-ai-quality"] }
+  },
+  {
+    "slug": "healthcare", "title": "Healthcare", "kind": "primary",
+    "cluster": "industry", "secondary": ["data", "cyber", "reliability"], "parent": "industries", "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Can integrity, access and uptime be proven where care depends on them?",
+    "audience": ["CIO", "CISO", "Chief Medical Information Officer", "Chief Data Officer"],
+    "intent": "Industry: continuous technology assurance for providers, payers and health technology",
+    "brief": "Data integrity, access control and availability carry clinical and regulatory consequence. Covers downtime tolerance for clinical systems, access to protected health information, data integrity across interfaces, clinical AI monitoring, recovery under ransomware conditions.",
+    "related": { "assurance": ["data-assurance", "cyber-exposure-assurance", "production-reliability-assurance", "identity-exposure-assurance", "disaster-recovery-assurance"], "useCases": ["untested-disaster-recovery", "identity-access-drift", "security-remediation-backlog", "data-pipeline-freshness-failure"], "technologies": ["entra-id-exposure-assurance", "azure-production-reliability", "databricks-data-assurance"], "industries": ["healthcare-ai-assurance"], "insights": ["disaster-recovery-plan-never-tested", "how-identity-controls-drift", "security-findings-vs-verified-closure"] }
+  },
+  {
+    "slug": "software-technology", "title": "Software and Technology", "kind": "primary",
+    "cluster": "industry", "secondary": ["reliability", "value", "change"], "parent": "industries", "state": "assured", "cadence": 180, "fresh": true,
+    "ogQuestion": "Do reliability and unit cost still support the margin?",
+    "audience": ["CTO", "VP Engineering", "VP Platform", "CFO office"],
+    "intent": "Industry: continuous technology assurance for software and SaaS companies",
+    "brief": "Reliability and technology economics translate directly into product value and gross margin. Covers customer-facing service levels, AI feature cost per tenant, release pace against stability, customer security evidence requests, enterprise procurement scrutiny.",
+    "related": { "assurance": ["production-reliability-assurance", "technology-value-assurance", "change-assurance", "unit-economics-assurance", "ai-cost-assurance"], "useCases": ["high-change-failure-rate", "ai-cost-spike", "cloud-cost-anomaly", "kubernetes-upgrade-risk"], "technologies": ["eks-reliability-assurance", "vllm-production-assurance", "aws-iam-exposure-assurance"], "industries": ["saas-production-reliability"], "insights": ["ai-cost-per-business-outcome", "what-change-failure-rate-proves", "error-budgets-without-consequence"] }
+  },
+  {
+    "slug": "financial-services-ai-assurance", "title": "Financial Services AI Assurance", "kind": "industry-use-case", "industry": "financial-services",
+    "cluster": "industry", "secondary": ["ai"], "parent": "financial-services", "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Does the AI still meet model risk expectations today?",
+    "audience": ["Head of AI", "Model Risk", "Technology Risk", "CISO"],
+    "intent": "Industry + assurance: AI assurance where model risk management and conduct obligations apply",
+    "brief": "Generative and agentic systems strain model risk practice built for static models: validation must continue after vendor model change. Covers ongoing monitoring, outcome analysis, third-party model dependency, agent actions in customer and payment processes.",
+    "related": { "assurance": ["ai-assurance", "ai-governance-assurance", "llm-evaluation-assurance", "ai-agent-assurance", "model-change-assurance"], "useCases": ["ai-audit-readiness", "ai-agent-with-write-access", "production-ai-going-live"], "technologies": ["azure-ai-assurance", "aws-bedrock-assurance"], "industries": ["financial-services", "insurance-claims-ai-assurance"], "insights": ["ai-audit-evidence-requirements", "why-ai-evaluation-fails-after-launch", "ai-agent-permission-risk"] }
+  },
+  {
+    "slug": "insurance-claims-ai-assurance", "title": "Insurance Claims AI Assurance", "kind": "industry-use-case", "industry": "insurance",
+    "cluster": "industry", "secondary": ["ai", "data"], "parent": "insurance", "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Can every automated claim decision still be reconstructed?",
+    "audience": ["Head of Claims", "Head of AI", "Technology Risk", "Compliance"],
+    "intent": "Industry + assurance: assurance for AI used in claims triage, assessment and settlement",
+    "brief": "Claims decisions carry fair-treatment obligations and long dispute tails. Covers decision reconstruction, document extraction accuracy, human review that actually reviews, drift after model change, and outcome monitoring across customer groups. Absorbs insurance model assurance.",
+    "related": { "assurance": ["ai-governance-assurance", "model-change-assurance", "llm-evaluation-assurance", "ai-agent-assurance"], "useCases": ["ai-audit-readiness", "model-provider-migration", "ai-agent-with-write-access"], "technologies": ["aws-bedrock-assurance", "azure-ai-assurance"], "industries": ["insurance", "financial-services-ai-assurance"], "insights": ["human-oversight-evidence", "ai-audit-evidence-requirements", "model-retirement-is-a-production-change"] }
+  },
+  {
+    "slug": "healthcare-ai-assurance", "title": "Healthcare AI Assurance", "kind": "industry-use-case", "industry": "healthcare",
+    "cluster": "industry", "secondary": ["ai", "data"], "parent": "healthcare", "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Is clinical and operational AI still performing as validated?",
+    "audience": ["Chief Medical Information Officer", "Head of AI", "CISO", "Clinical Safety"],
+    "intent": "Industry + assurance: assurance for AI in clinical documentation, decision support and operations",
+    "brief": "Performance validated at one site and one time does not hold across populations, workflows and model updates. Covers local performance monitoring, grounding in current clinical sources, protected data in prompts and retrieval, change control. Absorbs healthcare data assurance.",
+    "related": { "assurance": ["ai-governance-assurance", "production-rag-assurance", "llm-evaluation-assurance", "ai-security-assurance", "data-quality-assurance"], "useCases": ["production-ai-going-live", "rag-quality-degradation", "ai-audit-readiness"], "technologies": ["azure-ai-assurance", "vertex-ai-assurance", "rag-vector-search-assurance"], "industries": ["healthcare"], "insights": ["measuring-production-rag-quality", "human-oversight-evidence", "why-ai-evaluation-fails-after-launch"] }
+  },
+  {
+    "slug": "saas-production-reliability", "title": "SaaS Production Reliability", "kind": "industry-use-case", "industry": "software-technology",
+    "cluster": "industry", "secondary": ["reliability", "change"], "parent": "software-technology", "state": "assured", "cadence": 180, "fresh": true,
+    "ogQuestion": "Can you prove the service level you sold?",
+    "audience": ["CTO", "VP Engineering", "Head of SRE", "Customer Trust"],
+    "intent": "Industry + assurance: reliability assurance for multi-tenant SaaS with contractual service levels",
+    "brief": "SaaS reliability is a commercial commitment with credits, renewals and enterprise due diligence attached. Covers per-tenant experience versus aggregate availability, noisy-neighbour isolation, release pace, dependency on a single cloud region, customer-facing evidence. Absorbs SaaS AI cost topics by linking to AI cost assurance.",
+    "related": { "assurance": ["production-reliability-assurance", "slo-assurance", "release-assurance", "incident-recurrence-assurance", "kubernetes-reliability-assurance"], "useCases": ["high-change-failure-rate", "cloud-incident-recurrence", "kubernetes-upgrade-risk"], "technologies": ["eks-reliability-assurance", "aks-reliability-assurance", "aws-production-reliability"], "industries": ["software-technology"], "insights": ["error-budgets-without-consequence", "why-production-incidents-recur", "what-change-failure-rate-proves"] }
+  }
+]

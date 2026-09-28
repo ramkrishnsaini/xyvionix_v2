@@ -1,0 +1,47 @@
+---
+/**
+ * Industry page. Primary industry pages also introduce the more specific
+ * industry pages that belong to them.
+ */
+import type { CollectionEntry } from 'astro:content';
+import ContentShell from './ContentShell.astro';
+import Section from '../components/layout/Section.astro';
+import SectionHead from '../components/layout/SectionHead.astro';
+import PageList from '../components/clusters/PageList.astro';
+import { byTitle, getChildrenOf, getPage } from '../lib/pages.ts';
+
+interface Props {
+  entry: CollectionEntry<'industries'>;
+}
+
+const { entry } = Astro.props;
+const isPrimary = entry.data.kind === 'primary';
+const parent = isPrimary ? undefined : await getPage(entry.data.parent);
+const children = isPrimary ? (await getChildrenOf(entry.id)).filter((p) => p.kind === 'industries').sort(byTitle) : [];
+---
+
+<ContentShell
+  entry={entry}
+  label={isPrimary ? 'Industry' : (parent?.title ?? 'Industry')}
+  pageType="industries"
+  section="industries"
+  schemaKind="page"
+  showReviewed={entry.data.freshnessCritical}
+  ctaTitle="Which outcome carries the most consequence for you?"
+  secondary={parent ? { label: parent.title, href: parent.path } : { label: 'All industries', href: '/industries' }}
+>
+  {
+    children.length > 0 && (
+      <Section surface="light" alt slot="before-related" labelledby="sector-focus-title">
+        <SectionHead
+          label="In this sector"
+          title={`Assurance specific to ${entry.data.title.toLowerCase()}`}
+          id="sector-focus-title"
+        />
+        <div class="mt-block">
+          <PageList pages={children} location="industry-children" />
+        </div>
+      </Section>
+    )
+  }
+</ContentShell>

@@ -1,0 +1,82 @@
+---
+/** Subprocessor register. Renders only entries that really exist. */
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { site } from '../data/site.ts';
+import { pendingInputs, pendingSentence, subprocessorNoticeDays, subprocessors } from '../data/legal.ts';
+---
+
+<LegalLayout
+  slug="subprocessors"
+  label="Subprocessors"
+  lede="A subprocessor is a third party that processes data on behalf of Xyvionix. This register names each one, states what it is used for and explains how changes are notified before they take effect."
+  pending={pendingSentence(pendingInputs.subprocessors)}
+>
+  <h2 id="principle">Principle</h2>
+  <p>
+    {site.name} is designed so that enterprise data stays in the enterprise's own jurisdiction and infrastructure.
+    Assurance works on data where it lives, which keeps the number of third parties that ever handle enterprise data
+    as small as possible. Where a third party is used, it is listed here.
+  </p>
+
+  <h2 id="register">Register</h2>
+  {
+    subprocessors.length > 0 ? (
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Subprocessor</th>
+            <th scope="col">Purpose</th>
+            <th scope="col">Data processed</th>
+            <th scope="col">Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          {subprocessors.map((item) => (
+            <tr>
+              <th scope="row">
+                <a href={item.url} rel="noopener external">
+                  {item.name}
+                </a>
+              </th>
+              <td>{item.purpose}</td>
+              <td>{item.dataProcessed}</td>
+              <td>{item.location}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    ) : (
+      <p>
+        The register has not yet been published. It will be published on this page before {site.name} processes any
+        enterprise data, and the current list is provided in writing on request as part of due diligence.
+      </p>
+    )
+  }
+
+  <h2 id="changes">Changes to this register</h2>
+  {
+    subprocessorNoticeDays !== null ? (
+      <p>
+        Enterprises under agreement are notified at least {subprocessorNoticeDays} days before a new subprocessor begins
+        processing their data, and may object within that period under the terms of their agreement.
+      </p>
+    ) : (
+      <p>
+        Enterprises under agreement are notified before a new subprocessor begins processing their data and may object
+        under the terms of their agreement. The notice period is stated in each agreement.
+      </p>
+    )
+  }
+
+  <h2 id="website">This website</h2>
+  <p>
+    Separately from assurance engagements, this website is served by a hosting provider and, where the assessment form
+    is used, a form processing service. How information submitted through the website is handled is described in the
+    <a href="/privacy">privacy notice</a>.
+  </p>
+
+  <h2 id="related">Related</h2>
+  <p>
+    See <a href="/security-trust">security and trust</a> for the access model and data handling position.
+  </p>
+</LegalLayout>

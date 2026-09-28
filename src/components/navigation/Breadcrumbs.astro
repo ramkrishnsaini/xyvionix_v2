@@ -1,0 +1,28 @@
+---
+/** Visible breadcrumb trail. The matching BreadcrumbList is emitted in the page graph. */
+import type { Crumb } from '../../lib/breadcrumbs.ts';
+
+interface Props {
+  crumbs: Crumb[];
+}
+
+const { crumbs } = Astro.props;
+---
+
+{
+  crumbs.length > 1 && (
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        {crumbs.map((crumb, i) => (
+          <li>
+            {i === crumbs.length - 1 ? (
+              <span aria-current="page">{crumb.name}</span>
+            ) : (
+              <a href={crumb.path}>{crumb.name}</a>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}

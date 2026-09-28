@@ -1,0 +1,45 @@
+---
+/**
+ * A page band. `surface` selects obsidian or off-white; `alt` selects the
+ * second tone of that surface, which is how the theme builds its rhythm.
+ */
+interface Props {
+  surface?: 'light' | 'dark';
+  alt?: boolean;
+  tight?: boolean;
+  flush?: boolean;
+  id?: string;
+  labelledby?: string;
+  glow?: boolean;
+  class?: string;
+}
+
+const {
+  surface = 'light',
+  alt = false,
+  tight = false,
+  flush = false,
+  id,
+  labelledby,
+  glow = false,
+  class: className,
+} = Astro.props;
+---
+
+<section
+  id={id}
+  aria-labelledby={labelledby}
+  class:list={[
+    'section',
+    surface === 'light' && 'light',
+    alt && 'section--alt',
+    flush && 'section--flush',
+    glow && 'clip',
+    className,
+  ]}
+>
+  {glow && <div class="glow" aria-hidden="true" />}
+  <div class:list={['shell', 'section__inner', tight && 'section__inner--tight']}>
+    <slot />
+  </div>
+</section>

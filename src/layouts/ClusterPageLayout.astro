@@ -1,0 +1,23 @@
+---
+/** A page inside an assurance cluster, such as AI Agent Assurance. */
+import type { CollectionEntry } from 'astro:content';
+import ContentShell from './ContentShell.astro';
+import { getPage } from '../lib/pages.ts';
+
+interface Props {
+  entry: CollectionEntry<'assurance'>;
+}
+
+const { entry } = Astro.props;
+const hub = await getPage(entry.data.parent);
+---
+
+<ContentShell
+  entry={entry}
+  label={hub?.title ?? 'Assurance'}
+  pageType="assurance"
+  section="assurance"
+  schemaKind="service"
+  showReviewed={entry.data.freshnessCritical}
+  secondary={hub ? { label: hub.title, href: hub.path } : undefined}
+/>

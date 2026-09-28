@@ -1,0 +1,146 @@
+[
+  {
+    "slug": "production-ai-going-live",
+    "title": "Production AI Going Live",
+    "cluster": "ai", "secondary": ["change"], "parent": "use-cases",
+    "state": "unassured", "cadence": 90, "fresh": true,
+    "audience": ["Head of AI", "CTO", "Technology Risk"],
+    "intent": "Problem: an AI system is about to launch and approval evidence must survive launch",
+    "brief": "Launch approval is a point-in-time proof. The page defines what must be baselined before go-live so assurance can be held after it: evaluation set, thresholds, telemetry, cost envelope, rollback.",
+    "related": {
+      "assurance": ["ai-assurance", "llm-evaluation-assurance", "ai-governance-assurance", "ai-observability-assurance"],
+      "useCases": ["ai-audit-readiness", "rag-quality-degradation"],
+      "technologies": ["azure-ai-assurance", "aws-bedrock-assurance", "vertex-ai-assurance"],
+      "industries": ["financial-services-ai-assurance", "healthcare-ai-assurance"],
+      "insights": ["why-ai-evaluation-fails-after-launch"]
+    }
+  },
+  {
+    "slug": "rag-quality-degradation",
+    "title": "RAG Quality Degradation",
+    "cluster": "ai", "secondary": ["data"], "parent": "use-cases",
+    "state": "degrading", "cadence": 90, "fresh": true,
+    "audience": ["Head of AI", "VP Engineering", "Chief Data Officer"],
+    "intent": "Problem: answers from a retrieval-augmented system are getting worse without an obvious failure",
+    "brief": "Users report worse answers; nothing is down. Walks through isolating retrieval from generation, corpus staleness, index and embedding change, and what verified restoration looks like.",
+    "related": {
+      "assurance": ["production-rag-assurance", "data-freshness-assurance", "llm-evaluation-assurance"],
+      "useCases": ["data-pipeline-freshness-failure", "model-provider-migration"],
+      "technologies": ["rag-vector-search-assurance", "databricks-data-assurance"],
+      "industries": ["healthcare-ai-assurance"],
+      "insights": ["measuring-production-rag-quality", "data-freshness-ai-quality"]
+    }
+  },
+  {
+    "slug": "ai-agent-with-write-access",
+    "title": "AI Agent With Write Access",
+    "cluster": "ai", "secondary": ["cyber"], "parent": "use-cases",
+    "state": "risk", "cadence": 90, "fresh": true,
+    "audience": ["CISO", "Head of AI", "Technology Risk"],
+    "intent": "Problem: an agent is being granted the ability to change systems of record",
+    "brief": "Moving an agent from read to write changes the consequence of every error and every injection. Covers scoped credentials, approval thresholds, reversible actions, action audit and blast-radius limits.",
+    "related": {
+      "assurance": ["ai-agent-assurance", "mcp-security-assurance", "privileged-access-assurance", "ai-security-assurance"],
+      "useCases": ["production-ai-going-live", "stale-privileged-access"],
+      "technologies": ["azure-ai-assurance", "aws-bedrock-assurance", "entra-id-exposure-assurance"],
+      "industries": ["financial-services-ai-assurance", "insurance-claims-ai-assurance"],
+      "insights": ["ai-agent-permission-risk", "human-oversight-evidence"]
+    }
+  },
+  {
+    "slug": "model-provider-migration",
+    "title": "Model Provider Migration",
+    "cluster": "ai", "secondary": ["change", "value"], "parent": "use-cases",
+    "state": "unassured", "cadence": 90, "fresh": true,
+    "audience": ["Head of AI", "CTO", "FinOps Leadership"],
+    "intent": "Problem: moving a production workload to a different model or provider, by choice or by retirement",
+    "brief": "A model swap invalidates prior evaluation evidence. Covers behavioural equivalence testing, prompt and tool-schema portability, safety boundary re-test, cost and latency envelope, staged cutover and reversal.",
+    "related": {
+      "assurance": ["model-change-assurance", "llm-evaluation-assurance", "ai-cost-assurance", "rollback-readiness-assurance"],
+      "useCases": ["ai-cost-spike", "production-ai-going-live"],
+      "technologies": ["azure-ai-assurance", "aws-bedrock-assurance", "vertex-ai-assurance", "vllm-production-assurance"],
+      "industries": ["insurance-claims-ai-assurance"],
+      "insights": ["model-retirement-is-a-production-change"]
+    }
+  },
+  {
+    "slug": "ai-cost-spike",
+    "title": "AI Cost Spike",
+    "cluster": "ai", "secondary": ["value"], "parent": "use-cases",
+    "state": "risk", "cadence": 90, "fresh": true,
+    "audience": ["FinOps Leadership", "Head of AI", "CTO"],
+    "intent": "Problem: AI spend has risen sharply and the cause is not yet attributed",
+    "brief": "Spend rose faster than usage. Covers attribution to feature and tenant, agent loops, context growth, cache miss, retry storms, model tier change, and what proves the correction held.",
+    "related": {
+      "assurance": ["ai-cost-assurance", "unit-economics-assurance", "ai-observability-assurance"],
+      "useCases": ["cloud-cost-anomaly", "model-provider-migration"],
+      "technologies": ["vllm-production-assurance", "azure-ai-assurance", "aws-bedrock-assurance"],
+      "industries": ["software-technology"],
+      "insights": ["ai-cost-per-business-outcome"]
+    }
+  },
+  {
+    "slug": "ai-audit-readiness",
+    "title": "AI Audit Readiness",
+    "cluster": "ai", "secondary": [], "parent": "use-cases",
+    "state": "unassured", "cadence": 90, "fresh": true,
+    "audience": ["AI Governance", "Technology Risk", "Internal Audit", "CISO"],
+    "intent": "Problem: an audit, regulator or customer will ask for evidence about an AI system",
+    "brief": "Evidence reconstructed for an audit is weaker than evidence retained as the system ran. Covers the evidence set examiners ask for, retention, attribution to system version, and gaps typically found.",
+    "related": {
+      "assurance": ["ai-governance-assurance", "llm-evaluation-assurance", "ai-observability-assurance"],
+      "useCases": ["production-ai-going-live"],
+      "technologies": ["azure-ai-assurance", "aws-bedrock-assurance"],
+      "industries": ["financial-services-ai-assurance", "insurance-claims-ai-assurance", "healthcare-ai-assurance"],
+      "insights": ["ai-audit-evidence-requirements", "human-oversight-evidence"]
+    }
+  },
+  {
+    "slug": "cloud-incident-recurrence",
+    "title": "Cloud Incident Recurrence",
+    "cluster": "reliability", "secondary": [], "parent": "use-cases",
+    "state": "degrading", "cadence": 180, "fresh": false,
+    "audience": ["Head of SRE", "VP Engineering", "CTO"],
+    "intent": "Problem: the same class of production incident keeps returning",
+    "brief": "Repeat incidents indicate corrective actions that were recorded but not completed or not verified. Covers action completion evidence, recurrence testing, shared contributing factors and recurrence-rate thresholds.",
+    "related": {
+      "assurance": ["incident-recurrence-assurance", "slo-assurance", "production-observability-assurance"],
+      "useCases": ["high-change-failure-rate", "cloud-configuration-drift"],
+      "technologies": ["aws-production-reliability", "azure-production-reliability", "gcp-production-reliability"],
+      "industries": ["saas-production-reliability"],
+      "insights": ["why-production-incidents-recur"]
+    }
+  },
+  {
+    "slug": "untested-disaster-recovery",
+    "title": "Untested Disaster Recovery",
+    "cluster": "reliability", "secondary": ["data"], "parent": "use-cases",
+    "state": "unassured", "cadence": 180, "fresh": false,
+    "audience": ["CTO", "CIO", "Technology Risk"],
+    "intent": "Problem: a recovery plan exists but has not been exercised under realistic conditions",
+    "brief": "A documented plan with no timed exercise is unassured, not acceptable. Covers scoping a first exercise, measuring actual recovery time and point, restore verification, and converting findings into owned corrections.",
+    "related": {
+      "assurance": ["disaster-recovery-assurance", "cloud-drift-assurance", "data-pipeline-assurance"],
+      "useCases": ["cloud-configuration-drift"],
+      "technologies": ["aws-production-reliability", "azure-production-reliability", "gcp-production-reliability"],
+      "industries": ["financial-services", "healthcare"],
+      "insights": ["disaster-recovery-plan-never-tested"]
+    }
+  },
+  {
+    "slug": "kubernetes-upgrade-risk",
+    "title": "Kubernetes Upgrade Risk",
+    "cluster": "reliability", "secondary": ["change"], "parent": "use-cases",
+    "state": "degrading", "cadence": 90, "fresh": true,
+    "audience": ["VP Platform", "Head of SRE"],
+    "intent": "Problem: clusters are approaching end of support or an upgrade is overdue",
+    "brief": "Deferred upgrades compound: more versions to cross, more removed APIs, paid extended support or forced upgrades. Covers support position, API removal exposure, add-on compatibility, rehearsal evidence and verified completion.",
+    "related": {
+      "assurance": ["kubernetes-reliability-assurance", "release-assurance", "rollback-readiness-assurance"],
+      "useCases": ["cloud-configuration-drift", "high-change-failure-rate"],
+      "technologies": ["eks-reliability-assurance", "aks-reliability-assurance"],
+      "industries": ["saas-production-reliability"],
+      "insights": ["kubernetes-support-windows-upgrade-risk"]
+    }
+  }
+]

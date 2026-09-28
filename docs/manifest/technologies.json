@@ -1,0 +1,66 @@
+[
+  {
+    "slug": "aws-production-reliability", "title": "AWS Production Reliability", "group": "cloud",
+    "cluster": "reliability", "secondary": ["change"], "parent": "technologies", "state": "assured", "cadence": 180, "fresh": true,
+    "audience": ["VP Platform", "Head of SRE", "CTO"],
+    "intent": "Technology + problem: proving reliability of workloads running on AWS",
+    "brief": "What must be re-proven on AWS specifically: zonal and regional failure behaviour, control-plane dependency, quota headroom, recovery exercises, backup restore. Not a list of AWS services offered.",
+    "related": { "assurance": ["production-reliability-assurance", "disaster-recovery-assurance", "cloud-drift-assurance", "slo-assurance"], "useCases": ["untested-disaster-recovery", "cloud-incident-recurrence", "cloud-configuration-drift"], "technologies": ["eks-reliability-assurance", "aws-iam-exposure-assurance", "terraform-drift-assurance"], "industries": ["saas-production-reliability", "financial-services"], "insights": ["disaster-recovery-plan-never-tested", "cloud-drift-production-risk"] }
+  },
+  {
+    "slug": "azure-production-reliability", "title": "Azure Production Reliability", "group": "cloud",
+    "cluster": "reliability", "secondary": ["change"], "parent": "technologies", "state": "assured", "cadence": 180, "fresh": true,
+    "audience": ["VP Platform", "Head of SRE", "CTO"],
+    "intent": "Technology + problem: proving reliability of workloads running on Azure",
+    "brief": "What must be re-proven on Azure specifically: availability zone coverage by region and service, paired-region assumptions, platform maintenance, identity dependency, recovery exercises. Distinct from the AWS page in substance.",
+    "related": { "assurance": ["production-reliability-assurance", "disaster-recovery-assurance", "cloud-drift-assurance", "slo-assurance"], "useCases": ["untested-disaster-recovery", "cloud-incident-recurrence", "cloud-configuration-drift"], "technologies": ["aks-reliability-assurance", "entra-id-exposure-assurance", "azure-ai-assurance"], "industries": ["financial-services", "healthcare"], "insights": ["disaster-recovery-plan-never-tested", "why-production-incidents-recur"] }
+  },
+  {
+    "slug": "gcp-production-reliability", "title": "Google Cloud Production Reliability", "group": "cloud",
+    "cluster": "reliability", "secondary": ["change"], "parent": "technologies", "state": "assured", "cadence": 180, "fresh": true,
+    "audience": ["VP Platform", "Head of SRE", "CTO"],
+    "intent": "Technology + problem: proving reliability of workloads running on Google Cloud",
+    "brief": "What must be re-proven on Google Cloud specifically: global control-plane and global resource dependency, regional isolation, quota and policy propagation, recovery exercises. Distinct from AWS and Azure pages in substance.",
+    "related": { "assurance": ["production-reliability-assurance", "disaster-recovery-assurance", "cloud-drift-assurance", "slo-assurance"], "useCases": ["untested-disaster-recovery", "cloud-incident-recurrence"], "technologies": ["vertex-ai-assurance", "terraform-drift-assurance"], "industries": ["saas-production-reliability"], "insights": ["why-production-incidents-recur", "error-budgets-without-consequence"] }
+  },
+  {
+    "slug": "azure-ai-assurance", "title": "Azure AI Assurance", "group": "ai-platform",
+    "cluster": "ai", "secondary": ["cyber"], "parent": "technologies", "state": "assured", "cadence": 90, "fresh": true,
+    "audience": ["Head of AI", "CTO", "CISO"],
+    "intent": "Technology + problem: assurance for AI workloads built on Microsoft's AI platform and Azure OpenAI models",
+    "brief": "Deployment type, model retirement and automatic upgrade policy, quota and provisioned capacity, content safety configuration and agent identity each create evidence that expires. Use current Microsoft product names from research.",
+    "related": { "assurance": ["ai-assurance", "model-change-assurance", "ai-agent-assurance", "ai-security-assurance"], "useCases": ["production-ai-going-live", "model-provider-migration", "ai-agent-with-write-access"], "technologies": ["entra-id-exposure-assurance", "azure-production-reliability", "rag-vector-search-assurance"], "industries": ["financial-services-ai-assurance", "healthcare-ai-assurance"], "insights": ["model-retirement-is-a-production-change", "ai-agent-permission-risk"] }
+  },
+  {
+    "slug": "aws-bedrock-assurance", "title": "Amazon Bedrock Assurance", "group": "ai-platform",
+    "cluster": "ai", "secondary": ["cyber"], "parent": "technologies", "state": "assured", "cadence": 90, "fresh": true,
+    "audience": ["Head of AI", "CTO", "CISO"],
+    "intent": "Technology + problem: assurance for AI workloads built on Amazon Bedrock",
+    "brief": "Model lifecycle states, cross-region inference routing, guardrail configuration, knowledge base synchronisation and agent runtime permissions each create evidence that expires. Use current AWS product names from research.",
+    "related": { "assurance": ["ai-assurance", "model-change-assurance", "production-rag-assurance", "ai-agent-assurance"], "useCases": ["production-ai-going-live", "model-provider-migration", "ai-cost-spike"], "technologies": ["aws-iam-exposure-assurance", "aws-production-reliability", "rag-vector-search-assurance"], "industries": ["financial-services-ai-assurance", "insurance-claims-ai-assurance"], "insights": ["model-retirement-is-a-production-change", "measuring-production-rag-quality"] }
+  },
+  {
+    "slug": "vertex-ai-assurance", "title": "Vertex AI Assurance", "group": "ai-platform",
+    "cluster": "ai", "secondary": [], "parent": "technologies", "state": "assured", "cadence": 90, "fresh": true,
+    "audience": ["Head of AI", "CTO"],
+    "intent": "Technology + problem: assurance for AI workloads built on Google Cloud's AI platform and Gemini models",
+    "brief": "Model version lifecycle and retirement dates, auto-updated aliases, agent runtime, grounding sources and throughput commitments each create evidence that expires. Confirm the platform's current name from research and state it accurately.",
+    "related": { "assurance": ["ai-assurance", "model-change-assurance", "llm-evaluation-assurance", "ai-agent-assurance"], "useCases": ["production-ai-going-live", "model-provider-migration"], "technologies": ["gcp-production-reliability", "rag-vector-search-assurance"], "industries": ["healthcare-ai-assurance"], "insights": ["model-retirement-is-a-production-change", "why-ai-evaluation-fails-after-launch"] }
+  },
+  {
+    "slug": "entra-id-exposure-assurance", "title": "Microsoft Entra ID Exposure Assurance", "group": "identity",
+    "cluster": "cyber", "secondary": [], "parent": "technologies", "state": "assured", "cadence": 90, "fresh": true,
+    "audience": ["CISO", "Identity Engineering", "Internal Audit"],
+    "intent": "Technology + problem: proving Entra ID controls still enforce intended access",
+    "brief": "Conditional Access exclusions, standing directory roles, guest lifecycle, application credentials and legacy retirement dates. What effective enforcement looks like and how it drifts in a real tenant.",
+    "related": { "assurance": ["identity-exposure-assurance", "privileged-access-assurance", "secrets-exposure-assurance"], "useCases": ["identity-access-drift", "stale-privileged-access", "ai-agent-with-write-access"], "technologies": ["azure-ai-assurance", "azure-production-reliability", "aws-iam-exposure-assurance"], "industries": ["financial-services", "healthcare"], "insights": ["how-identity-controls-drift", "standing-privilege-evidence-gap"] }
+  },
+  {
+    "slug": "aws-iam-exposure-assurance", "title": "AWS IAM Exposure Assurance", "group": "identity",
+    "cluster": "cyber", "secondary": [], "parent": "technologies", "state": "assured", "cadence": 90, "fresh": true,
+    "audience": ["CISO", "Cloud Security", "Internal Audit"],
+    "intent": "Technology + problem: proving AWS identity and access remains least-privilege",
+    "brief": "Long-lived access keys, unused roles and permissions, cross-account trust, root governance and organisation policy coverage. Distinct from the Entra page: AWS exposure is policy and trust-relationship centred.",
+    "related": { "assurance": ["identity-exposure-assurance", "privileged-access-assurance", "secrets-exposure-assurance", "cloud-security-exposure-assurance"], "useCases": ["identity-access-drift", "stale-privileged-access"], "technologies": ["aws-production-reliability", "aws-bedrock-assurance", "entra-id-exposure-assurance"], "industries": ["software-technology", "financial-services"], "insights": ["non-human-identity-exposure", "how-identity-controls-drift"] }
+  }
+]

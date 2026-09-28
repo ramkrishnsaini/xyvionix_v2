@@ -1,0 +1,140 @@
+[
+  {
+    "slug": "ai-assurance",
+    "title": "AI Assurance",
+    "kind": "hub",
+    "cluster": "ai",
+    "secondary": ["value", "data"],
+    "parent": "assurance",
+    "state": "assured",
+    "cadence": 90,
+    "fresh": true,
+    "tier": "primary",
+    "ogQuestion": "Can production AI still be proven?",
+    "audience": ["Head of AI", "CTO", "CISO", "AI Governance"],
+    "intent": "Commercial: what AI assurance covers and how it is held continuously",
+    "brief": "Hub for the AI cluster. Defines AI assurance as continuing proof that a production AI system still answers correctly, safely and within cost after models, prompts, data and tools change. Introduces every child page with context.",
+    "related": {
+      "assurance": ["ai-agent-assurance", "production-rag-assurance", "llm-evaluation-assurance", "model-change-assurance", "ai-security-assurance", "ai-governance-assurance", "ai-observability-assurance", "ai-cost-assurance", "mcp-security-assurance"],
+      "useCases": ["production-ai-going-live", "rag-quality-degradation", "ai-agent-with-write-access", "model-provider-migration", "ai-cost-spike", "ai-audit-readiness"],
+      "technologies": ["azure-ai-assurance", "aws-bedrock-assurance", "vertex-ai-assurance", "vllm-production-assurance", "rag-vector-search-assurance"],
+      "industries": ["financial-services-ai-assurance", "healthcare-ai-assurance", "insurance-claims-ai-assurance"],
+      "insights": ["why-ai-evaluation-fails-after-launch", "measuring-production-rag-quality", "ai-agent-permission-risk"]
+    }
+  },
+  {
+    "slug": "production-reliability-assurance",
+    "title": "Production Reliability Assurance",
+    "kind": "hub",
+    "cluster": "reliability",
+    "secondary": ["change"],
+    "parent": "assurance",
+    "state": "assured",
+    "cadence": 180,
+    "fresh": false,
+    "tier": "primary",
+    "ogQuestion": "Can critical systems still meet their threshold?",
+    "audience": ["CTO", "VP Engineering", "VP Platform", "Head of SRE", "Technology Risk"],
+    "intent": "Commercial: continuing proof that production will keep running under real conditions",
+    "brief": "Hub for the reliability cluster. Reliability is proven by tested service levels, tested recovery and verified environment parity, not by documented intent. Introduces every child page with context.",
+    "related": {
+      "assurance": ["slo-assurance", "disaster-recovery-assurance", "production-observability-assurance", "kubernetes-reliability-assurance", "cloud-drift-assurance", "incident-recurrence-assurance"],
+      "useCases": ["cloud-incident-recurrence", "untested-disaster-recovery", "kubernetes-upgrade-risk", "cloud-configuration-drift"],
+      "technologies": ["aws-production-reliability", "azure-production-reliability", "gcp-production-reliability", "eks-reliability-assurance", "aks-reliability-assurance", "terraform-drift-assurance"],
+      "industries": ["saas-production-reliability", "financial-services"],
+      "insights": ["disaster-recovery-plan-never-tested", "error-budgets-without-consequence", "why-production-incidents-recur"]
+    }
+  },
+  {
+    "slug": "cyber-exposure-assurance",
+    "title": "Cyber Exposure Assurance",
+    "kind": "hub",
+    "cluster": "cyber",
+    "secondary": [],
+    "parent": "assurance",
+    "state": "assured",
+    "cadence": 90,
+    "fresh": true,
+    "tier": "primary",
+    "ogQuestion": "Can you prove what was closed has stayed closed?",
+    "audience": ["CISO", "Technology Risk", "Security Engineering"],
+    "intent": "Commercial: continuing proof that exposure stays closed, with remediation owned to verified closure",
+    "brief": "Hub for the cyber cluster. Distinguishes exposure assurance from scanning and from ticket closure: identity and cloud exposure is re-verified continuously and remediation is closed only on re-test. Introduces every child page with context.",
+    "related": {
+      "assurance": ["identity-exposure-assurance", "privileged-access-assurance", "cloud-security-exposure-assurance", "vulnerability-remediation-assurance", "secrets-exposure-assurance"],
+      "useCases": ["identity-access-drift", "stale-privileged-access", "security-remediation-backlog", "unverified-vulnerability-closure"],
+      "technologies": ["entra-id-exposure-assurance", "aws-iam-exposure-assurance"],
+      "industries": ["financial-services", "healthcare"],
+      "insights": ["security-findings-vs-verified-closure", "how-identity-controls-drift", "standing-privilege-evidence-gap"]
+    }
+  },
+  {
+    "slug": "technology-value-assurance",
+    "title": "Technology Value Assurance",
+    "kind": "hub",
+    "cluster": "value",
+    "secondary": ["ai"],
+    "parent": "assurance",
+    "state": "assured",
+    "cadence": 180,
+    "fresh": false,
+    "tier": "expansion",
+    "ogQuestion": "Can technology spend still be tied to the outcome it buys?",
+    "audience": ["CIO", "CTO", "FinOps Leadership", "CFO office"],
+    "intent": "Commercial: continuing proof that cloud and AI spend still delivers the unit economics the business agreed",
+    "brief": "Hub for the value cluster. Cost is treated as an assurance outcome with thresholds (unit cost, commitment utilisation, anomaly response), not a monthly report. Must not read like a cost-cutting consultancy page.",
+    "related": {
+      "assurance": ["cloud-cost-assurance", "unit-economics-assurance", "ai-cost-assurance"],
+      "useCases": ["cloud-cost-anomaly", "ai-cost-spike"],
+      "technologies": ["vllm-production-assurance", "databricks-data-assurance", "snowflake-data-assurance"],
+      "industries": ["software-technology"],
+      "insights": ["ai-cost-per-business-outcome", "cloud-commitment-utilisation-risk"]
+    }
+  },
+  {
+    "slug": "data-assurance",
+    "title": "Data Assurance",
+    "kind": "hub",
+    "cluster": "data",
+    "secondary": ["ai"],
+    "parent": "assurance",
+    "state": "assured",
+    "cadence": 180,
+    "fresh": false,
+    "tier": "expansion",
+    "ogQuestion": "Can the data behind the decision still be trusted?",
+    "audience": ["Chief Data Officer", "Head of Data Engineering", "Head of AI", "CTO"],
+    "intent": "Commercial: continuing proof that data is fresh, complete and correct enough for the decisions and AI systems depending on it",
+    "brief": "Hub for the data cluster. Data degrades without visible failure; systems keep answering, less correctly. Freshness, quality and pipeline integrity are held against thresholds set by the consuming outcome.",
+    "related": {
+      "assurance": ["data-freshness-assurance", "data-quality-assurance", "data-pipeline-assurance"],
+      "useCases": ["data-pipeline-freshness-failure", "schema-change-production-impact", "rag-quality-degradation"],
+      "technologies": ["databricks-data-assurance", "snowflake-data-assurance", "kafka-pipeline-assurance"],
+      "industries": ["healthcare", "insurance"],
+      "insights": ["data-freshness-ai-quality"]
+    }
+  },
+  {
+    "slug": "change-assurance",
+    "title": "Change Assurance",
+    "kind": "hub",
+    "cluster": "change",
+    "secondary": ["reliability"],
+    "parent": "assurance",
+    "state": "assured",
+    "cadence": 180,
+    "fresh": false,
+    "tier": "expansion",
+    "ogQuestion": "Can each release still be proven safe to ship and safe to reverse?",
+    "audience": ["VP Engineering", "VP Platform", "Head of SRE", "Technology Risk"],
+    "intent": "Commercial: continuing proof that change reaches production without breaking agreed outcomes and can be reversed",
+    "brief": "Hub for the change cluster. Every release introduces operating assumptions no one revisits. Release evidence, change failure rate and rollback readiness are held as thresholds rather than reviewed after incidents.",
+    "related": {
+      "assurance": ["release-assurance", "rollback-readiness-assurance", "model-change-assurance", "cloud-drift-assurance"],
+      "useCases": ["high-change-failure-rate", "schema-change-production-impact", "kubernetes-upgrade-risk"],
+      "technologies": ["terraform-drift-assurance", "eks-reliability-assurance"],
+      "industries": ["software-technology"],
+      "insights": ["what-change-failure-rate-proves"]
+    }
+  }
+]

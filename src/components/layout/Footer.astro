@@ -1,0 +1,66 @@
+---
+import { footerNav, legalNav } from '../../data/navigation.ts';
+import { site } from '../../data/site.ts';
+import { profiles } from '../../data/social.ts';
+import Logo from './Logo.astro';
+---
+
+<footer class="footer">
+  <div class="shell footer__inner">
+    <div class="footer__grid">
+      <div class="footer__about">
+        <a href="/" class="brand" aria-label="Xyvionix home">
+          <Logo size={20} />
+          <span>Xyvionix</span>
+        </a>
+        <p class="footer__about-text">
+          {site.category}. Proving that critical enterprise technology still delivers the outcome the business depends
+          on. Designed for enterprises operating across North America, the United Kingdom, Europe and Australia.
+        </p>
+      </div>
+
+      <div class="footer__spacer" aria-hidden="true"></div>
+
+      {
+        footerNav.map((group) => (
+          <nav aria-label={`Footer: ${group.label}`}>
+            <h2 class="footer__label">{group.label}</h2>
+            <ul class="footer__list">
+              {group.links.map((link) => (
+                <li>
+                  <a href={link.href} class="ul">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+
+    <div class="footer__base">
+      <p>© {site.copyrightYear} {site.name}</p>
+      <ul class="footer__legal">
+        {
+          legalNav.map((link) => (
+            <li>
+              <a href={link.href} class="ul">
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+        {
+          profiles.map((profile) => (
+            <li>
+              <a href={profile.url} class="ul" rel="me noopener">
+                {profile.network}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</footer>

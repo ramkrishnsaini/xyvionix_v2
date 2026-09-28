@@ -1,0 +1,158 @@
+---
+/**
+ * Assessment request form. Works as a plain HTML POST; the script adds inline
+ * validation messages and submission without a page reload. Every field has a
+ * visible label, and errors are announced through aria-describedby.
+ */
+import { company } from '../../data/site.ts';
+import { assuranceOptions, formCopy, roleOptions, timingOptions } from '../../data/contact.ts';
+
+const endpoint = company.contactFormEndpoint;
+const configured = Boolean(endpoint);
+---
+
+{
+  !configured && (
+    <p class="notice form__notice" role="note">
+      <strong>Not yet available.</strong> {formCopy.notConfigured}
+    </p>
+  )
+}
+
+<form
+  class="form form--2"
+  method="post"
+  action={endpoint ?? undefined}
+  data-contact-form
+  data-success={formCopy.success}
+  data-failure={formCopy.failure}
+  novalidate
+  aria-describedby="form-privacy"
+>
+  <div class="field">
+    <label class="field__label" for="cf-name">Name</label>
+    <input class="input" id="cf-name" name="name" type="text" autocomplete="name" required maxlength="120" disabled={!configured} />
+    <p class="field__error" id="cf-name-error" hidden></p>
+  </div>
+
+  <div class="field">
+    <label class="field__label" for="cf-email">Business email</label>
+    <input class="input" id="cf-email" name="email" type="email" autocomplete="email" required maxlength="200" disabled={!configured} />
+    <p class="field__error" id="cf-email-error" hidden></p>
+  </div>
+
+  <div class="field">
+    <label class="field__label" for="cf-company">Company</label>
+    <input class="input" id="cf-company" name="company" type="text" autocomplete="organization" required maxlength="160" disabled={!configured} />
+    <p class="field__error" id="cf-company-error" hidden></p>
+  </div>
+
+  <div class="field">
+    <label class="field__label" for="cf-role">Role</label>
+    <select class="select" id="cf-role" name="role" required disabled={!configured}>
+      <option value="">Select your role</option>
+      {roleOptions.map((role) => <option value={role}>{role}</option>)}
+    </select>
+    <p class="field__error" id="cf-role-error" hidden></p>
+  </div>
+
+  <div class="field">
+    <label class="field__label" for="cf-area">Assurance area</label>
+    <select class="select" id="cf-area" name="assurance_area" required disabled={!configured}>
+      <option value="">Select an area</option>
+      {assuranceOptions.map((option) => <option value={option.value}>{option.label}</option>)}
+    </select>
+    <p class="field__error" id="cf-area-error" hidden></p>
+  </div>
+
+  <div class="field">
+    <label class="field__label" for="cf-timing">Timing</label>
+    <select class="select" id="cf-timing" name="timing" required disabled={!configured}>
+      <option value="">Select timing</option>
+      {timingOptions.map((option) => <option value={option.value}>{option.label}</option>)}
+    </select>
+    <p class="field__error" id="cf-timing-error" hidden></p>
+  </div>
+
+  <div class="field form__full">
+    <label class="field__label" for="cf-system">Critical system or process</label>
+    <p class="field__hint" id="cf-system-hint">The system, service or business process you want held under assurance.</p>
+    <input class="input" id="cf-system" name="system" type="text" required maxlength="200" aria-describedby="cf-system-hint" disabled={!configured} />
+    <p class="field__error" id="cf-system-error" hidden></p>
+  </div>
+
+  <div class="field form__full">
+    <label class="field__label" for="cf-true">What must remain true?</label>
+    <p class="field__hint" id="cf-true-hint">
+      The outcome, in your own terms. For example: a customer decision can always be explained, or the service recovers
+      within its stated tolerance.
+    </p>
+    <textarea class="textarea" id="cf-true" name="must_remain_true" required maxlength="1500" aria-describedby="cf-true-hint" disabled={!configured}></textarea>
+    <p class="field__error" id="cf-true-error" hidden></p>
+  </div>
+
+  <div class="field">
+    <label class="field__label" for="cf-concern">Current concern</label>
+    <p class="field__hint" id="cf-concern-hint">What has changed, or what you cannot currently prove.</p>
+    <textarea class="textarea" id="cf-concern" name="concern" required maxlength="1500" aria-describedby="cf-concern-hint" disabled={!configured}></textarea>
+    <p class="field__error" id="cf-concern-error" hidden></p>
+  </div>
+
+  <div class="field">
+    <label class="field__label" for="cf-impact">Business impact</label>
+    <p class="field__hint" id="cf-impact-hint">What happens to the business if the outcome is lost.</p>
+    <textarea class="textarea" id="cf-impact" name="impact" required maxlength="1500" aria-describedby="cf-impact-hint" disabled={!configured}></textarea>
+    <p class="field__error" id="cf-impact-error" hidden></p>
+  </div>
+
+  <div class="field form__full">
+    <label class="field__label" for="cf-phone">Phone <span class="field__opt">(optional)</span></label>
+    <input class="input form__phone" id="cf-phone" name="phone" type="tel" autocomplete="tel" maxlength="40" disabled={!configured} />
+  </div>
+
+  <div class="form__trap" aria-hidden="true">
+    <label for="cf-website">Leave this field empty</label>
+    <input id="cf-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <p class="form__note form__full" id="form-privacy">
+    {formCopy.privacy} See the <a class="ul" href="/privacy">privacy notice</a>.
+  </p>
+
+  <div class="form__full form__actions">
+    <button type="submit" class="btn btn--lg" disabled={!configured} data-track="contact_submit_click">Request an assessment</button>
+  </div>
+
+  <div class="form__status form__full" role="status" aria-live="polite" data-form-status hidden></div>
+</form>
+
+<script>
+  import '../../scripts/contact.ts';
+</script>
+
+<style>
+  .form__notice {
+    margin-bottom: 2.5rem;
+  }
+
+  .form__phone {
+    max-width: 22rem;
+  }
+
+  .form__actions {
+    margin-top: 0.5rem;
+  }
+
+  .btn:disabled,
+  .input:disabled,
+  .select:disabled,
+  .textarea:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+  }
+</style>

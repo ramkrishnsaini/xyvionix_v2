@@ -1,0 +1,117 @@
+---
+/**
+ * Privacy notice for this website. It describes what the site actually does:
+ * no advertising, no tracking cookies, no analytics unless one is configured.
+ */
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { company, site } from '../data/site.ts';
+import { analyticsProvider, pendingInputs, pendingSentence } from '../data/legal.ts';
+
+const controller = company.legalName ?? site.name;
+const contact = company.privacyEmail;
+---
+
+<LegalLayout
+  slug="privacy"
+  label="Privacy"
+  lede="This notice explains what personal information this website collects, why, how long it is kept and the rights you have over it. It covers the website only. Information handled during an assurance engagement is governed by the agreement for that engagement."
+  pending={pendingSentence(pendingInputs.privacy)}
+>
+  <h2 id="who">Who is responsible</h2>
+  <p>
+    {controller} is responsible for personal information collected through {site.url.replace('https://', '')}.
+    {company.registeredAddress && <> Registered address: {company.registeredAddress}.</>}
+  </p>
+
+  <h2 id="collected">What is collected</h2>
+  <h3>Information you submit</h3>
+  <p>
+    When you use the assessment form you provide your name, business email address, company, role, and your
+    description of the system and outcome you want assured. A phone number is optional. Please do not include
+    credentials, confidential system detail or personal information about other people.
+  </p>
+  <h3>Technical information</h3>
+  <p>
+    Like most websites, the servers that deliver this site record technical information about each request, such as
+    the network address, the page requested, the time and the browser type. This is used to operate and secure the
+    site.
+  </p>
+  <h3>Cookies and browser storage</h3>
+  <p>
+    This website sets no advertising or cross-site tracking cookies. It stores one value in your browser's session
+    storage, recording the type of page you last viewed, so that movement between sections can be counted. The value
+    contains no personal information and is removed when you close the tab.
+  </p>
+  <h3>Analytics</h3>
+  {
+    analyticsProvider ? (
+      <p>
+        This website uses {analyticsProvider} to count visits and understand which pages are useful. It is configured
+        to avoid collecting information that identifies you.
+      </p>
+    ) : (
+      <p>This website does not currently use an analytics service.</p>
+    )
+  }
+
+  <h2 id="use">How information is used</h2>
+  <ul>
+    <li>to reply to an assessment request and continue that conversation</li>
+    <li>to operate, secure and improve this website</li>
+    <li>to meet legal obligations</li>
+  </ul>
+  <p>
+    Personal information is not sold, and it is not used for advertising. It is not used to make automated decisions
+    about you.
+  </p>
+
+  <h2 id="basis">Legal basis</h2>
+  <p>
+    Where data protection law requires a legal basis, information you submit is processed in order to take steps at
+    your request, and technical information is processed for the legitimate interest of operating a secure website.
+  </p>
+
+  <h2 id="sharing">Who it is shared with</h2>
+  <p>
+    Information is shared only with service providers that host this website and process form submissions, acting on
+    instruction, and where the law requires disclosure. Providers are listed under
+    <a href="/subprocessors">subprocessors</a>.
+  </p>
+
+  <h2 id="transfers">International transfers</h2>
+  <p>
+    Service providers may process information in a country other than yours. Where that happens, a transfer mechanism
+    recognised by the applicable law is used.
+  </p>
+
+  <h2 id="retention">How long it is kept</h2>
+  <p>
+    Assessment requests are kept for as long as the conversation continues and for a limited period afterwards, then
+    deleted. Server records are kept for a short period for security purposes. You can ask for your information to be
+    deleted sooner.
+  </p>
+
+  <h2 id="rights">Your rights</h2>
+  <p>
+    Depending on where you live, you may have the right to access, correct, delete or restrict the use of your
+    personal information, to object to its use, to receive a copy in a portable form and to complain to your data
+    protection authority.
+  </p>
+  {
+    contact ? (
+      <p>
+        To exercise a right, write to <a href={`mailto:${contact}`}>{contact}</a>.
+      </p>
+    ) : (
+      <p>
+        To exercise a right, use the <a href="/contact">contact page</a> and state that your message is a privacy
+        request.
+      </p>
+    )
+  }
+
+  <h2 id="changes">Changes to this notice</h2>
+  <p>
+    If this notice changes, the date at the top of the page is updated. Material changes are described on this page.
+  </p>
+</LegalLayout>

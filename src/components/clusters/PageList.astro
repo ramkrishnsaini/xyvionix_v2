@@ -1,0 +1,38 @@
+---
+/**
+ * Listing rows for hub pages. Each row is a normal link. Optional data
+ * attributes let the hub filter script show and hide rows; without script
+ * every row stays visible and crawlable.
+ */
+import type { PageRef } from '../../lib/pages.ts';
+import StateMark from '../assurance/StateMark.astro';
+
+interface Props {
+  pages: PageRef[];
+  /** Show the assurance state mark beside each title. */
+  marks?: boolean;
+  /** Attribute value used by hub filters. */
+  filterBy?: 'cluster' | 'label';
+  location?: string;
+}
+
+const { pages, marks = false, filterBy, location = 'listing' } = Astro.props;
+
+const filterValue = (p: PageRef) => (filterBy === 'cluster' ? (p.cluster ?? '') : filterBy === 'label' ? (p.label ?? '') : undefined);
+---
+
+<ul class="listing rv">
+  {
+    pages.map((page) => (
+      <li class="listing__item" data-filter-item={filterValue(page)}>
+        <a href={page.path} class="listing__link" data-track="listing_click" data-track-location={location}>
+          <h3 class="listing__title">
+            {marks && <StateMark state={page.state} label="hidden" />}
+            <span class="ul">{page.title}</span>
+          </h3>
+          <p class="listing__text">{page.summary}</p>
+        </a>
+      </li>
+    ))
+  }
+</ul>

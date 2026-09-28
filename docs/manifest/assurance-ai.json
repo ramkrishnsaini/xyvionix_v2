@@ -1,0 +1,155 @@
+[
+  {
+    "slug": "ai-agent-assurance",
+    "title": "AI Agent Assurance",
+    "kind": "child", "cluster": "ai", "secondary": ["cyber"], "parent": "ai-assurance",
+    "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Can you prove what your agents are permitted to do, and did?",
+    "audience": ["Head of AI", "CISO", "CTO"],
+    "intent": "Commercial: assurance for agents that take actions through tools",
+    "brief": "Agents act, so the assured outcome is bounded action: permitted tools, scoped credentials, approval gates, trajectory correctness and auditability. Covers tool use, agent permissions and human approval as one page rather than three thin ones.",
+    "related": {
+      "assurance": ["mcp-security-assurance", "ai-security-assurance", "llm-evaluation-assurance"],
+      "useCases": ["ai-agent-with-write-access", "production-ai-going-live"],
+      "technologies": ["azure-ai-assurance", "aws-bedrock-assurance", "vertex-ai-assurance"],
+      "industries": ["financial-services-ai-assurance"],
+      "insights": ["ai-agent-permission-risk", "human-oversight-evidence", "mcp-servers-trust-boundary"]
+    }
+  },
+  {
+    "slug": "production-rag-assurance",
+    "title": "Production RAG Assurance",
+    "kind": "child", "cluster": "ai", "secondary": ["data"], "parent": "ai-assurance",
+    "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Is retrieval still returning what the answer depends on?",
+    "audience": ["Head of AI", "VP Engineering", "Chief Data Officer"],
+    "intent": "Commercial: assurance for retrieval-augmented generation in production",
+    "brief": "Retrieval and generation are assured separately. Covers retrieval precision and recall, groundedness, corpus freshness, embedding and index change, and permission-aware retrieval. Absorbs the retrieval and knowledge-freshness topics.",
+    "related": {
+      "assurance": ["llm-evaluation-assurance", "data-freshness-assurance", "ai-observability-assurance"],
+      "useCases": ["rag-quality-degradation", "production-ai-going-live"],
+      "technologies": ["rag-vector-search-assurance", "azure-ai-assurance", "aws-bedrock-assurance", "databricks-data-assurance"],
+      "industries": ["healthcare-ai-assurance"],
+      "insights": ["measuring-production-rag-quality", "data-freshness-ai-quality"]
+    }
+  },
+  {
+    "slug": "llm-evaluation-assurance",
+    "title": "LLM Evaluation Assurance",
+    "kind": "child", "cluster": "ai", "secondary": [], "parent": "ai-assurance",
+    "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Does your evaluation still measure what production does?",
+    "audience": ["Head of AI", "VP Engineering", "AI Governance"],
+    "intent": "Commercial: keeping evaluation evidence valid after launch",
+    "brief": "Evaluation is itself an asset that decays: golden sets age, judges drift, production traffic moves away from the test distribution. Covers regression evaluation on change, judge calibration, online sampling and evaluation coverage.",
+    "related": {
+      "assurance": ["model-change-assurance", "production-rag-assurance", "ai-observability-assurance"],
+      "useCases": ["production-ai-going-live", "model-provider-migration"],
+      "technologies": ["azure-ai-assurance", "aws-bedrock-assurance", "vertex-ai-assurance"],
+      "industries": ["financial-services-ai-assurance"],
+      "insights": ["why-ai-evaluation-fails-after-launch", "ai-audit-evidence-requirements"]
+    }
+  },
+  {
+    "slug": "model-change-assurance",
+    "title": "Model Change Assurance",
+    "kind": "child", "cluster": "ai", "secondary": ["change"], "parent": "ai-assurance",
+    "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "When the model changes, is the outcome re-proven?",
+    "audience": ["Head of AI", "CTO", "Technology Risk"],
+    "intent": "Commercial: re-proving AI outcomes on model version, provider or routing change",
+    "brief": "Model retirement schedules, alias upgrades, provider migration and routing changes are production changes that arrive on the vendor's calendar. Covers version pinning, retirement tracking, re-evaluation gates and routing policy. Absorbs model routing.",
+    "related": {
+      "assurance": ["llm-evaluation-assurance", "ai-cost-assurance", "release-assurance"],
+      "useCases": ["model-provider-migration", "rag-quality-degradation"],
+      "technologies": ["azure-ai-assurance", "aws-bedrock-assurance", "vertex-ai-assurance", "vllm-production-assurance"],
+      "industries": ["insurance-claims-ai-assurance"],
+      "insights": ["model-retirement-is-a-production-change", "why-ai-evaluation-fails-after-launch"]
+    }
+  },
+  {
+    "slug": "ai-security-assurance",
+    "title": "AI Security Assurance",
+    "kind": "child", "cluster": "ai", "secondary": ["cyber"], "parent": "ai-assurance",
+    "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Do the safety boundaries still hold against current attacks?",
+    "audience": ["CISO", "Head of AI", "Security Engineering"],
+    "intent": "Commercial: continuing proof that AI safety and security boundaries hold",
+    "brief": "Prompt injection, data exfiltration through tools, and guardrail regression. Boundaries are re-tested as attack techniques and system context change. Defensive framing: what must be re-proven and what evidence is retained.",
+    "related": {
+      "assurance": ["ai-agent-assurance", "mcp-security-assurance", "ai-governance-assurance", "secrets-exposure-assurance"],
+      "useCases": ["ai-agent-with-write-access", "production-ai-going-live"],
+      "technologies": ["azure-ai-assurance", "aws-bedrock-assurance", "vertex-ai-assurance"],
+      "industries": ["financial-services-ai-assurance", "healthcare-ai-assurance"],
+      "insights": ["mcp-servers-trust-boundary", "ai-agent-permission-risk"]
+    }
+  },
+  {
+    "slug": "ai-governance-assurance",
+    "title": "AI Governance Assurance",
+    "kind": "child", "cluster": "ai", "secondary": [], "parent": "ai-assurance",
+    "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Is governance evidenced by the system, or only by the policy?",
+    "audience": ["AI Governance", "Technology Risk", "CISO", "General Counsel office"],
+    "intent": "Commercial: operating evidence behind AI governance commitments",
+    "brief": "Governance frameworks state obligations; assurance produces the operating evidence that they are met today: inventory currency, oversight that intervenes, monitoring, incident records. Accurate on regulatory timelines, no legal advice.",
+    "related": {
+      "assurance": ["llm-evaluation-assurance", "ai-security-assurance", "ai-observability-assurance"],
+      "useCases": ["ai-audit-readiness", "production-ai-going-live"],
+      "technologies": ["azure-ai-assurance", "aws-bedrock-assurance"],
+      "industries": ["financial-services-ai-assurance", "insurance-claims-ai-assurance", "healthcare-ai-assurance"],
+      "insights": ["ai-audit-evidence-requirements", "human-oversight-evidence"]
+    }
+  },
+  {
+    "slug": "ai-observability-assurance",
+    "title": "AI Observability Assurance",
+    "kind": "child", "cluster": "ai", "secondary": ["reliability"], "parent": "ai-assurance",
+    "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Would you know if the answers got worse this week?",
+    "audience": ["VP Platform", "Head of AI", "Head of SRE"],
+    "intent": "Commercial: proving AI telemetry is complete enough to detect quality, safety and cost loss",
+    "brief": "Traces and token counts are not quality signals on their own. Covers trace coverage, quality scoring on sampled traffic, tool error visibility and the gap between observing and assuring.",
+    "related": {
+      "assurance": ["production-observability-assurance", "llm-evaluation-assurance", "ai-cost-assurance"],
+      "useCases": ["rag-quality-degradation", "ai-cost-spike"],
+      "technologies": ["azure-ai-assurance", "aws-bedrock-assurance", "vllm-production-assurance"],
+      "industries": ["saas-production-reliability"],
+      "insights": ["continuous-assurance-vs-monitoring", "why-ai-evaluation-fails-after-launch"]
+    }
+  },
+  {
+    "slug": "ai-cost-assurance",
+    "title": "AI Cost Assurance",
+    "kind": "child", "cluster": "ai", "secondary": ["value"], "parent": "ai-assurance",
+    "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Is each AI outcome still delivered within its agreed cost?",
+    "audience": ["FinOps Leadership", "Head of AI", "CTO"],
+    "intent": "Commercial: holding AI unit cost against an agreed threshold",
+    "brief": "AI cost is a per-outcome threshold, not a monthly invoice. Covers cost per resolved task, caching effectiveness, context growth, agent loop cost, reserved capacity utilisation. Canonical page for AI FinOps; no separate ai-finops page.",
+    "related": {
+      "assurance": ["unit-economics-assurance", "model-change-assurance", "ai-observability-assurance"],
+      "useCases": ["ai-cost-spike", "model-provider-migration"],
+      "technologies": ["vllm-production-assurance", "azure-ai-assurance", "aws-bedrock-assurance"],
+      "industries": ["software-technology"],
+      "insights": ["ai-cost-per-business-outcome"]
+    }
+  },
+  {
+    "slug": "mcp-security-assurance",
+    "title": "MCP Security Assurance",
+    "kind": "child", "cluster": "ai", "secondary": ["cyber"], "parent": "ai-assurance",
+    "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Do you know what every connected tool server can reach?",
+    "audience": ["CISO", "Head of AI", "Security Engineering"],
+    "intent": "Commercial: assurance for Model Context Protocol servers and tool connections",
+    "brief": "MCP servers extend the trust boundary of every agent that connects to them. Covers server inventory, authorisation scope, tool description integrity, token handling and change detection on third-party servers.",
+    "related": {
+      "assurance": ["ai-agent-assurance", "ai-security-assurance", "secrets-exposure-assurance"],
+      "useCases": ["ai-agent-with-write-access"],
+      "technologies": ["azure-ai-assurance", "aws-bedrock-assurance"],
+      "industries": ["financial-services-ai-assurance"],
+      "insights": ["mcp-servers-trust-boundary", "non-human-identity-exposure"]
+    }
+  }
+]

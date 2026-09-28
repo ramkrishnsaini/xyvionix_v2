@@ -1,0 +1,35 @@
+---
+/**
+ * Questions buyers actually ask, with every answer visible in the page text.
+ * No accordion and no FAQPage markup: Google retired FAQ rich results, and
+ * content hidden behind a toggle is harder for readers and agents to reach.
+ */
+interface Props {
+  items: { q: string; a: string }[];
+  headingId?: string;
+  title?: string;
+}
+
+const { items, headingId = 'questions-title', title = 'Questions buyers ask' } = Astro.props;
+---
+
+{
+  items.length > 0 && (
+    <>
+      <div class="module-head rv">
+        <p class="lbl">Questions</p>
+        <h2 id={headingId} class="h2">
+          {title}
+        </h2>
+      </div>
+      <div class="qa mt-block">
+        {items.map((item) => (
+          <div class="qa__item rv">
+            <h3 class="qa__q">{item.q}</h3>
+            <p class="qa__a">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </>
+  )
+}

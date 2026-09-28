@@ -1,0 +1,28 @@
+---
+/** "On this page" contents from the rendered headings. Second-level headings only. */
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+  /** Extra in-page anchors rendered by the layout after the prose. */
+  extra?: { slug: string; text: string }[];
+}
+
+const { headings, extra = [] } = Astro.props;
+const items = [...headings.filter((h) => h.depth === 2).map((h) => ({ slug: h.slug, text: h.text })), ...extra];
+---
+
+{
+  items.length > 2 && (
+    <nav aria-label="On this page">
+      <p class="lbl lbl--plain">On this page</p>
+      <ol class="toc__list">
+        {items.map((item) => (
+          <li>
+            <a href={`#${item.slug}`}>{item.text}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}

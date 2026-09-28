@@ -1,0 +1,186 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Section from '../components/layout/Section.astro';
+import SectionHead from '../components/layout/SectionHead.astro';
+import EngineRail from '../components/assurance/EngineRail.astro';
+import EvidenceField from '../components/evidence/EvidenceField.astro';
+import { designPrinciples, engineDetail } from '../data/engine.ts';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<PageLayout
+  slug="assurance-engine"
+  label="The Assurance Engine"
+  pageType="core"
+  section="assurance"
+  lede="The Assurance Engine is the design behind continuous assurance: the way signals from an estate become evidence, evidence is tested against thresholds, thresholds determine state, and a state that falls short is carried to verified closure. This page describes how it is designed to work and the principles it is built on."
+  secondary={{ label: 'How assurance works', href: '/how-assurance-works' }}
+>
+  <Section surface="dark" alt flush glow labelledby="loop-title">
+    <SectionHead
+      label="The loop"
+      title="Six stages, one continuous cycle"
+      id="loop-title"
+      split
+      text="The stages are sequential and the cycle does not end. A verified closure is itself a tested result, so it re-enters as evidence, and the same check keeps running against the corrected system."
+    />
+    <div class="mt-block">
+      <EngineRail />
+    </div>
+  </Section>
+
+  <Section surface="light" labelledby="stages-title">
+    <SectionHead
+      label="Stage by stage"
+      title="What each stage answers"
+      id="stages-title"
+      split
+      text="Each stage exists to answer one question. If a stage cannot answer its question for a given outcome, that gap is reported as a finding rather than worked around."
+    />
+    <ol class="stages mt-block">
+      {
+        engineDetail.map((stage, i) => (
+          <li class="stage rv">
+            <div class="stage__head">
+              <p class="lbl lbl--plain num">Stage {pad(i + 1)}</p>
+              <h3 class="h3 stage__title">{stage.title}</h3>
+              <p class="stage__question">{stage.question}</p>
+            </div>
+            <div class="stage__body">
+              <p class="body">{stage.text}</p>
+              <ul class="stage__points">
+                {stage.points.map((point) => (
+                  <li>{point}</li>
+                ))}
+              </ul>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <Section surface="dark" labelledby="field-title">
+    <SectionHead
+      label="Reading the model"
+      title="Evidence, threshold and state in one picture"
+      id="field-title"
+      split
+    >
+      <div class="prose">
+        <p>
+          The figure shows the model in its simplest form. A trace represents evidence about one outcome over time. The
+          dashed line is the threshold the business agreed. Solid squares mark the points at which the outcome was
+          verified.
+        </p>
+        <p>
+          Where the trace approaches the line the state is Degrading and corrective action starts. Where it crosses,
+          the state is At risk, shown by the hollow square. The trace returns above the line only after the correction
+          has been re-tested.
+        </p>
+        <p>The figure is an illustration of the model. It is not a product screen and it does not show live data.</p>
+      </div>
+    </SectionHead>
+    <EvidenceField idPrefix="engine-field" />
+  </Section>
+
+  <Section surface="light" alt labelledby="principles-title">
+    <SectionHead
+      label="Design principles"
+      title="What the engine is built to hold true about itself"
+      id="principles-title"
+      split
+      text="An assurance function has to meet the standard it applies. These principles constrain how the engine is designed, and they are the basis on which security and architecture teams can evaluate it."
+    />
+    <div class="grid-3 mt-block">
+      {
+        designPrinciples.map((principle, i) => (
+          <article class="card card--compact rv">
+            <p class="lbl lbl--plain num">Principle {pad(i + 1)}</p>
+            <h3 class="h4 card__title">{principle.title}</h3>
+            <p class="card__text">{principle.text}</p>
+          </article>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section surface="light" labelledby="scope-title">
+    <SectionHead label="Scope" title="What the engine is not" id="scope-title" split>
+      <div class="prose">
+        <p>
+          The engine is not a monitoring product and does not replace the observability, security or cost tools an
+          enterprise already runs. Those tools are sources of signal. The engine adds what they do not provide: a
+          threshold owned by the business, evidence retained for examination, a state derived by rule and ownership of
+          the correction.
+        </p>
+        <p>
+          It is not sold as software and it is not a dashboard to be watched. It is the mechanism through which
+          Xyvionix holds the assurance it is accountable for. What an enterprise receives is the state of its outcomes,
+          the evidence behind each state and corrections carried to closure.
+        </p>
+        <p>
+          The specific signals used for a given outcome depend on the platforms involved. The
+          <a href="/technologies">technology pages</a> describe what has to be re-proven on each, and the
+          <a href="/assurance">assurance areas</a> describe the evidence and thresholds for each outcome.
+        </p>
+      </div>
+    </SectionHead>
+  </Section>
+</PageLayout>
+
+<style>
+  .stages {
+    border-top: 1px solid var(--ln);
+  }
+
+  .stage {
+    display: grid;
+    gap: 1.25rem 4rem;
+    padding-block: 2.5rem;
+    border-bottom: 1px solid var(--ln);
+  }
+
+  @media (min-width: 64rem) {
+    .stage {
+      grid-template-columns: 5fr 7fr;
+    }
+  }
+
+  .stage__title {
+    margin-top: 0.75rem;
+  }
+
+  .stage__question {
+    margin-top: 0.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--tx);
+  }
+
+  .stage__points {
+    margin-top: 1.25rem;
+    display: grid;
+    gap: 0.6rem;
+    font-size: 0.906rem;
+    line-height: 1.65;
+    color: var(--mut);
+  }
+
+  .stage__points li {
+    position: relative;
+    padding-left: 1.25rem;
+  }
+
+  .stage__points li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 6px;
+    height: 6px;
+    background: var(--tx);
+  }
+</style>

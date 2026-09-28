@@ -1,0 +1,23 @@
+---
+/** Insight article. Organisational authorship; no individual is named unless one is real and configured. */
+import type { CollectionEntry } from 'astro:content';
+import ContentShell from './ContentShell.astro';
+
+interface Props {
+  entry: CollectionEntry<'insights'>;
+}
+
+const { entry } = Astro.props;
+---
+
+<ContentShell
+  entry={entry}
+  label={entry.data.category}
+  pageType="insights"
+  section="insights"
+  schemaKind="article"
+  showByline
+  showReviewed={entry.data.freshnessCritical}
+  ctaTitle="Which outcome would you most want proven today?"
+  secondary={{ label: 'All insights', href: '/insights' }}
+/>

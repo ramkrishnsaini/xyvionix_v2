@@ -1,0 +1,46 @@
+---
+import Section from '../layout/Section.astro';
+import SectionHead from '../layout/SectionHead.astro';
+import Arrow from '../layout/Arrow.astro';
+import { trustSummary } from '../../data/trust.ts';
+---
+
+<Section surface="light" labelledby="trust-title">
+  <SectionHead
+    label="Security and trust"
+    title="Assurance requires access. Access requires proof of its own."
+    id="trust-title"
+    split
+  >
+    <Fragment slot="head">
+      <p class="body measure-narrow trust__text">
+        Xyvionix holds the same standard it applies to its clients. The posture is published so security and
+        procurement can evaluate it before a conversation begins.
+      </p>
+      <a href="/security-trust" class="lk trust__link">
+        <span class="ul">Trust and assurance overview</span>
+        <Arrow />
+      </a>
+    </Fragment>
+    <dl class="rows rows--open rv">
+      {
+        trustSummary.map((item) => (
+          <div class="row">
+            <dt class="row__term">{item.title}</dt>
+            <dd class="row__desc">{item.text}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </SectionHead>
+</Section>
+
+<style>
+  .trust__text {
+    margin-top: 1.75rem;
+  }
+
+  .trust__link {
+    margin-top: 2rem;
+  }
+</style>

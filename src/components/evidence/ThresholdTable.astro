@@ -1,0 +1,48 @@
+---
+/**
+ * Threshold model as a real table. Always captioned as illustrative: actual
+ * thresholds are agreed with the business for each engagement.
+ */
+import StateMark from '../assurance/StateMark.astro';
+
+interface Props {
+  rows: { signal: string; basis: string; lostWhen: string }[];
+  subject: string;
+}
+
+const { rows, subject } = Astro.props;
+---
+
+{
+  rows.length > 0 && (
+    <div class="table-wrap rv" role="region" aria-label={`Threshold model for ${subject}`} tabindex="0">
+    <table class="table threshold">
+      <caption>
+        Illustrative threshold model for {subject}. Actual thresholds are agreed with the business for each system under
+        assurance.
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">Signal</th>
+          <th scope="col">Threshold is set by</th>
+          <th scope="col">Assurance is lost when</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row) => (
+          <tr>
+            <th scope="row">{row.signal}</th>
+            <td>{row.basis}</td>
+            <td>
+              <span class="threshold__lost">
+                <StateMark state="risk" size="sm" />
+                <span>{row.lostWhen}</span>
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    </div>
+  )
+}

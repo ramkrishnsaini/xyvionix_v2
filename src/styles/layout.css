@@ -1,0 +1,139 @@
+/* Shell, sections and grid */
+
+.shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  position: relative;
+  background: var(--bg0);
+  color: var(--tx);
+  border-top: 1px solid var(--ln);
+}
+
+.section--alt {
+  background: var(--bg1);
+}
+
+.section--flush {
+  border-top: 0;
+}
+
+.section__inner {
+  position: relative;
+  padding-block: var(--section-y);
+}
+
+.section__inner--tight {
+  padding-block: calc(var(--section-y) * 0.62);
+}
+
+/* heading block: label + h2 on the left, supporting copy on the right */
+.split {
+  display: grid;
+  gap: 2rem 4rem;
+}
+
+.split__body {
+  align-self: end;
+}
+
+@media (min-width: 64rem) {
+  .split {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .split__head {
+    grid-column: span 5;
+  }
+
+  .split__body {
+    grid-column: 7 / span 6;
+  }
+}
+
+.measure {
+  max-width: 54ch;
+}
+
+.measure-narrow {
+  max-width: 42ch;
+}
+
+.stack > * + * {
+  margin-top: var(--stack, 1.5rem);
+}
+
+.mt-block {
+  margin-top: 3.5rem;
+}
+
+@media (min-width: 64rem) {
+  .mt-block {
+    margin-top: 5rem;
+  }
+}
+
+.grid-2,
+.grid-3,
+.grid-4 {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 48rem) {
+  .grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64rem) {
+  .grid-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* decorative obsidian field behind dark heroes */
+.grid-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 72px 72px;
+  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 28%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(ellipse 75% 65% at 50% 28%, #000 25%, transparent 78%);
+}
+
+/* Soft light behind heroes. A gradient, not a blur filter: same look, far cheaper to paint. */
+.glow {
+  position: absolute;
+  left: 50%;
+  top: -22rem;
+  width: min(80rem, 140%);
+  height: 52rem;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: radial-gradient(closest-side, rgba(245, 244, 241, 0.045), rgba(245, 244, 241, 0.018) 45%, transparent 72%);
+}
+
+.glow--bottom {
+  top: auto;
+  bottom: -22rem;
+}
+
+.clip {
+  overflow: hidden;
+}

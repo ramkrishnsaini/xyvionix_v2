@@ -1,0 +1,66 @@
+[
+  {
+    "slug": "eks-reliability-assurance", "title": "Amazon EKS Reliability Assurance", "group": "kubernetes",
+    "cluster": "reliability", "secondary": ["change"], "parent": "technologies", "state": "assured", "cadence": 90, "fresh": true,
+    "audience": ["VP Platform", "Head of SRE"],
+    "intent": "Technology + problem: proving EKS clusters remain supported, upgradable and resilient",
+    "brief": "Standard and extended support windows and their cost, managed add-on compatibility, node provisioning behaviour, upgrade readiness signals and zonal failure handling on EKS specifically.",
+    "related": { "assurance": ["kubernetes-reliability-assurance", "release-assurance", "vulnerability-remediation-assurance"], "useCases": ["kubernetes-upgrade-risk", "high-change-failure-rate"], "technologies": ["aws-production-reliability", "aks-reliability-assurance", "terraform-drift-assurance"], "industries": ["saas-production-reliability"], "insights": ["kubernetes-support-windows-upgrade-risk"] }
+  },
+  {
+    "slug": "aks-reliability-assurance", "title": "Azure AKS Reliability Assurance", "group": "kubernetes",
+    "cluster": "reliability", "secondary": ["change"], "parent": "technologies", "state": "assured", "cadence": 90, "fresh": true,
+    "audience": ["VP Platform", "Head of SRE"],
+    "intent": "Technology + problem: proving AKS clusters remain supported, upgradable and resilient",
+    "brief": "Support policy and long-term support option, automatic upgrade channels and maintenance windows, node image updates, zone configuration and platform-managed change on AKS specifically. Distinct from the EKS page in substance.",
+    "related": { "assurance": ["kubernetes-reliability-assurance", "release-assurance", "vulnerability-remediation-assurance"], "useCases": ["kubernetes-upgrade-risk", "unverified-vulnerability-closure"], "technologies": ["azure-production-reliability", "eks-reliability-assurance", "entra-id-exposure-assurance"], "industries": ["saas-production-reliability"], "insights": ["kubernetes-support-windows-upgrade-risk"] }
+  },
+  {
+    "slug": "terraform-drift-assurance", "title": "Terraform Drift Assurance", "group": "infrastructure-as-code",
+    "cluster": "reliability", "secondary": ["change", "cyber"], "parent": "technologies", "state": "assured", "cadence": 180, "fresh": true,
+    "audience": ["VP Platform", "Cloud Security", "Technology Risk"],
+    "intent": "Technology + problem: proving infrastructure still matches its Terraform or OpenTofu definition",
+    "brief": "State versus reality, unmanaged resources, provider and module version lag, plan noise that hides real drift, and reconciliation ownership. Covers Terraform and OpenTofu accurately.",
+    "related": { "assurance": ["cloud-drift-assurance", "release-assurance", "cloud-security-exposure-assurance"], "useCases": ["cloud-configuration-drift", "unverified-vulnerability-closure"], "technologies": ["aws-production-reliability", "azure-production-reliability", "eks-reliability-assurance"], "industries": ["financial-services"], "insights": ["cloud-drift-production-risk"] }
+  },
+  {
+    "slug": "databricks-data-assurance", "title": "Databricks Data Assurance", "group": "data-platform",
+    "cluster": "data", "secondary": ["ai", "value"], "parent": "technologies", "state": "assured", "cadence": 180, "fresh": true,
+    "audience": ["Chief Data Officer", "Head of Data Engineering", "Head of AI"],
+    "intent": "Technology + problem: proving data on Databricks remains fresh, correct and governed",
+    "brief": "Pipeline expectations, catalog lineage and permissions, table maintenance, freshness of tables feeding AI, and compute cost per pipeline. Use current Databricks product names from research.",
+    "related": { "assurance": ["data-assurance", "data-quality-assurance", "data-pipeline-assurance", "data-freshness-assurance"], "useCases": ["data-pipeline-freshness-failure", "schema-change-production-impact", "rag-quality-degradation"], "technologies": ["snowflake-data-assurance", "kafka-pipeline-assurance", "rag-vector-search-assurance"], "industries": ["insurance", "healthcare"], "insights": ["data-freshness-ai-quality"] }
+  },
+  {
+    "slug": "snowflake-data-assurance", "title": "Snowflake Data Assurance", "group": "data-platform",
+    "cluster": "data", "secondary": ["value"], "parent": "technologies", "state": "assured", "cadence": 180, "fresh": true,
+    "audience": ["Chief Data Officer", "Head of Data Engineering", "FinOps Leadership"],
+    "intent": "Technology + problem: proving data on Snowflake remains fresh, correct and recoverable",
+    "brief": "Data quality metrics, dynamic table lag, recovery windows, access governance and consumption cost per workload. Distinct from the Databricks page in substance. Use current Snowflake product names from research.",
+    "related": { "assurance": ["data-assurance", "data-quality-assurance", "data-freshness-assurance", "cloud-cost-assurance"], "useCases": ["data-pipeline-freshness-failure", "schema-change-production-impact", "cloud-cost-anomaly"], "technologies": ["databricks-data-assurance", "kafka-pipeline-assurance"], "industries": ["insurance", "financial-services"], "insights": ["data-freshness-ai-quality"] }
+  },
+  {
+    "slug": "kafka-pipeline-assurance", "title": "Kafka Pipeline Assurance", "group": "data-platform",
+    "cluster": "data", "secondary": ["reliability"], "parent": "technologies", "state": "assured", "cadence": 180, "fresh": true,
+    "audience": ["Head of Data Engineering", "VP Platform"],
+    "intent": "Technology + problem: proving event streams deliver complete, ordered, timely data",
+    "brief": "Consumer lag as a freshness signal, schema compatibility enforcement, delivery guarantees in practice, retention versus replay need, and platform version position. Use current Apache Kafka facts from research.",
+    "related": { "assurance": ["data-pipeline-assurance", "data-freshness-assurance", "data-quality-assurance"], "useCases": ["data-pipeline-freshness-failure", "schema-change-production-impact"], "technologies": ["databricks-data-assurance", "snowflake-data-assurance"], "industries": ["financial-services", "insurance"], "insights": ["data-freshness-ai-quality"] }
+  },
+  {
+    "slug": "vllm-production-assurance", "title": "vLLM Production Assurance", "group": "inference",
+    "cluster": "ai", "secondary": ["value", "reliability"], "parent": "technologies", "state": "assured", "cadence": 90, "fresh": true,
+    "audience": ["Head of AI", "VP Platform", "FinOps Leadership"],
+    "intent": "Technology + problem: proving self-hosted inference meets throughput, quality and cost thresholds",
+    "brief": "Self-hosting moves model risk from the vendor to the platform team. Throughput and latency under real load, behaviour after engine or quantisation change, template correctness, GPU utilisation against cost, capacity headroom.",
+    "related": { "assurance": ["ai-cost-assurance", "model-change-assurance", "ai-observability-assurance", "unit-economics-assurance"], "useCases": ["ai-cost-spike", "model-provider-migration"], "technologies": ["eks-reliability-assurance", "aks-reliability-assurance", "rag-vector-search-assurance"], "industries": ["software-technology"], "insights": ["ai-cost-per-business-outcome", "model-retirement-is-a-production-change"] }
+  },
+  {
+    "slug": "rag-vector-search-assurance", "title": "RAG Vector Search Assurance", "group": "inference",
+    "cluster": "ai", "secondary": ["data"], "parent": "technologies", "state": "assured", "cadence": 90, "fresh": true,
+    "audience": ["Head of AI", "Head of Data Engineering", "VP Engineering"],
+    "intent": "Technology + problem: proving the retrieval layer still returns the right context",
+    "brief": "Index freshness, embedding model version coupling, recall under approximate search settings, hybrid and reranking configuration, permission filtering and deletion propagation. Vendor-neutral across vector stores.",
+    "related": { "assurance": ["production-rag-assurance", "data-freshness-assurance", "llm-evaluation-assurance"], "useCases": ["rag-quality-degradation", "data-pipeline-freshness-failure"], "technologies": ["azure-ai-assurance", "aws-bedrock-assurance", "databricks-data-assurance"], "industries": ["healthcare-ai-assurance"], "insights": ["measuring-production-rag-quality", "data-freshness-ai-quality"] }
+  }
+]

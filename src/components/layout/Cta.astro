@@ -1,0 +1,33 @@
+---
+/** Closing call to action on the obsidian surface. */
+import { site } from '../../data/site.ts';
+
+interface Props {
+  label?: string;
+  title?: string;
+  text?: string;
+  /** Where the click came from, for analytics. */
+  location?: string;
+}
+
+const {
+  label = 'Begin',
+  title = 'Which outcome would you most want proven today?',
+  text = 'Start with one outcome that matters. Xyvionix establishes what must be true, what evidence proves it, and where assurance stands today.',
+  location = 'page-cta',
+} = Astro.props;
+---
+
+<section class="cta" aria-labelledby="cta-title">
+  <div class="glow glow--bottom" aria-hidden="true"></div>
+  <div class="shell cta__inner">
+    <p class="lbl lbl--plain lbl--center rv">{label}</p>
+    <h2 id="cta-title" class="cta__title rv">{title}</h2>
+    <p class="lede cta__text rv">{text}</p>
+    <div class="cta__action rv">
+      <a href={site.cta.href} class="btn btn--lg" data-track="cta_click" data-track-location={location}>
+        {site.cta.label}
+      </a>
+    </div>
+  </div>
+</section>

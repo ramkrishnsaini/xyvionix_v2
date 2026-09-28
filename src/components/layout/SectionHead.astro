@@ -1,0 +1,50 @@
+---
+/**
+ * Label plus H2, with optional supporting copy. `split` places the copy in a
+ * right-hand column on wide screens, as in the frozen theme.
+ */
+interface Props {
+  label: string;
+  title: string;
+  id?: string;
+  text?: string;
+  split?: boolean;
+  level?: 'h2' | 'h3';
+}
+
+const { label, title, id, text, split = false, level = 'h2' } = Astro.props;
+const Heading = level;
+---
+
+{
+  split ? (
+    <div class="split rv">
+      <div class="split__head">
+        <p class="lbl">{label}</p>
+        <Heading id={id} class="h2 head__title">
+          {title}
+        </Heading>
+        <slot name="head" />
+      </div>
+      <div class="split__body">
+        {text && <p class="lede measure">{text}</p>}
+        <slot />
+      </div>
+    </div>
+  ) : (
+    <div class="module-head rv">
+      <p class="lbl">{label}</p>
+      <Heading id={id} class="h2">
+        {title}
+      </Heading>
+      {text && <p class="lede">{text}</p>}
+      <slot />
+    </div>
+  )
+}
+
+<style>
+  .head__title {
+    margin-top: 1.5rem;
+  }
+</style>

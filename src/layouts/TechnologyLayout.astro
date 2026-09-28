@@ -1,0 +1,40 @@
+---
+/**
+ * Technology page: a platform connected to the assurance problem it creates.
+ * Platform detail changes quickly, so the review date is always shown.
+ */
+import type { CollectionEntry } from 'astro:content';
+import ContentShell from './ContentShell.astro';
+import { technologyGroupByKey } from '../data/technologies.ts';
+
+interface Props {
+  entry: CollectionEntry<'technologies'>;
+}
+
+const { entry } = Astro.props;
+const group = technologyGroupByKey[entry.data.group];
+---
+
+<ContentShell
+  entry={entry}
+  label={group.name}
+  pageType="technologies"
+  section="technologies"
+  schemaKind="page"
+  showReviewed
+  ctaTitle="What must stay proven on this platform?"
+  ctaText="Start with one workload. Xyvionix establishes what evidence the platform can provide, what expires and when, and where assurance stands today."
+  secondary={{ label: 'All technologies', href: '/technologies' }}
+>
+  <p class="notice tech-note" slot="after-prose">
+    <strong>Independence.</strong> Xyvionix is not a reseller or partner of the vendors named on this page, and product
+    names belong to their owners. Platform detail was checked against vendor documentation on the review date shown and
+    changes frequently.
+  </p>
+</ContentShell>
+
+<style>
+  .tech-note {
+    margin-top: 3.5rem;
+  }
+</style>

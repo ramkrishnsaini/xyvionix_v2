@@ -1,0 +1,190 @@
+---
+/** Home page. Section order and wording follow the frozen theme. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/layout/Section.astro';
+import SectionHead from '../components/layout/SectionHead.astro';
+import Arrow from '../components/layout/Arrow.astro';
+import Cta from '../components/layout/Cta.astro';
+import EvidenceField from '../components/evidence/EvidenceField.astro';
+import PageCard from '../components/clusters/PageCard.astro';
+import StateModel from '../components/assurance/StateModel.astro';
+import EngineRail from '../components/assurance/EngineRail.astro';
+import OperatingModel from '../components/assurance/OperatingModel.astro';
+import Outcomes from '../components/assurance/Outcomes.astro';
+import HomeTrust from '../components/home/HomeTrust.astro';
+import HomeIndustries from '../components/home/HomeIndustries.astro';
+import HomeInsights from '../components/home/HomeInsights.astro';
+import { whyAssuranceIsLost } from '../data/assurances.ts';
+import { clusters, expansionClusters, primaryClusters } from '../data/clusters.ts';
+import { pathFor } from '../data/routes.ts';
+import { site } from '../data/site.ts';
+import { staticPageContext } from '../lib/static-seo.ts';
+
+const { page, seo } = await staticPageContext('');
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<BaseLayout seo={seo} slug="" pageType="home">
+  <section class="hero hero--home">
+    <div class="grid-bg" aria-hidden="true"></div>
+    <div class="glow" aria-hidden="true"></div>
+    <div class="shell hero__inner">
+      <p class="lbl lbl--plain lbl--center rv in">{site.category}</p>
+      <h1 class="h-hero hero__title text-center mx-auto rv in">{page.h1}</h1>
+      <p class="lede hero__lede text-center mx-auto rv in">{site.description}</p>
+      <div class="hero__actions rv in">
+        <a href={site.cta.href} class="btn btn--block" data-track="cta_click" data-track-location="home-hero">
+          {site.cta.label}
+        </a>
+        <a href="/how-assurance-works" class="lk">
+          <span class="ul">How assurance works</span>
+          <Arrow />
+        </a>
+      </div>
+      <EvidenceField idPrefix="home-field" />
+    </div>
+  </section>
+
+  <div class="band">
+    <div class="shell">
+      <p class="band__text">
+        {clusters.map((c) => <span>{c.band}</span>)}
+      </p>
+    </div>
+  </div>
+
+  <Section surface="light" flush labelledby="why-title">
+    <SectionHead label="Why the category exists" title="Critical technology changes continuously. Assurance does not survive that change on its own." id="why-title" split>
+      <p class="body measure-narrow home__aside" slot="head">
+        Every enterprise proves a system works once, at the point it goes live. Almost none can prove it still works
+        today.
+      </p>
+      <dl class="rows rows--open">
+        {
+          whyAssuranceIsLost.map((item) => (
+            <div class="row rv">
+              <dt class="row__term">{item.title}</dt>
+              <dd class="row__desc">{item.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </SectionHead>
+  </Section>
+
+  <Section surface="light" alt labelledby="assures-title">
+    <SectionHead label="What Xyvionix assures" title="The outcomes that cannot be left to assumption" id="assures-title" />
+    <div class="grid-3 mt-block">
+      {
+        primaryClusters.map((c, i) => (
+          <PageCard
+            href={pathFor(c.hub)}
+            label={`Assurance ${pad(i + 1)}`}
+            title={c.name}
+            question={c.question}
+            text={c.summary}
+            trace={i === 0}
+            location="home-assurance"
+          />
+        ))
+      }
+    </div>
+    <div class="also rv">
+      <p class="lbl lbl--plain">Also assured</p>
+      <ul class="also__list">
+        {
+          expansionClusters.map((c) => (
+            <li>
+              <a href={pathFor(c.hub)} class="ul">
+                {c.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Section>
+
+  <Section surface="light" labelledby="state-title">
+    <SectionHead
+      label="The state model"
+      title="Assurance is a state, not a report"
+      id="state-title"
+      split
+      text="Every system under assurance holds one of four states, determined by evidence against agreed thresholds. The state is current, not historical, and it is legible without colour: solid means proven, hollow means breached."
+    />
+    <div class="mt-block">
+      <StateModel />
+    </div>
+  </Section>
+
+  <Section surface="dark" alt glow labelledby="engine-title">
+    <SectionHead
+      label="The assurance engine"
+      title="The intelligence layer beneath continuous assurance"
+      id="engine-title"
+      split
+      text="Signals from the estate become evidence. Evidence is tested against thresholds. Thresholds determine state. State that falls short triggers corrective action, which closes only when closure is verified."
+    >
+      <a href="/assurance-engine" class="lk home__link">
+        <span class="ul">How the Assurance Engine is designed</span>
+        <Arrow />
+      </a>
+    </SectionHead>
+    <div class="mt-block">
+      <EngineRail />
+    </div>
+  </Section>
+
+  <Section surface="light" labelledby="operating-title">
+    <SectionHead label="Operating model" title="How Xyvionix acts on the evidence" id="operating-title" />
+    <div class="mt-block">
+      <OperatingModel />
+    </div>
+  </Section>
+
+  <Section surface="light" alt labelledby="outcomes-title">
+    <SectionHead label="What the business receives" title="Four outcomes, held continuously" id="outcomes-title" />
+    <div class="mt-block">
+      <Outcomes />
+    </div>
+  </Section>
+
+  <HomeTrust />
+  <HomeIndustries />
+  <HomeInsights />
+
+  <Cta location="home-cta" />
+</BaseLayout>
+
+<style>
+  .home__aside {
+    margin-top: 1.75rem;
+  }
+
+  .home__link {
+    margin-top: 1.75rem;
+  }
+
+  .also {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--ln);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem 2.5rem;
+  }
+
+  .also__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    font-size: 0.9375rem;
+    color: var(--mut);
+  }
+
+  .also__list a:hover {
+    color: var(--tx);
+  }
+</style>

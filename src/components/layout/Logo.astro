@@ -1,0 +1,35 @@
+---
+/**
+ * The Xyvionix mark: a trace rising through a dashed threshold, with a solid
+ * verification square where it crosses. Decorative here; the wordmark carries the name.
+ */
+interface Props {
+  size?: number;
+}
+
+const { size = 22 } = Astro.props;
+---
+
+<svg class="mark" width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+  <line class="mark__threshold" x1="0" y1="12" x2="24" y2="12" stroke-width="1.2" stroke-dasharray="2.5 2.5"></line>
+  <path class="mark__trace" d="M0 20 L6 18 L10 15 L14 9 L18 6 L24 4" stroke-width="1.8" fill="none" stroke-linejoin="round"></path>
+  <rect class="mark__proof" x="9" y="9" width="6" height="6"></rect>
+</svg>
+
+<style>
+  .mark {
+    flex: none;
+  }
+
+  .mark__threshold {
+    stroke: var(--fnt);
+  }
+
+  .mark__trace {
+    stroke: var(--tx);
+  }
+
+  .mark__proof {
+    fill: var(--tx);
+  }
+</style>

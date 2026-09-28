@@ -1,0 +1,46 @@
+---
+/**
+ * Document shell for every page. Critical content is static HTML; the single
+ * script is an enhancement and is loaded as an external module.
+ */
+import '../styles/global.css';
+import type { Seo as SeoModel } from '../lib/seo.ts';
+import { site } from '../data/site.ts';
+import { pathFor } from '../data/routes.ts';
+import Seo from '../components/seo/Seo.astro';
+import Header from '../components/navigation/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+
+interface Props {
+  seo: SeoModel;
+  /** Slug of this page. '' for home. */
+  slug: string;
+  /** Page type, exposed for analytics: assurance, useCases, technologies, industries, insights, hub, core, contact, legal. */
+  pageType: string;
+  /** Top-level section slug, for marking the active navigation item. */
+  section?: string;
+}
+
+const { seo, slug, pageType, section } = Astro.props;
+---
+
+<!doctype html>
+<html lang={site.language}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <Seo seo={seo} />
+    <slot name="head" />
+  </head>
+  <body data-page-type={pageType}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header currentPath={pathFor(slug)} section={section} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import '../scripts/site.ts';
+    </script>
+  </body>
+</html>

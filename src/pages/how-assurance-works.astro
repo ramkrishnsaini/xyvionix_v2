@@ -1,0 +1,233 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Section from '../components/layout/Section.astro';
+import SectionHead from '../components/layout/SectionHead.astro';
+import OperatingModel from '../components/assurance/OperatingModel.astro';
+import StateModel from '../components/assurance/StateModel.astro';
+import Outcomes from '../components/assurance/Outcomes.astro';
+import Faq from '../components/editorial/Faq.astro';
+import Arrow from '../components/layout/Arrow.astro';
+import { comparison, evidenceProperties, methodFaqs, thresholdSteps } from '../data/method.ts';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<PageLayout
+  slug="how-assurance-works"
+  label="Method"
+  pageType="core"
+  section="assurance"
+  lede="Continuous assurance holds a technology outcome as a current fact. The business states what must remain true. Evidence is gathered from the running system and tested against an agreed threshold. When the evidence falls short, the correction is owned until a re-test shows the outcome is met again."
+  secondary={{ label: 'The Assurance Engine', href: '/assurance-engine' }}
+>
+  <Section surface="light" flush labelledby="different-title">
+    <SectionHead
+      label="What assurance is"
+      title="Not monitoring, not audit, not a managed service"
+      id="different-title"
+      split
+      text="Enterprises already monitor their systems, audit their controls and pay for services to be run. None of the three answers the question a board or a regulator eventually asks: can you prove it still works today, and who acts if you cannot?"
+    />
+    <div class="table-wrap mt-block rv" role="region" aria-label="Comparison of monitoring, audit, managed service and continuous assurance" tabindex="0">
+      <table class="table compare">
+        <caption>How continuous assurance differs from the practices it is most often confused with.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Aspect</th>
+            {comparison.columns.map((column) => <th scope="col">{column}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {
+            comparison.rows.map((row) => (
+              <tr>
+                <th scope="row">{row.aspect}</th>
+                {row.cells.map((cell) => (
+                  <td>{cell}</td>
+                ))}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </Section>
+
+  <Section surface="light" alt labelledby="operating-title">
+    <SectionHead
+      label="Operating model"
+      title="Baseline, assure, correct, improve"
+      id="operating-title"
+      split
+      text="The four stages run as a cycle. Closure of a correction returns as a new signal, and the thresholds themselves are raised as the business asks more of the system."
+    />
+    <div class="mt-block">
+      <OperatingModel />
+    </div>
+  </Section>
+
+  <Section surface="light" labelledby="thresholds-title">
+    <SectionHead
+      label="Thresholds"
+      title="How a threshold is established"
+      id="thresholds-title"
+      split
+      text="A threshold is a business decision recorded in technical terms. It is the point at which the outcome can no longer be claimed, so it has to be set by the people who carry the consequence."
+    />
+    <ol class="steps mt-block">
+      {
+        thresholdSteps.map((step, i) => (
+          <li class="row rv">
+            <h3 class="row__term steps__term">
+              <span class="lbl lbl--plain num">{pad(i + 1)}</span>
+              {step.title}
+            </h3>
+            <p class="row__desc">{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <Section surface="light" alt labelledby="evidence-title">
+    <SectionHead
+      label="Evidence"
+      title="What makes something evidence"
+      id="evidence-title"
+      split
+      text="Most of what is presented as proof in technology is assertion: a diagram, a policy, a dashboard at one moment. Evidence under assurance has five properties."
+    >
+      <dl class="rows rows--open rv">
+        {
+          evidenceProperties.map((item) => (
+            <div class="row">
+              <dt class="row__term">{item.title}</dt>
+              <dd class="row__desc">{item.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </SectionHead>
+  </Section>
+
+  <Section surface="light" labelledby="state-title">
+    <SectionHead
+      label="State"
+      title="What happens when assurance is lost"
+      id="state-title"
+      split
+    >
+      <div class="prose">
+        <p>
+          State is determined by evidence, not by opinion. Movement toward a threshold sets the state to Degrading,
+          and corrective action begins there, while there is still time to act before the outcome is lost. A breach
+          sets the state to At risk. Evidence that has aged past its validity, or that a change has invalidated, sets
+          the state to Unassured.
+        </p>
+        <p>
+          Unassured is deliberately separate from failing. A recovery plan that has never been exercised may well
+          work. No one knows. Treating the unknown as acceptable is how most technology risk is carried without being
+          seen.
+        </p>
+        <p>
+          In each case the owner of the threshold is told, the correction is owned, and the state returns to Assured
+          only when a re-test shows the outcome is met. The argument behind the model is set out in
+          <a href="/assurance-is-a-state-not-a-report">Assurance is a state, not a report</a>.
+        </p>
+      </div>
+    </SectionHead>
+    <div class="mt-block">
+      <StateModel />
+    </div>
+  </Section>
+
+  <Section surface="light" alt labelledby="teams-title">
+    <SectionHead
+      label="Working model"
+      title="Alongside the teams that run the systems"
+      id="teams-title"
+      split
+    >
+      <div class="prose">
+        <p>
+          Xyvionix does not replace platform, security, data or AI teams, and it does not supply people to them. Those
+          teams design, build and operate. Assurance is a separate responsibility: to hold the evidence that what they
+          operate still meets the outcome the business agreed, and to carry corrections through to closure.
+        </p>
+        <p>
+          The separation matters. A team that builds a system and also certifies that it works is marking its own
+          work, usually under delivery pressure. An assurance function is answerable for the evidence and has no
+          stake in the answer being favourable.
+        </p>
+        <p>
+          Corrective action is taken within the access that has been granted and through the enterprise’s own change
+          process. Where a correction needs a decision that belongs to the business, the decision is recorded with
+          its owner and an expiry date. The access model is described in
+          <a href="/security-trust">Security and trust</a>.
+        </p>
+      </div>
+    </SectionHead>
+  </Section>
+
+  <Section surface="light" labelledby="receives-title">
+    <SectionHead label="What the business receives" title="Four outcomes, held continuously" id="receives-title" />
+    <div class="mt-block">
+      <Outcomes />
+    </div>
+  </Section>
+
+  <Section surface="light" alt labelledby="start-title">
+    <SectionHead
+      label="Starting"
+      title="Begin with one outcome"
+      id="start-title"
+      split
+    >
+      <div class="prose">
+        <p>
+          Assurance does not start with an estate-wide assessment. It starts with one outcome that matters and one
+          system that delivers it. The first step establishes what must be true, which signals can prove it, what
+          threshold the business will agree and what the state is today.
+        </p>
+        <p>
+          That first baseline is often the most informative result. It shows which outcomes the enterprise can already
+          prove, which it believes but cannot prove, and which no one has measured.
+        </p>
+      </div>
+      <a href="/use-cases" class="lk start__link">
+        <span class="ul">See the situations where assurance is lost</span>
+        <Arrow />
+      </a>
+    </SectionHead>
+  </Section>
+
+  <Section surface="light" labelledby="questions-title">
+    <Faq items={methodFaqs} title="Questions about the method" />
+  </Section>
+</PageLayout>
+
+<style>
+  .compare td,
+  .compare th {
+    min-width: 11rem;
+  }
+
+  .compare td:last-child {
+    color: var(--tx);
+    font-weight: 500;
+  }
+
+  .steps {
+    border-top: 1px solid var(--ln);
+  }
+
+  .steps__term {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+  }
+
+  .start__link {
+    margin-top: 2rem;
+  }
+</style>

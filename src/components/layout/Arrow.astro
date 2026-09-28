@@ -1,0 +1,13 @@
+---
+interface Props {
+  size?: 'sm' | 'md';
+}
+
+const { size = 'md' } = Astro.props;
+const w = size === 'sm' ? 14 : 15;
+const h = size === 'sm' ? 9 : 10;
+---
+
+<svg class="arw" width={w} height={h} viewBox="0 0 15 10" fill="none" aria-hidden="true" focusable="false">
+  <path d="M0 5h13M9.5 1.2 13.3 5l-3.8 3.8" stroke="currentColor" stroke-width="1.2"></path>
+</svg>

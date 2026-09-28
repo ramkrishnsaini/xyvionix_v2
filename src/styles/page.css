@@ -1,0 +1,282 @@
+/* Page-level structures: heroes, breadcrumbs, article body, closing call to action */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg0);
+  color: var(--tx);
+}
+
+.hero__inner {
+  position: relative;
+  padding-top: 9rem;
+  padding-bottom: 4rem;
+}
+
+@media (min-width: 40rem) {
+  .hero__inner {
+    padding-top: 11rem;
+    padding-bottom: 6rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .hero__inner {
+    padding-top: 14rem;
+    padding-bottom: 8rem;
+  }
+}
+
+.hero--home .hero__title {
+  max-width: 17ch;
+  margin-top: 1.75rem;
+}
+
+.hero--home .hero__lede {
+  max-width: 56ch;
+  margin-top: 2rem;
+}
+
+.hero__actions {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+@media (min-width: 40rem) {
+  .hero__actions {
+    flex-direction: row;
+    gap: 1.75rem;
+  }
+}
+
+.hero__actions--start {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+@media (min-width: 40rem) {
+  .hero__actions--start {
+    align-items: center;
+  }
+}
+
+.hero__figure {
+  margin: 4rem auto 0;
+  max-width: 880px;
+}
+
+@media (min-width: 64rem) {
+  .hero__figure {
+    margin-top: 6rem;
+  }
+}
+
+.hero__figure svg {
+  width: 100%;
+  height: auto;
+}
+
+.hero__caption {
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--fnt);
+  text-align: center;
+}
+
+/* interior page hero: left aligned, shorter */
+.hero--page .hero__inner {
+  padding-top: 8.5rem;
+  padding-bottom: 3.5rem;
+}
+
+@media (min-width: 40rem) {
+  .hero--page .hero__inner {
+    padding-top: 10rem;
+    padding-bottom: 4.5rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .hero--page .hero__inner {
+    padding-top: 12rem;
+    padding-bottom: 6rem;
+  }
+}
+
+.hero--page .hero__title {
+  margin-top: 1.5rem;
+  max-width: 22ch;
+}
+
+.hero--page .hero__lede {
+  margin-top: 1.75rem;
+  max-width: 62ch;
+}
+
+.hero__meta {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.75rem;
+}
+
+.hero__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* breadcrumbs */
+.crumbs {
+  font-family: var(--font-mono);
+  font-size: 0.656rem;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--fnt);
+}
+
+.crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.6rem;
+}
+
+.crumbs li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.crumbs li + li::before {
+  content: "/";
+  color: var(--gst);
+}
+
+.crumbs a {
+  color: var(--mut);
+}
+
+.crumbs a:hover {
+  color: var(--tx);
+}
+
+.crumbs [aria-current="page"] {
+  color: var(--fnt);
+}
+
+/* article body with contents rail */
+.article {
+  display: grid;
+  gap: 3rem;
+}
+
+@media (min-width: 64rem) {
+  .article {
+    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .article__aside {
+    position: sticky;
+    top: 7.5rem;
+  }
+}
+
+.article__main {
+  min-width: 0;
+  max-width: 46rem;
+}
+
+.toc__list {
+  margin-top: 1.25rem;
+  display: grid;
+  gap: 0.7rem;
+  border-left: 1px solid var(--ln);
+  padding-left: 1.1rem;
+  font-size: 0.844rem;
+  line-height: 1.45;
+  color: var(--mut);
+}
+
+.toc__list a:hover {
+  color: var(--tx);
+}
+
+.aside-note {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--ln);
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: var(--mut);
+}
+
+.aside-note dt {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--fnt);
+}
+
+.aside-note dd {
+  margin-top: 0.2rem;
+  color: var(--tx);
+}
+
+.aside-note dd + dt {
+  margin-top: 1rem;
+}
+
+/* closing call to action */
+.cta {
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid var(--ln);
+  background: var(--bg0);
+  color: var(--tx);
+  text-align: center;
+}
+
+.cta__inner {
+  position: relative;
+  padding-block: 6rem;
+}
+
+@media (min-width: 40rem) {
+  .cta__inner {
+    padding-block: 8rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .cta__inner {
+    padding-block: 11rem;
+  }
+}
+
+.cta__title {
+  margin: 1.5rem auto 0;
+  max-width: 22ch;
+  font-size: clamp(2rem, 1.4rem + 2.6vw, 3.6rem);
+  line-height: 1.07;
+}
+
+.cta__text {
+  margin: 1.75rem auto 0;
+  max-width: 52ch;
+}
+
+.cta__action {
+  margin-top: 2.5rem;
+}

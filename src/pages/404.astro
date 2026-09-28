@@ -1,0 +1,102 @@
+---
+/** Branded not-found page. Served with a 404 status by the host, never indexed. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/layout/Section.astro';
+import StateMark from '../components/assurance/StateMark.astro';
+import Arrow from '../components/layout/Arrow.astro';
+import { clusters } from '../data/clusters.ts';
+import { pathFor } from '../data/routes.ts';
+import { site } from '../data/site.ts';
+import { buildSeo } from '../lib/seo.ts';
+
+const seo = buildSeo({
+  slug: '404',
+  title: `Page not found | ${site.name}`,
+  description:
+    'The page you asked for does not exist at this address. Use the sections listed here or the site search to find assurance areas, use cases and insights.',
+  pageName: 'Page not found',
+  index: false,
+});
+
+// The error page is served at any missing address, so it has no canonical. It reuses the home image.
+seo.canonical = '';
+seo.ogImage = `${site.url}/og/home.png`;
+seo.twitterImage = seo.ogImage;
+
+const sections = [
+  { label: 'Assurance areas', href: '/assurance' },
+  { label: 'Use cases', href: '/use-cases' },
+  { label: 'Industries', href: '/industries' },
+  { label: 'Technologies', href: '/technologies' },
+  { label: 'Insights', href: '/insights' },
+  { label: 'Search', href: '/search' },
+];
+---
+
+<BaseLayout seo={seo} slug="404" pageType="utility">
+  <section class="hero hero--page">
+    <div class="grid-bg" aria-hidden="true"></div>
+    <div class="shell hero__inner">
+      <StateMark state="unassured" label="visible" />
+      <h1 class="h1 hero__title">This page cannot be found</h1>
+      <p class="lede hero__lede">
+        There is nothing at this address. The page may have moved, or the link may be mistaken. The sections below
+        lead to everything on the site.
+      </p>
+      <div class="hero__actions hero__actions--start">
+        <a href="/" class="btn btn--block">Go to the home page</a>
+        <a href="/search" class="lk">
+          <span class="ul">Search the site</span>
+          <Arrow />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <Section surface="light" flush labelledby="nf-sections">
+    <div class="nf">
+      <nav aria-labelledby="nf-sections">
+        <h2 id="nf-sections" class="lbl lbl--plain">Sections</h2>
+        <ul class="related__list">
+          {
+            sections.map((item) => (
+              <li class="related__item">
+                <a href={item.href} class="related__link">
+                  <span class="related__title ul">{item.label}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <nav aria-labelledby="nf-areas">
+        <h2 id="nf-areas" class="lbl lbl--plain">Assurance areas</h2>
+        <ul class="related__list">
+          {
+            clusters.map((c) => (
+              <li class="related__item">
+                <a href={pathFor(c.hub)} class="related__link">
+                  <span class="related__title ul">{c.name}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .nf {
+    display: grid;
+    gap: 3rem 4rem;
+    max-width: 60rem;
+  }
+
+  @media (min-width: 48rem) {
+    .nf {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

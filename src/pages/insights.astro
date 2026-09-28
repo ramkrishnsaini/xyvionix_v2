@@ -1,0 +1,125 @@
+---
+/** Insights hub. Articles are grouped by theme; every article is a normal link. */
+import PageLayout from '../layouts/PageLayout.astro';
+import Section from '../components/layout/Section.astro';
+import SectionHead from '../components/layout/SectionHead.astro';
+import PostCard from '../components/editorial/PostCard.astro';
+import { featured, insightThemes } from '../data/hubs.ts';
+import { site } from '../data/site.ts';
+import { byTitle, getContentEntries, getPagesByKind } from '../lib/pages.ts';
+import { readingMinutes } from '../lib/text.ts';
+
+const entries = (await getContentEntries()).filter((e) => e.collection === 'insights');
+const minutes = new Map(entries.map((e) => [e.id, readingMinutes(e.body)]));
+
+const all = (await getPagesByKind('insights')).filter((p) => p.index).sort(byTitle);
+const lead = featured.insights.map((slug) => all.find((p) => p.slug === slug)).filter((p) => p !== undefined);
+const [first, ...others] = lead;
+
+const themes = insightThemes
+  .map((theme) => ({ ...theme, pages: all.filter((p) => p.cluster === theme.cluster) }))
+  .filter((theme) => theme.pages.length > 0);
+---
+
+<PageLayout
+  slug="insights"
+  label="Xyvionix Insights"
+  pageType="hub"
+  lede="Research and analysis on one question: how does the evidence that a technology works stop being true, and what does it take to keep it current. Each article sets out a failure pattern, a way to measure it and what would count as proof."
+  heroCta={false}
+  secondary={{ label: 'Subscribe by RSS', href: '/rss.xml' }}
+>
+  {
+    first && (
+      <Section surface="light" flush labelledby="featured-title">
+        <h2 id="featured-title" class="lbl">
+          Featured
+        </h2>
+        <div class="posts posts--lead featured">
+          <PostCard page={first} readingTime={minutes.get(first.slug)} lead level="h3" />
+          <div class="posts__stack">
+            {others.map((page) => (
+              <PostCard page={page} readingTime={minutes.get(page.slug)} level="h3" />
+            ))}
+          </div>
+        </div>
+      </Section>
+    )
+  }
+
+  <Section surface="light" alt labelledby="approach-title">
+    <SectionHead label="Editorial approach" title="What these articles are, and are not" id="approach-title" split>
+      <div class="prose">
+        <p>
+          These are not summaries of vendor documentation and they are not written to a keyword list. Each article
+          takes a position and supports it with a mechanism: how a recovery plan ages, why an approval step stops
+          intervening, how a closed finding reopens.
+        </p>
+        <p>
+          Articles are published under organisational authorship by {site.editorialAuthor}. Third-party facts are
+          sourced to the primary publication and listed at the end of each article. Examples with specific figures
+          are labelled illustrative. Technical detail changes quickly, so each article shows when it was last
+          reviewed.
+        </p>
+      </div>
+    </SectionHead>
+  </Section>
+
+  <Section surface="light" labelledby="all-title">
+    <SectionHead label="All insights" title="By theme" id="all-title" />
+
+    <div class="filters insights__filters rv" data-filter-group role="group" aria-label="Filter insights by theme" hidden>
+      <button type="button" class="chip" data-filter="" aria-pressed="true">All</button>
+      {
+        themes.map((theme) => (
+          <button type="button" class="chip" data-filter={theme.cluster} aria-pressed="false">
+            {theme.title}
+          </button>
+        ))
+      }
+    </div>
+
+    {
+      themes.map((theme) => (
+        <div class="theme" data-filter-section={theme.cluster}>
+          <div class="theme__head rv">
+            <h3 class="h3">{theme.title}</h3>
+            <p class="body theme__text">{theme.text}</p>
+          </div>
+          <div class="post-grid">
+            {theme.pages.map((page) => (
+              <PostCard page={page} readingTime={minutes.get(page.slug)} summary level="h4" />
+            ))}
+          </div>
+        </div>
+      ))
+    }
+  </Section>
+
+  <script>
+    import '../scripts/hub-filter.ts';
+  </script>
+</PageLayout>
+
+<style>
+  .featured {
+    margin-top: 2.5rem;
+  }
+
+  .insights__filters {
+    margin-top: 3rem;
+  }
+
+  .theme {
+    margin-top: 4rem;
+  }
+
+  .theme__head {
+    max-width: 62ch;
+    margin-bottom: 2rem;
+  }
+
+  .theme__text {
+    margin-top: 1rem;
+  }
+</style>

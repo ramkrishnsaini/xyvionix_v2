@@ -1,0 +1,150 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Section from '../components/layout/Section.astro';
+import ContactForm from '../components/forms/ContactForm.astro';
+import { company } from '../data/site.ts';
+
+const steps = [
+  {
+    title: 'You name one outcome',
+    text: 'One system or process, and what must remain true about it. A single outcome is enough to begin.',
+  },
+  {
+    title: 'Xyvionix replies with how it would be proven',
+    text: 'Which signals could evidence the outcome, what threshold questions the business would need to answer, and what is likely to be unknown today.',
+  },
+  {
+    title: 'A baseline is agreed',
+    text: 'If you proceed, the first step is a baseline: the outcome defined, the threshold agreed and the current state measured.',
+  },
+];
+---
+
+<PageLayout
+  slug="contact"
+  label="Begin"
+  pageType="contact"
+  lede="Start with one outcome that matters. Tell us what must remain true, and Xyvionix will set out what evidence would prove it and where assurance is likely to stand today. The questions below are about the outcome, not about people or capacity."
+  heroCta={false}
+  closingCta={false}
+>
+  <Section surface="light" flush labelledby="form-title">
+    <div class="contact">
+      <div class="contact__form">
+        <h2 id="form-title" class="h3">Request an assessment</h2>
+        <p class="body contact__intro">All fields are required unless marked optional.</p>
+        <div class="contact__fields">
+          <ContactForm />
+        </div>
+      </div>
+
+      <aside class="contact__aside" aria-labelledby="next-title">
+        <h2 id="next-title" class="lbl lbl--plain">What happens next</h2>
+        <ol class="contact__steps">
+          {
+            steps.map((step, i) => (
+              <li>
+                <p class="lbl lbl--plain num">Step {String(i + 1).padStart(2, '0')}</p>
+                <h3 class="h4 contact__step-title">{step.title}</h3>
+                <p class="small">{step.text}</p>
+              </li>
+            ))
+          }
+        </ol>
+
+        <div class="contact__block">
+          <h2 class="lbl lbl--plain">Before you write</h2>
+          <p class="small contact__block-text">
+            Security and procurement teams can review the access model and attestation status on the
+            <a class="ul" href="/security-trust">security and trust</a> page. To report a vulnerability, use the
+            <a class="ul" href="/security">security policy</a>.
+          </p>
+        </div>
+
+        {
+          (company.contactEmail || company.phone) && (
+            <div class="contact__block">
+              <h2 class="lbl lbl--plain">Direct</h2>
+              <ul class="contact__direct">
+                {company.contactEmail && (
+                  <li>
+                    <a class="ul" href={`mailto:${company.contactEmail}`}>
+                      {company.contactEmail}
+                    </a>
+                  </li>
+                )}
+                {company.phone && (
+                  <li>
+                    <a class="ul" href={`tel:${company.phone.replace(/[^+\d]/g, '')}`}>
+                      {company.phone}
+                    </a>
+                  </li>
+                )}
+              </ul>
+            </div>
+          )
+        }
+      </aside>
+    </div>
+  </Section>
+</PageLayout>
+
+<style>
+  .contact {
+    display: grid;
+    gap: 4rem;
+  }
+
+  @media (min-width: 64rem) {
+    .contact {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .contact__aside {
+      position: sticky;
+      top: 7.5rem;
+    }
+  }
+
+  .contact__intro {
+    margin-top: 0.75rem;
+    font-size: 0.906rem;
+  }
+
+  .contact__fields {
+    margin-top: 2.5rem;
+  }
+
+  .contact__steps {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: 2rem;
+    border-left: 1px solid var(--ln);
+    padding-left: 1.5rem;
+  }
+
+  .contact__step-title {
+    margin-top: 0.5rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .contact__block {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--ln);
+  }
+
+  .contact__block-text {
+    margin-top: 1rem;
+  }
+
+  .contact__direct {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    color: var(--tx);
+  }
+</style>

@@ -1,0 +1,85 @@
+---
+/** Three insights: featured first, then one each from other clusters. */
+import Section from '../layout/Section.astro';
+import Arrow from '../layout/Arrow.astro';
+import PostCard from '../editorial/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { entryToRef } from '../../lib/pages.ts';
+import { readingMinutes } from '../../lib/text.ts';
+import { featured } from '../../data/hubs.ts';
+
+const includeDrafts = process.env.XYV_INCLUDE_DRAFTS === '1';
+const entries = (await getCollection('insights', ({ data }) => includeDrafts || data.draft !== true)).sort(
+  (a, b) =>
+    Number(b.data.featured) - Number(a.data.featured) ||
+    b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf() ||
+    a.id.localeCompare(b.id),
+);
+
+// Curated articles first, in the order given. Then one per cluster, to show the breadth of the research.
+const picked: typeof entries = featured.home
+  .map((slug) => entries.find((e) => e.id === slug))
+  .filter((e): e is (typeof entries)[number] => e !== undefined);
+const clustersSeen = new Set<string>(picked.map((e) => e.data.cluster));
+for (const entry of entries) {
+  if (picked.length === 3) break;
+  if (clustersSeen.has(entry.data.cluster)) continue;
+  clustersSeen.add(entry.data.cluster);
+  picked.push(entry);
+}
+
+const posts = picked.map((entry) => ({ page: entryToRef(entry), minutes: readingMinutes(entry.body) }));
+const [lead, ...rest] = posts;
+---
+
+{
+  lead && (
+    <Section surface="light" labelledby="insights-title">
+      <div class="insights__head rv">
+        <div>
+          <p class="lbl">Xyvionix Insights</p>
+          <h2 id="insights-title" class="h2 insights__title">
+            Insights
+          </h2>
+        </div>
+        <a href="/insights" class="lk">
+          <span class="ul">All insights</span>
+          <Arrow />
+        </a>
+      </div>
+
+      <div class="posts posts--lead insights__grid">
+        <PostCard page={lead.page} readingTime={lead.minutes} lead />
+        <div class="posts__stack">
+          {rest.map((post) => (
+            <PostCard page={post.page} readingTime={post.minutes} />
+          ))}
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+<style>
+  .insights__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .insights__title {
+    margin-top: 1.25rem;
+  }
+
+  .insights__grid {
+    margin-top: 2.5rem;
+  }
+
+  @media (min-width: 40rem) {
+    .insights__grid {
+      margin-top: 3.5rem;
+    }
+  }
+</style>

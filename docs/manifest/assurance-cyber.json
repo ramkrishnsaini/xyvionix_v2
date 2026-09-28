@@ -1,0 +1,87 @@
+[
+  {
+    "slug": "identity-exposure-assurance",
+    "title": "Identity Exposure Assurance",
+    "kind": "child", "cluster": "cyber", "secondary": [], "parent": "cyber-exposure-assurance",
+    "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Do access controls still enforce what policy says?",
+    "audience": ["CISO", "Identity Engineering", "Technology Risk"],
+    "intent": "Commercial: continuing proof that identity controls enforce the intended access",
+    "brief": "Identity policy decays through exclusions, guests, dormant accounts and application grants. Covers effective enforcement coverage, exclusion growth, dormant identity age, authentication strength and non-human identities.",
+    "related": {
+      "assurance": ["privileged-access-assurance", "secrets-exposure-assurance", "cloud-security-exposure-assurance"],
+      "useCases": ["identity-access-drift", "stale-privileged-access"],
+      "technologies": ["entra-id-exposure-assurance", "aws-iam-exposure-assurance"],
+      "industries": ["financial-services", "healthcare"],
+      "insights": ["how-identity-controls-drift", "non-human-identity-exposure"]
+    }
+  },
+  {
+    "slug": "privileged-access-assurance",
+    "title": "Privileged Access Assurance",
+    "kind": "child", "cluster": "cyber", "secondary": [], "parent": "cyber-exposure-assurance",
+    "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Is every standing privilege still justified today?",
+    "audience": ["CISO", "Identity Engineering", "Internal Audit"],
+    "intent": "Commercial: continuing proof that privileged access is minimal, time-bound and reviewed",
+    "brief": "Privilege accumulates and is rarely removed. Covers standing versus eligible assignment, elevation evidence, emergency account governance, review quality and privileged non-human identities.",
+    "related": {
+      "assurance": ["identity-exposure-assurance", "secrets-exposure-assurance", "ai-agent-assurance"],
+      "useCases": ["stale-privileged-access", "identity-access-drift"],
+      "technologies": ["entra-id-exposure-assurance", "aws-iam-exposure-assurance"],
+      "industries": ["financial-services", "insurance"],
+      "insights": ["standing-privilege-evidence-gap"]
+    }
+  },
+  {
+    "slug": "cloud-security-exposure-assurance",
+    "title": "Cloud Security Exposure Assurance",
+    "kind": "child", "cluster": "cyber", "secondary": ["reliability"], "parent": "cyber-exposure-assurance",
+    "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Which exposures are reachable right now?",
+    "audience": ["CISO", "Cloud Security", "VP Platform"],
+    "intent": "Commercial: continuing proof of cloud exposure position, prioritised by reachability",
+    "brief": "Posture tools list findings; assurance holds a threshold on reachable exposure and its age. Covers public exposure, attack-path reachability, configuration regression and ownership of each open exposure.",
+    "related": {
+      "assurance": ["vulnerability-remediation-assurance", "cloud-drift-assurance", "identity-exposure-assurance"],
+      "useCases": ["security-remediation-backlog", "cloud-configuration-drift"],
+      "technologies": ["aws-iam-exposure-assurance", "entra-id-exposure-assurance", "terraform-drift-assurance"],
+      "industries": ["healthcare", "software-technology"],
+      "insights": ["security-findings-vs-verified-closure", "cloud-drift-production-risk"]
+    }
+  },
+  {
+    "slug": "vulnerability-remediation-assurance",
+    "title": "Vulnerability Remediation Assurance",
+    "kind": "child", "cluster": "cyber", "secondary": [], "parent": "cyber-exposure-assurance",
+    "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Was the fix verified, or only the ticket closed?",
+    "audience": ["CISO", "Vulnerability Management", "Internal Audit"],
+    "intent": "Commercial: remediation owned through to verified closure",
+    "brief": "Closure is a re-test result, not a ticket status. Covers exploitation-informed prioritisation, remediation time against agreed windows, re-test evidence, regression after rebuild and exception expiry. Canonical page for security remediation.",
+    "related": {
+      "assurance": ["cloud-security-exposure-assurance", "release-assurance", "secrets-exposure-assurance"],
+      "useCases": ["unverified-vulnerability-closure", "security-remediation-backlog"],
+      "technologies": ["eks-reliability-assurance", "aks-reliability-assurance"],
+      "industries": ["financial-services", "healthcare"],
+      "insights": ["security-findings-vs-verified-closure"]
+    }
+  },
+  {
+    "slug": "secrets-exposure-assurance",
+    "title": "Secrets Exposure Assurance",
+    "kind": "child", "cluster": "cyber", "secondary": ["ai"], "parent": "cyber-exposure-assurance",
+    "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Is every credential known, scoped, rotated and unexposed?",
+    "audience": ["CISO", "Security Engineering", "VP Platform"],
+    "intent": "Commercial: continuing proof that credentials are inventoried, rotated and not exposed",
+    "brief": "Secrets spread into repositories, pipelines, images and AI tool configuration. Covers inventory, age against rotation policy, exposure detection to revocation time, and replacement of long-lived credentials with federated identity.",
+    "related": {
+      "assurance": ["identity-exposure-assurance", "privileged-access-assurance", "mcp-security-assurance"],
+      "useCases": ["identity-access-drift", "unverified-vulnerability-closure"],
+      "technologies": ["aws-iam-exposure-assurance", "entra-id-exposure-assurance"],
+      "industries": ["software-technology"],
+      "insights": ["non-human-identity-exposure"]
+    }
+  }
+]

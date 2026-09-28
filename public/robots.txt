@@ -1,0 +1,43 @@
+# Xyvionix robots.txt
+# Policy: open to search, AI search, AI assistants and AI training crawlers.
+# Pages are kept out of indexes with a robots meta tag, not with Disallow.
+# Every user-agent token below is taken from the vendor's own documentation.
+# Rationale and sources: docs/ai-discovery.md
+
+User-agent: *
+Allow: /
+
+# A crawler that matches a named group ignores the * group, so any future
+# Disallow must be added to both groups.
+User-agent: OAI-SearchBot
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: OAI-AdsBot
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Googlebot
+User-agent: Google-Extended
+User-agent: GoogleOther
+User-agent: Google-CloudVertexBot
+User-agent: bingbot
+User-agent: Applebot
+User-agent: Applebot-Extended
+User-agent: Amazonbot
+User-agent: Amzn-SearchBot
+User-agent: Amzn-User
+User-agent: meta-externalagent
+User-agent: meta-webindexer
+User-agent: meta-externalfetcher
+User-agent: facebookexternalhit
+User-agent: DuckDuckBot
+User-agent: DuckAssistBot
+User-agent: CCBot
+User-agent: MistralAI-Index
+User-agent: MistralAI-User
+User-agent: MistralAI-Training
+Allow: /
+
+Sitemap: https://xyvionix.com/sitemap-index.xml

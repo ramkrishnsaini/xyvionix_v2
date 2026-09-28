@@ -1,0 +1,83 @@
+/* Print and PDF. State marks stay legible because they never depended on colour. */
+
+@media print {
+  :root,
+  .light {
+    --bg0: #fff;
+    --bg1: #fff;
+    --bg2: #f1f1ee;
+    --tx: #000;
+    --mut: #222;
+    --fnt: #444;
+    --gst: #999;
+    --ln: #bbb;
+    --ln2: #777;
+    color-scheme: light;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 11pt;
+  }
+
+  .nav,
+  .footer,
+  .cta,
+  .skip-link,
+  .grid-bg,
+  .glow,
+  .filters,
+  .article__aside,
+  .hero__actions {
+    display: none !important;
+  }
+
+  .hero,
+  .section {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .hero__inner,
+  .hero--page .hero__inner,
+  .section__inner {
+    padding-block: 1.5rem;
+  }
+
+  .rv {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .prose a::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #444;
+    overflow-wrap: anywhere;
+  }
+
+  .st-assured {
+    background: #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .st-degrading {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  tr,
+  .row,
+  .qa__item,
+  .card {
+    break-inside: avoid;
+  }
+}

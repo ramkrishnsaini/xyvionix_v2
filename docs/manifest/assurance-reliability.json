@@ -1,0 +1,104 @@
+[
+  {
+    "slug": "slo-assurance",
+    "title": "SLO Assurance",
+    "kind": "child", "cluster": "reliability", "secondary": [], "parent": "production-reliability-assurance",
+    "state": "assured", "cadence": 180, "fresh": false,
+    "ogQuestion": "Do your service levels still describe what customers experience?",
+    "audience": ["Head of SRE", "VP Engineering", "VP Platform"],
+    "intent": "Commercial: keeping service level objectives valid and consequential",
+    "brief": "An SLO is evidence only if the indicator still measures the user journey and the error budget changes decisions. Covers indicator validity, budget policy enforcement, burn-rate response and SLO coverage of critical journeys.",
+    "related": {
+      "assurance": ["production-observability-assurance", "incident-recurrence-assurance", "release-assurance"],
+      "useCases": ["cloud-incident-recurrence", "high-change-failure-rate"],
+      "technologies": ["aws-production-reliability", "azure-production-reliability", "gcp-production-reliability"],
+      "industries": ["saas-production-reliability"],
+      "insights": ["error-budgets-without-consequence", "continuous-assurance-vs-monitoring"]
+    }
+  },
+  {
+    "slug": "disaster-recovery-assurance",
+    "title": "Disaster Recovery Assurance",
+    "kind": "child", "cluster": "reliability", "secondary": ["data"], "parent": "production-reliability-assurance",
+    "state": "assured", "cadence": 180, "fresh": false,
+    "ogQuestion": "When was recovery last proven, not planned?",
+    "audience": ["CTO", "Technology Risk", "Head of SRE", "CIO"],
+    "intent": "Commercial: tested recovery capability against agreed recovery time and recovery point",
+    "brief": "Recovery objectives are claims until a timed restore proves them. Covers exercised recovery time and recovery point, restore verification, dependency order, runbook currency and regulatory testing expectations. Absorbs recovery readiness and cloud resilience.",
+    "related": {
+      "assurance": ["cloud-drift-assurance", "data-pipeline-assurance", "rollback-readiness-assurance"],
+      "useCases": ["untested-disaster-recovery", "cloud-configuration-drift"],
+      "technologies": ["aws-production-reliability", "azure-production-reliability", "gcp-production-reliability"],
+      "industries": ["financial-services", "healthcare"],
+      "insights": ["disaster-recovery-plan-never-tested"]
+    }
+  },
+  {
+    "slug": "production-observability-assurance",
+    "title": "Production Observability Assurance",
+    "kind": "child", "cluster": "reliability", "secondary": [], "parent": "production-reliability-assurance",
+    "state": "assured", "cadence": 180, "fresh": false,
+    "ogQuestion": "Would your telemetry detect the failure that matters?",
+    "audience": ["VP Platform", "Head of SRE", "VP Engineering"],
+    "intent": "Commercial: proving that telemetry can detect the failures the business cares about",
+    "brief": "Observability is assured by detection coverage, not by tool ownership. Covers coverage of critical paths, alert validity, signal loss after change, sampling blind spots and telemetry cost pressure that removes signal.",
+    "related": {
+      "assurance": ["slo-assurance", "ai-observability-assurance", "incident-recurrence-assurance"],
+      "useCases": ["cloud-incident-recurrence", "cloud-configuration-drift"],
+      "technologies": ["aws-production-reliability", "azure-production-reliability", "eks-reliability-assurance"],
+      "industries": ["saas-production-reliability"],
+      "insights": ["continuous-assurance-vs-monitoring", "why-production-incidents-recur"]
+    }
+  },
+  {
+    "slug": "kubernetes-reliability-assurance",
+    "title": "Kubernetes Reliability Assurance",
+    "kind": "child", "cluster": "reliability", "secondary": ["change"], "parent": "production-reliability-assurance",
+    "state": "assured", "cadence": 90, "fresh": true,
+    "ogQuestion": "Is the cluster still inside its supported, tested envelope?",
+    "audience": ["VP Platform", "Head of SRE"],
+    "intent": "Commercial: continuing proof that Kubernetes platforms remain supported, upgradable and resilient",
+    "brief": "Kubernetes reliability expires on a release calendar. Covers version support position, deprecated API usage, disruption budgets, capacity headroom, add-on compatibility and upgrade rehearsal.",
+    "related": {
+      "assurance": ["cloud-drift-assurance", "release-assurance", "slo-assurance"],
+      "useCases": ["kubernetes-upgrade-risk", "cloud-configuration-drift"],
+      "technologies": ["eks-reliability-assurance", "aks-reliability-assurance", "terraform-drift-assurance"],
+      "industries": ["saas-production-reliability"],
+      "insights": ["kubernetes-support-windows-upgrade-risk"]
+    }
+  },
+  {
+    "slug": "cloud-drift-assurance",
+    "title": "Cloud Drift Assurance",
+    "kind": "child", "cluster": "reliability", "secondary": ["change", "cyber"], "parent": "production-reliability-assurance",
+    "state": "assured", "cadence": 180, "fresh": false,
+    "ogQuestion": "Does production still match what was approved?",
+    "audience": ["VP Platform", "Technology Risk", "Head of SRE"],
+    "intent": "Commercial: continuing proof that environments match their declared and approved state",
+    "brief": "Drift is the difference between what was reviewed and what is running. Covers declared-versus-actual state, environment parity, out-of-band change, drift age and reconciliation ownership.",
+    "related": {
+      "assurance": ["disaster-recovery-assurance", "kubernetes-reliability-assurance", "cloud-security-exposure-assurance"],
+      "useCases": ["cloud-configuration-drift", "untested-disaster-recovery"],
+      "technologies": ["terraform-drift-assurance", "aws-production-reliability", "azure-production-reliability"],
+      "industries": ["financial-services"],
+      "insights": ["cloud-drift-production-risk"]
+    }
+  },
+  {
+    "slug": "incident-recurrence-assurance",
+    "title": "Incident Recurrence Assurance",
+    "kind": "child", "cluster": "reliability", "secondary": [], "parent": "production-reliability-assurance",
+    "state": "assured", "cadence": 180, "fresh": false,
+    "ogQuestion": "Has the cause been removed, or only the symptom?",
+    "audience": ["Head of SRE", "VP Engineering", "Technology Risk"],
+    "intent": "Commercial: proving that incident causes are removed and stay removed",
+    "brief": "An incident is closed when its cause can be shown absent under test, not when the review document is filed. Covers corrective action completion, recurrence testing, contributing-factor coverage and repeat-incident rate.",
+    "related": {
+      "assurance": ["slo-assurance", "production-observability-assurance", "release-assurance"],
+      "useCases": ["cloud-incident-recurrence", "high-change-failure-rate"],
+      "technologies": ["aws-production-reliability", "azure-production-reliability", "gcp-production-reliability"],
+      "industries": ["saas-production-reliability", "financial-services"],
+      "insights": ["why-production-incidents-recur"]
+    }
+  }
+]

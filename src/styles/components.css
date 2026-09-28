@@ -1,0 +1,215 @@
+/* Buttons, links, state marks, panels */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.875rem 1.75rem;
+  border-radius: var(--radius);
+  background: var(--tx);
+  color: var(--bg0);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  transition: transform 0.25s, box-shadow 0.3s;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 44px -14px rgba(0, 0, 0, 0.4);
+}
+
+.btn--sm {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.844rem;
+}
+
+.btn--lg {
+  padding: 1rem 2rem;
+  font-size: 0.969rem;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--tx);
+  border: 1px solid var(--ln2);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+@media (min-width: 40rem) {
+  .btn--block {
+    width: auto;
+  }
+}
+
+/* text link with animated underline and arrow */
+.lk {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--tx);
+}
+
+.lk--sm {
+  font-size: 0.875rem;
+}
+
+.ul {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size 0.35s;
+}
+
+.lk:hover .ul,
+a.ul:hover,
+a:hover > .ul,
+a:focus-visible > .ul {
+  background-size: 100% 1px;
+}
+
+.arw {
+  flex: none;
+  transition: transform 0.3s var(--ease);
+}
+
+.lk:hover .arw {
+  transform: translateX(4px);
+}
+
+/* monochrome assurance state marks: fill density = state */
+.st {
+  display: inline-block;
+  flex: none;
+  width: 12px;
+  height: 12px;
+}
+
+.st--sm {
+  width: 9px;
+  height: 9px;
+}
+
+.st--lg {
+  width: 16px;
+  height: 16px;
+}
+
+.st-assured {
+  background: var(--tx);
+}
+
+.st-degrading {
+  background: repeating-linear-gradient(45deg, var(--tx) 0 2px, transparent 2px 4px);
+  border: 1px solid var(--ln2);
+}
+
+.st-risk {
+  border: 1.5px solid var(--tx);
+  background: transparent;
+}
+
+.st-unassured {
+  border: 1px dashed var(--fnt);
+  background: transparent;
+}
+
+.state {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--mut);
+}
+
+/* translucent panel */
+.glass {
+  background: var(--gls);
+  border: 1px solid var(--ln);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+}
+
+@media (min-width: 40rem) {
+  .glass {
+    padding: 2.5rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .glass {
+    padding: 3rem;
+  }
+}
+
+/* mono band under hero */
+.band {
+  border-block: 1px solid var(--ln);
+  background: var(--bg1);
+}
+
+.band__text {
+  padding-block: 1.25rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  line-height: 1.9;
+  text-transform: uppercase;
+  color: var(--fnt);
+}
+
+.band__text span + span::before {
+  content: "·";
+  margin-inline: 0.75em;
+}
+
+@media (min-width: 40rem) {
+  .band__text {
+    font-size: 0.75rem;
+  }
+}
+
+/* scroll reveal: only hidden once the enhancement script has loaded */
+.js-reveal .rv:not(.in) {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.rv {
+  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+}
+
+.ln-draw {
+  stroke-dasharray: 920;
+  stroke-dashoffset: 0;
+}
+
+.js-reveal .rv:not(.in) .ln-draw {
+  stroke-dashoffset: 920;
+}
+
+.rv .ln-draw {
+  transition: stroke-dashoffset 1.8s var(--ease-line) 0.25s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal .rv:not(.in) {
+    opacity: 1;
+    transform: none;
+  }
+
+  .js-reveal .rv:not(.in) .ln-draw {
+    stroke-dashoffset: 0;
+  }
+}
